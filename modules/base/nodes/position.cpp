@@ -10,7 +10,7 @@ Gin::Base::Position::Position()
 void Gin::Base::Position::Execute(Graph::GraphContext ctx)
 {
 	SpatialOperation([&](size_t idx, size_t x, size_t y, size_t z) {
-		position[idx] = Eigen::Vector3<double>{ (double)x,(double)y,(double)z } / ctx.scale - ctx.bounds.extent;
+		position[idx] = Eigen::Vector3<double>{ (double)x,(double)y,(double)z } * ctx.scale - ctx.bounds.extent;
 	});
 }
 

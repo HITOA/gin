@@ -13,9 +13,28 @@ Vin::Vector2<int> mouseLastPos{};
 float pitch = 0;
 float yaw = 0;
 
+std::shared_ptr<Vin::Program> program{};
+std::shared_ptr<Vin::Material> material{};
+
 void GinEditorModule::Start()
 {
+	Vin::VFS::AddFileSystem(std::make_shared<Vin::NativeFS>("./data"));
+
+	program = Vin::LoadProgram("vs.glsl", "fs.glsl");
+	material = std::make_shared<Vin::Material>(program);
+
 	scene = std::make_shared<Vin::Scene>();
+
+	Vin::Light mainLight{};
+	mainLight.mainLight = true;
+
+	mainLight.color = Vin::Vector3<float>{ 1.0f, 1.0f, 1.0f };
+	mainLight.shadow.distance = 20;
+
+	mainLight.direction = Vin::Vector3<float>{ 0.5, 1, 0.15 }.Normalize();
+	mainLight.intensity = 3;
+
+	(*scene)->CreateEntity(mainLight);
 
 	Vin::Asset<Vin::WindowInfo> windowInfo = Vin::AssetDatabase::GetAsset<Vin::WindowInfo>(VIN_WINDOWINFO_ASSETPATH);
 
@@ -32,6 +51,7 @@ void GinEditorModule::Start()
 	std::unique_ptr<MeshBuilderWindow> meshBuilder{ std::make_unique<MeshBuilderWindow>() };
 	meshBuilder->SetGraph(graph);
 	meshBuilder->SetScene(scene);
+	meshBuilder->SetMaterial(material);
 
 	RegisterWindow(std::move(graphEditor), true);
 	RegisterWindow(std::move(meshBuilder), true);
@@ -90,6 +110,8 @@ void GinEditorModule::Process()
 		translation *= 3;
 
 	camera->position += translation;
+
+	//Vin::Logger::Log("Camera Position : {}", camera->position);
 }
 
 void GinEditorModule::Render()

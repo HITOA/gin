@@ -9,6 +9,9 @@ add_subdirectory(${EXTERNAL_PATH}/eigen)
 add_subdirectory(${EXTERNAL_PATH}/vin-engine)
 add_subdirectory(${EXTERNAL_PATH}/nanobench)
 
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data
+     DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+
 file(GLOB_RECURSE gin_library_src "library/*.cpp" "library/*.hpp")
 file(GLOB_RECURSE gin_editor_src "editor/*.cpp" "editor/*.hpp")
 

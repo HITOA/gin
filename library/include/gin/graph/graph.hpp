@@ -145,20 +145,26 @@ namespace Gin::Graph {
 			return GetOutput<T>(std::distance(outputs.begin(), it));
 		}
 
-		inline bool HasInput(std::string_view name) {
+		inline size_t HasInput(std::string_view name) {
 			auto& it = std::find_if(inputs.begin(), inputs.end(), [&](GraphPort& port) {
 				return name == port.GetName();
 				});
 
-			return it != std::end(outputs);
+			if (it == std::end(inputs))
+				return std::numeric_limits<size_t>::max();
+
+			return it - inputs.begin();
 		}
 
-		inline bool HasOutput(std::string_view name) {
+		inline size_t HasOutput(std::string_view name) {
 			auto& it = std::find_if(outputs.begin(), outputs.end(), [&](GraphPort& port) {
 				return name == port.GetName();
 				});
 
-			return it != std::end(outputs);
+			if (it == std::end(outputs))
+				return std::numeric_limits<size_t>::max();
+
+			return it - outputs.begin();
 		}
 
 		template<typename T>

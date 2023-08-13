@@ -23,6 +23,10 @@ namespace Gin::Spatial {
 			data[0] = v;
 		}
 
+		inline size_t GetWidth() { return size[0]; }
+		inline size_t GetHeight() { return size[1]; }
+		inline size_t GetDepth() { return size[2]; }
+
 		virtual void Resize(size_t width, size_t height, size_t depth) final {
 			if (size[0] == width && size[1] == height && size[2] == depth)
 				return;

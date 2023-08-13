@@ -14,6 +14,7 @@ public:
 
 	void SetGraph(std::shared_ptr<Gin::Graph::Graph> graph);
 	void SetScene(std::shared_ptr<Vin::Scene> scene);
+	void SetMaterial(std::shared_ptr<Vin::Material> material);
 
 private:
 	void DrawHeightmapTab();
@@ -24,4 +25,6 @@ private:
 private:
 	std::shared_ptr<Gin::Graph::Graph> graph{};
 	std::shared_ptr<Vin::Scene> scene{};
+	std::shared_ptr<Vin::Material> material{};
+	std::shared_ptr<Vin::DynamicMesh> mesh{};
 };
