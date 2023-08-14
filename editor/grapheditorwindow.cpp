@@ -350,6 +350,34 @@ void GraphEditorWindow::DrawPin(Gin::Graph::Port& port, int idx, bool input)
 			ImGui::InputDouble("##Input", (double*)port.GetProperty());
 			ImGui::PopItemWidth();
 		}
+
+		if (port.GetType() == Gin::Graph::GetPortTypeInfo<Gin::Spatial::Spatial<int>>()) {
+			ImGui::PushItemWidth(50);
+			static int i{ 0 };
+			Gin::Spatial::Spatial<int>& spatial = *(Gin::Spatial::Spatial<int>*)port.GetProperty();
+			i = spatial[0];
+			ImGui::InputInt("##Input", &i, 0, 0);
+			std::fill(&spatial[0], &spatial[spatial.GetWidth() * spatial.GetHeight() * spatial.GetDepth() + 1], i);
+			ImGui::PopItemWidth();
+		}
+		if (port.GetType() == Gin::Graph::GetPortTypeInfo<Gin::Spatial::Spatial<float>>()) {
+			ImGui::PushItemWidth(50);
+			static float f{ 0.0f };
+			Gin::Spatial::Spatial<float>& spatial = *(Gin::Spatial::Spatial<float>*)port.GetProperty();
+			f = spatial[0];
+			ImGui::InputFloat("##Input", &f);
+			std::fill(&spatial[0], &spatial[spatial.GetWidth() * spatial.GetHeight() * spatial.GetDepth() + 1], f);
+			ImGui::PopItemWidth();
+		}
+		if (port.GetType() == Gin::Graph::GetPortTypeInfo<Gin::Spatial::Spatial<double>>()) {
+			ImGui::PushItemWidth(50);
+			static double d{ 0.0 };
+			Gin::Spatial::Spatial<double>& spatial = *(Gin::Spatial::Spatial<double>*)port.GetProperty();
+			d = spatial[0];
+			ImGui::InputDouble("##Input", &d);
+			std::fill(&spatial[0], &spatial[spatial.GetWidth() * spatial.GetHeight() * spatial.GetDepth() + 1], d);
+			ImGui::PopItemWidth();
+		}
 	}
 	
 
@@ -752,20 +780,3 @@ void GraphEditorWindow::Execute(Gin::Graph::GraphContext ctx)
 	std::chrono::duration<double> elapsed = std::chrono::system_clock::now() - start;
 	Vin::Logger::Log("Graph Execution Took : {}ms", elapsed.count() * 1000.0);
 }
-
-/*std::string GraphEditorWindow::GetPortTypeAsString(Gin::Graph::PortType type)
-{
-	switch (type)
-	{
-	case Gin::Graph::PortType::CHAR:
-		return "Char";
-	case Gin::Graph::PortType::INT:
-		return "Int";
-	case Gin::Graph::PortType::FLOAT:
-		return "Float";
-	case Gin::Graph::PortType::DOUBLE:
-		return "Double";
-	default:
-		return "Unknown";
-	}
-}*/
