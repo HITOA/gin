@@ -2,7 +2,7 @@
 
 #include <gin/gin.hpp>
 
-namespace Gin::Base {
+namespace Gin::Module::Base {
 
 	class Position : public Graph::Node {
 	public:

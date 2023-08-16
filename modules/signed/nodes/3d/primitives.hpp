@@ -2,7 +2,7 @@
 
 #include <gin/graph/node.hpp>
 
-namespace Gin::Signed {
+namespace Gin::Module::Signed {
 
 	/**
 	 * Signed Distance Function For A Sphere.
@@ -16,6 +16,23 @@ namespace Gin::Signed {
 
 	private:
 		Spatial::Spatial<float> radius{ 1.0f };
+		Spatial::Spatial<Eigen::Vector3<double>> position{};
+
+		Spatial::Spatial<float> distance{};
+	};
+
+	/**
+	 * Signed Distance Function For A Sphere.
+	 */
+	class SDBox : public Graph::Node {
+	public:
+		SDBox();
+
+		virtual void Execute(Graph::GraphContext ctx) final;
+		virtual std::string GetName() final;
+
+	private:
+		Spatial::Spatial<Eigen::Vector3<double>> size{ Eigen::Vector3<double>{ 1.0f, 1.0f, 1.0f } };
 		Spatial::Spatial<Eigen::Vector3<double>> position{};
 
 		Spatial::Spatial<float> distance{};

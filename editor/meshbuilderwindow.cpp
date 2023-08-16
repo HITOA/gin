@@ -5,6 +5,9 @@
 
 MeshBuilderWindow::MeshBuilderWindow()
 {
+	mesh = std::make_shared<Vin::DynamicMesh>(Vin::VertexBufferLayout{
+			   Vin::VertexBufferElement{ Vin::VertexAttribute::Position, Vin::VertexAttributeType::Float3 },
+			   Vin::VertexBufferElement{ Vin::VertexAttribute::Normal, Vin::VertexAttributeType::Float3 } }, Vin::BufferIndexType::UnsignedInt32);
 }
 
 MeshBuilderWindow::~MeshBuilderWindow()
@@ -46,6 +49,7 @@ void MeshBuilderWindow::SetGraph(std::shared_ptr<Gin::Graph::Graph> graph)
 void MeshBuilderWindow::SetScene(std::shared_ptr<Vin::Scene> scene)
 {
 	this->scene = scene;
+	(*scene)->CreateEntity(Vin::Transform<float>{Vin::Vector3<float>{0.0, -1.0, 0.0}}, Vin::MeshRenderer{ mesh.get() });
 }
 
 void MeshBuilderWindow::SetMaterial(std::shared_ptr<Vin::Material> material)
@@ -145,15 +149,8 @@ void MeshBuilderWindow::BuildVolume(Gin::Graph::GraphContext ctx)
 	Vin::Logger::Log("Vertex Count : {}", indexedMesh.GetVertexBufferSize());
 	Vin::Logger::Log("Indices Count : {}", indexedMesh.GetIndexBufferSize());
 
-	mesh = std::make_shared<Vin::DynamicMesh>(Vin::VertexBufferLayout{
-			Vin::VertexBufferElement{ Vin::VertexAttribute::Position, Vin::VertexAttributeType::Float3 },
-			Vin::VertexBufferElement{ Vin::VertexAttribute::Normal, Vin::VertexAttributeType::Float3 } }, Vin::BufferIndexType::UnsignedInt32);
-
 	mesh->SetVertexData(indexedMesh.GetVertexBuffer(), indexedMesh.GetVertexBufferSize());
 	mesh->SetIndexData(indexedMesh.GetIndexBuffer(), indexedMesh.GetIndexBufferSize());
 	mesh->SetMaterialCount(1);
 	mesh->SetMaterial(material, 0);
-
-	(*scene)->CreateEntity(Vin::Transform<float>{Vin::Vector3<float>{0.0, -1.0, 0.0}}, Vin::MeshRenderer{ mesh.get() });
-	
 }

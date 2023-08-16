@@ -2,7 +2,7 @@
 
 #include <gin/graph/node.hpp>
 
-namespace Gin::Signed {
+namespace Gin::Module::Signed {
 
 	/**
 	 * Union Operation For 2 Signed Distance.

@@ -355,6 +355,354 @@ namespace Gin::Graph {
 		Eigen::Vector3<double>* property{ nullptr };
 	};
 
+	//Spatial Number
+
+	template<>
+	class NodePort<Spatial::Spatial<int>> : public Port {
+	public:
+		NodePort(const std::string& name, Spatial::Spatial<int>& property) : Port(GetPortTypeInfo<Spatial::Spatial<int>>(), name), property{ &property } {};
+
+		virtual bool Match(Port& port) final {
+			return port.GetType().type == (PortType)((int)PortType::Number + (int)PortType::Spatial);
+		}
+		virtual bool CopyFrom(Port& port) final {
+			if (!Match(port))
+				return false;
+
+			if (port.GetType() == GetType()) {
+				*property = *((Spatial::Spatial<int>*)port.GetProperty());
+				return true;
+			}
+
+			if (port.GetType() == GetPortTypeInfo<Spatial::Spatial<float>>()) {
+				Spatial::Spatial<float>* spatial = (Spatial::Spatial<float>*)port.GetProperty();
+				size_t max = property->GetWidth() * property->GetHeight() * property->GetDepth();
+				for (size_t i = 0; i < max; ++i)
+					(*property)[i] = (int)((*spatial)[i]);
+			}
+
+			if (port.GetType() == GetPortTypeInfo<Spatial::Spatial<double>>()) {
+				Spatial::Spatial<double>* spatial = (Spatial::Spatial<double>*)port.GetProperty();
+				size_t max = property->GetWidth() * property->GetHeight() * property->GetDepth();
+				for (size_t i = 0; i < max; ++i)
+					(*property)[i] = (int)((*spatial)[i]);
+			}
+
+			return false;
+		}
+		virtual void* GetProperty() final { return property; };
+	public:
+		Spatial::Spatial<int>* property{ nullptr };
+	};
+
+	template<>
+	class NodePort<Spatial::Spatial<float>> : public Port {
+	public:
+		NodePort(const std::string& name, Spatial::Spatial<float>& property) : Port(GetPortTypeInfo<Spatial::Spatial<float>>(), name), property{ &property } {};
+
+		virtual bool Match(Port& port) final {
+			return port.GetType().type == (PortType)((int)PortType::Number + (int)PortType::Spatial);
+		}
+		virtual bool CopyFrom(Port& port) final {
+			if (!Match(port))
+				return false;
+
+			if (port.GetType() == GetType()) {
+				*property = *((Spatial::Spatial<float>*)port.GetProperty());
+				return true;
+			}
+
+			if (port.GetType() == GetPortTypeInfo<Spatial::Spatial<int>>()) {
+				Spatial::Spatial<int>* spatial = (Spatial::Spatial<int>*)port.GetProperty();
+				size_t max = property->GetWidth() * property->GetHeight() * property->GetDepth();
+				for (size_t i = 0; i < max; ++i)
+					(*property)[i] = (float)((*spatial)[i]);
+			}
+
+			if (port.GetType() == GetPortTypeInfo<Spatial::Spatial<double>>()) {
+				Spatial::Spatial<double>* spatial = (Spatial::Spatial<double>*)port.GetProperty();
+				size_t max = property->GetWidth() * property->GetHeight() * property->GetDepth();
+				for (size_t i = 0; i < max; ++i)
+					(*property)[i] = (float)((*spatial)[i]);
+			}
+
+			return false;
+		}
+		virtual void* GetProperty() final { return property; };
+	public:
+		Spatial::Spatial<float>* property{ nullptr };
+	};
+
+	template<>
+	class NodePort<Spatial::Spatial<double>> : public Port {
+	public:
+		NodePort(const std::string& name, Spatial::Spatial<double>& property) : Port(GetPortTypeInfo<Spatial::Spatial<double>>(), name), property{ &property } {};
+
+		virtual bool Match(Port& port) final {
+			return port.GetType().type == (PortType)((int)PortType::Number + (int)PortType::Spatial);
+		}
+		virtual bool CopyFrom(Port& port) final {
+			if (!Match(port))
+				return false;
+
+			if (port.GetType() == GetType()) {
+				*property = *((Spatial::Spatial<double>*)port.GetProperty());
+				return true;
+			}
+
+			if (port.GetType() == GetPortTypeInfo<Spatial::Spatial<int>>()) {
+				Spatial::Spatial<int>* spatial = (Spatial::Spatial<int>*)port.GetProperty();
+				size_t max = property->GetWidth() * property->GetHeight() * property->GetDepth();
+				for (size_t i = 0; i < max; ++i)
+					(*property)[i] = (double)((*spatial)[i]);
+			}
+
+			if (port.GetType() == GetPortTypeInfo<Spatial::Spatial<float>>()) {
+				Spatial::Spatial<float>* spatial = (Spatial::Spatial<float>*)port.GetProperty();
+				size_t max = property->GetWidth() * property->GetHeight() * property->GetDepth();
+				for (size_t i = 0; i < max; ++i)
+					(*property)[i] = (double)((*spatial)[i]);
+			}
+
+			return false;
+		}
+		virtual void* GetProperty() final { return property; };
+	public:
+		Spatial::Spatial<double>* property{ nullptr };
+	};
+
+	//Spatial Vector2
+
+	template<>
+	class NodePort<Spatial::Spatial<Eigen::Vector2<int>>> : public Port {
+	public:
+		NodePort(const std::string& name, Spatial::Spatial<Eigen::Vector2<int>>& property) : Port(GetPortTypeInfo<Spatial::Spatial<Eigen::Vector2<int>>>(), name), property{ &property } {};
+
+		virtual bool Match(Port& port) final {
+			return port.GetType().type == (PortType)((int)PortType::Vector2 + (int)PortType::Spatial);
+		}
+		virtual bool CopyFrom(Port& port) final {
+			if (!Match(port))
+				return false;
+
+			if (port.GetType() == GetType()) {
+				*property = *((Spatial::Spatial<Eigen::Vector2<int>>*)port.GetProperty());
+				return true;
+			}
+
+			if (port.GetType() == GetPortTypeInfo<Spatial::Spatial<Eigen::Vector2<float>>>()) {
+				Spatial::Spatial<Eigen::Vector2<float>>* spatial = (Spatial::Spatial<Eigen::Vector2<float>>*)port.GetProperty();
+				size_t max = property->GetWidth() * property->GetHeight() * property->GetDepth();
+				for (size_t i = 0; i < max; ++i)
+					(*property)[i] = ((*spatial)[i]).cast<int>();
+			}
+
+			if (port.GetType() == GetPortTypeInfo<Spatial::Spatial<Eigen::Vector2<double>>>()) {
+				Spatial::Spatial<Eigen::Vector2<double>>* spatial = (Spatial::Spatial<Eigen::Vector2<double>>*)port.GetProperty();
+				size_t max = property->GetWidth() * property->GetHeight() * property->GetDepth();
+				for (size_t i = 0; i < max; ++i)
+					(*property)[i] = ((*spatial)[i]).cast<int>();
+			}
+
+			return false;
+		}
+		virtual void* GetProperty() final { return property; };
+	public:
+		Spatial::Spatial<Eigen::Vector2<int>>* property{ nullptr };
+	};
+
+	template<>
+	class NodePort<Spatial::Spatial<Eigen::Vector2<float>>> : public Port {
+	public:
+		NodePort(const std::string& name, Spatial::Spatial<Eigen::Vector2<float>>& property) : Port(GetPortTypeInfo<Spatial::Spatial<Eigen::Vector2<float>>>(), name), property{ &property } {};
+
+		virtual bool Match(Port& port) final {
+			return port.GetType().type == (PortType)((int)PortType::Vector2 + (int)PortType::Spatial);
+		}
+		virtual bool CopyFrom(Port& port) final {
+			if (!Match(port))
+				return false;
+
+			if (port.GetType() == GetType()) {
+				*property = *((Spatial::Spatial<Eigen::Vector2<float>>*)port.GetProperty());
+				return true;
+			}
+
+			if (port.GetType() == GetPortTypeInfo<Spatial::Spatial<Eigen::Vector2<int>>>()) {
+				Spatial::Spatial<Eigen::Vector2<int>>* spatial = (Spatial::Spatial<Eigen::Vector2<int>>*)port.GetProperty();
+				size_t max = property->GetWidth() * property->GetHeight() * property->GetDepth();
+				for (size_t i = 0; i < max; ++i)
+					(*property)[i] = ((*spatial)[i]).cast<float>();
+			}
+
+			if (port.GetType() == GetPortTypeInfo<Spatial::Spatial<Eigen::Vector2<double>>>()) {
+				Spatial::Spatial<Eigen::Vector2<double>>* spatial = (Spatial::Spatial<Eigen::Vector2<double>>*)port.GetProperty();
+				size_t max = property->GetWidth() * property->GetHeight() * property->GetDepth();
+				for (size_t i = 0; i < max; ++i)
+					(*property)[i] = ((*spatial)[i]).cast<float>();
+			}
+
+			return false;
+		}
+		virtual void* GetProperty() final { return property; };
+	public:
+		Spatial::Spatial<Eigen::Vector2<float>>* property{ nullptr };
+	};
+
+	template<>
+	class NodePort<Spatial::Spatial<Eigen::Vector2<double>>> : public Port {
+	public:
+		NodePort(const std::string& name, Spatial::Spatial<Eigen::Vector2<double>>& property) : Port(GetPortTypeInfo<Spatial::Spatial<Eigen::Vector2<double>>>(), name), property{ &property } {};
+
+		virtual bool Match(Port& port) final {
+			return port.GetType().type == (PortType)((int)PortType::Vector2 + (int)PortType::Spatial);
+		}
+		virtual bool CopyFrom(Port& port) final {
+			if (!Match(port))
+				return false;
+
+			if (port.GetType() == GetType()) {
+				*property = *((Spatial::Spatial<Eigen::Vector2<double>>*)port.GetProperty());
+				return true;
+			}
+
+			if (port.GetType() == GetPortTypeInfo<Spatial::Spatial<Eigen::Vector2<int>>>()) {
+				Spatial::Spatial<Eigen::Vector2<int>>* spatial = (Spatial::Spatial<Eigen::Vector2<int>>*)port.GetProperty();
+				size_t max = property->GetWidth() * property->GetHeight() * property->GetDepth();
+				for (size_t i = 0; i < max; ++i)
+					(*property)[i] = ((*spatial)[i]).cast<double>();
+			}
+
+			if (port.GetType() == GetPortTypeInfo<Spatial::Spatial<Eigen::Vector2<float>>>()) {
+				Spatial::Spatial<Eigen::Vector2<float>>* spatial = (Spatial::Spatial<Eigen::Vector2<float>>*)port.GetProperty();
+				size_t max = property->GetWidth() * property->GetHeight() * property->GetDepth();
+				for (size_t i = 0; i < max; ++i)
+					(*property)[i] = ((*spatial)[i]).cast<double>();
+			}
+
+			return false;
+		}
+		virtual void* GetProperty() final { return property; };
+	public:
+		Spatial::Spatial<Eigen::Vector2<double>>* property{ nullptr };
+	};
+
+	//Spatial Vector3
+
+	template<>
+	class NodePort<Spatial::Spatial<Eigen::Vector3<int>>> : public Port {
+	public:
+		NodePort(const std::string& name, Spatial::Spatial<Eigen::Vector3<int>>& property) : Port(GetPortTypeInfo<Spatial::Spatial<Eigen::Vector3<int>>>(), name), property{ &property } {};
+
+		virtual bool Match(Port& port) final {
+			return port.GetType().type == (PortType)((int)PortType::Vector3 + (int)PortType::Spatial);
+		}
+		virtual bool CopyFrom(Port& port) final {
+			if (!Match(port))
+				return false;
+
+			if (port.GetType() == GetType()) {
+				*property = *((Spatial::Spatial<Eigen::Vector3<int>>*)port.GetProperty());
+				return true;
+			}
+
+			if (port.GetType() == GetPortTypeInfo<Spatial::Spatial<Eigen::Vector3<float>>>()) {
+				Spatial::Spatial<Eigen::Vector3<float>>* spatial = (Spatial::Spatial<Eigen::Vector3<float>>*)port.GetProperty();
+				size_t max = property->GetWidth() * property->GetHeight() * property->GetDepth();
+				for (size_t i = 0; i < max; ++i)
+					(*property)[i] = ((*spatial)[i]).cast<int>();
+			}
+
+			if (port.GetType() == GetPortTypeInfo<Spatial::Spatial<Eigen::Vector3<double>>>()) {
+				Spatial::Spatial<Eigen::Vector3<double>>* spatial = (Spatial::Spatial<Eigen::Vector3<double>>*)port.GetProperty();
+				size_t max = property->GetWidth() * property->GetHeight() * property->GetDepth();
+				for (size_t i = 0; i < max; ++i)
+					(*property)[i] = ((*spatial)[i]).cast<int>();
+			}
+
+			return false;
+		}
+		virtual void* GetProperty() final { return property; };
+	public:
+		Spatial::Spatial<Eigen::Vector3<int>>* property{ nullptr };
+	};
+
+	template<>
+	class NodePort<Spatial::Spatial<Eigen::Vector3<float>>> : public Port {
+	public:
+		NodePort(const std::string& name, Spatial::Spatial<Eigen::Vector3<float>>& property) : Port(GetPortTypeInfo<Spatial::Spatial<Eigen::Vector3<float>>>(), name), property{ &property } {};
+
+		virtual bool Match(Port& port) final {
+			return port.GetType().type == (PortType)((int)PortType::Vector3 + (int)PortType::Spatial);
+		}
+		virtual bool CopyFrom(Port& port) final {
+			if (!Match(port))
+				return false;
+
+			if (port.GetType() == GetType()) {
+				*property = *((Spatial::Spatial<Eigen::Vector3<float>>*)port.GetProperty());
+				return true;
+			}
+
+			if (port.GetType() == GetPortTypeInfo<Spatial::Spatial<Eigen::Vector3<int>>>()) {
+				Spatial::Spatial<Eigen::Vector3<int>>* spatial = (Spatial::Spatial<Eigen::Vector3<int>>*)port.GetProperty();
+				size_t max = property->GetWidth() * property->GetHeight() * property->GetDepth();
+				for (size_t i = 0; i < max; ++i)
+					(*property)[i] = ((*spatial)[i]).cast<float>();
+			}
+
+			if (port.GetType() == GetPortTypeInfo<Spatial::Spatial<Eigen::Vector3<double>>>()) {
+				Spatial::Spatial<Eigen::Vector3<double>>* spatial = (Spatial::Spatial<Eigen::Vector3<double>>*)port.GetProperty();
+				size_t max = property->GetWidth() * property->GetHeight() * property->GetDepth();
+				for (size_t i = 0; i < max; ++i)
+					(*property)[i] = ((*spatial)[i]).cast<float>();
+			}
+
+			return false;
+		}
+		virtual void* GetProperty() final { return property; };
+	public:
+		Spatial::Spatial<Eigen::Vector3<float>>* property{ nullptr };
+	};
+
+	template<>
+	class NodePort<Spatial::Spatial<Eigen::Vector3<double>>> : public Port {
+	public:
+		NodePort(const std::string& name, Spatial::Spatial<Eigen::Vector3<double>>& property) : Port(GetPortTypeInfo<Spatial::Spatial<Eigen::Vector3<double>>>(), name), property{ &property } {};
+
+		virtual bool Match(Port& port) final {
+			return port.GetType().type == (PortType)((int)PortType::Vector3 + (int)PortType::Spatial);
+		}
+		virtual bool CopyFrom(Port& port) final {
+			if (!Match(port))
+				return false;
+
+			if (port.GetType() == GetType()) {
+				*property = *((Spatial::Spatial<Eigen::Vector3<double>>*)port.GetProperty());
+				return true;
+			}
+
+			if (port.GetType() == GetPortTypeInfo<Spatial::Spatial<Eigen::Vector3<int>>>()) {
+				Spatial::Spatial<Eigen::Vector3<int>>* spatial = (Spatial::Spatial<Eigen::Vector3<int>>*)port.GetProperty();
+				size_t max = property->GetWidth() * property->GetHeight() * property->GetDepth();
+				for (size_t i = 0; i < max; ++i)
+					(*property)[i] = ((*spatial)[i]).cast<double>();
+			}
+
+			if (port.GetType() == GetPortTypeInfo<Spatial::Spatial<Eigen::Vector3<float>>>()) {
+				Spatial::Spatial<Eigen::Vector3<float>>* spatial = (Spatial::Spatial<Eigen::Vector3<float>>*)port.GetProperty();
+				size_t max = property->GetWidth() * property->GetHeight() * property->GetDepth();
+				for (size_t i = 0; i < max; ++i)
+					(*property)[i] = ((*spatial)[i]).cast<double>();
+			}
+
+			return false;
+		}
+		virtual void* GetProperty() final { return property; };
+	public:
+		Spatial::Spatial<Eigen::Vector3<double>>* property{ nullptr };
+	};
+
 	template<typename T>
 	inline std::shared_ptr<Port> CreateNodePort(const std::string& name, T& property) {
 		return std::make_shared<NodePort<T>>(name, property);

@@ -1,7 +1,7 @@
 #include <signed/nodes/3d/operations.hpp>
 #include <gin/math/math.hpp>
 
-Gin::Signed::OPUnion::OPUnion()
+Gin::Module::Signed::OPUnion::OPUnion()
 {
 	AddInputPort("A", distanceA);
 	AddInputPort("B", distanceB);
@@ -9,19 +9,19 @@ Gin::Signed::OPUnion::OPUnion()
 	AddOutputPort("Signed Distance", distanceR);
 }
 
-void Gin::Signed::OPUnion::Execute(Graph::GraphContext ctx)
+void Gin::Module::Signed::OPUnion::Execute(Graph::GraphContext ctx)
 {
 	SpatialOperation([&](size_t idx, size_t x, size_t y, size_t z) {
 		distanceR[idx] = Math::Min<float>(distanceA[idx], distanceB[idx]);
 	});
 }
 
-std::string Gin::Signed::OPUnion::GetName()
+std::string Gin::Module::Signed::OPUnion::GetName()
 {
 	return "OPUnion";
 }
 
-Gin::Signed::OPSubstraction::OPSubstraction()
+Gin::Module::Signed::OPSubstraction::OPSubstraction()
 {
 	AddInputPort("A", distanceA);
 	AddInputPort("B", distanceB);
@@ -29,19 +29,19 @@ Gin::Signed::OPSubstraction::OPSubstraction()
 	AddOutputPort("Signed Distance", distanceR);
 }
 
-void Gin::Signed::OPSubstraction::Execute(Graph::GraphContext ctx)
+void Gin::Module::Signed::OPSubstraction::Execute(Graph::GraphContext ctx)
 {
 	SpatialOperation([&](size_t idx, size_t x, size_t y, size_t z) {
 		distanceR[idx] = Math::Max<float>(-distanceA[idx], distanceB[idx]);
 	});
 }
 
-std::string Gin::Signed::OPSubstraction::GetName()
+std::string Gin::Module::Signed::OPSubstraction::GetName()
 {
 	return "OPSubstraction";
 }
 
-Gin::Signed::OPIntersection::OPIntersection()
+Gin::Module::Signed::OPIntersection::OPIntersection()
 {
 	AddInputPort("A", distanceA);
 	AddInputPort("B", distanceB);
@@ -49,19 +49,19 @@ Gin::Signed::OPIntersection::OPIntersection()
 	AddOutputPort("Signed Distance", distanceR);
 }
 
-void Gin::Signed::OPIntersection::Execute(Graph::GraphContext ctx)
+void Gin::Module::Signed::OPIntersection::Execute(Graph::GraphContext ctx)
 {
 	SpatialOperation([&](size_t idx, size_t x, size_t y, size_t z) {
 		distanceR[idx] = Math::Max<float>(distanceA[idx], distanceB[idx]);
 	});
 }
 
-std::string Gin::Signed::OPIntersection::GetName()
+std::string Gin::Module::Signed::OPIntersection::GetName()
 {
 	return "OPIntersection";
 }
 
-Gin::Signed::OPSmoothUnion::OPSmoothUnion()
+Gin::Module::Signed::OPSmoothUnion::OPSmoothUnion()
 {
 	AddInputPort("A", distanceA);
 	AddInputPort("B", distanceB);
@@ -70,19 +70,19 @@ Gin::Signed::OPSmoothUnion::OPSmoothUnion()
 	AddOutputPort("Signed Distance", distanceR);
 }
 
-void Gin::Signed::OPSmoothUnion::Execute(Graph::GraphContext ctx)
+void Gin::Module::Signed::OPSmoothUnion::Execute(Graph::GraphContext ctx)
 {
 	SpatialOperation([&](size_t idx, size_t x, size_t y, size_t z) {
 		distanceR[idx] = Math::SMin(distanceA[idx], distanceB[idx], smoothFactor[idx]).x();
 	});
 }
 
-std::string Gin::Signed::OPSmoothUnion::GetName()
+std::string Gin::Module::Signed::OPSmoothUnion::GetName()
 {
 	return "OPSmoothUnion";
 }
 
-Gin::Signed::OPSmoothSubstraction::OPSmoothSubstraction()
+Gin::Module::Signed::OPSmoothSubstraction::OPSmoothSubstraction()
 {
 	AddInputPort("A", distanceA);
 	AddInputPort("B", distanceB);
@@ -91,19 +91,19 @@ Gin::Signed::OPSmoothSubstraction::OPSmoothSubstraction()
 	AddOutputPort("Signed Distance", distanceR);
 }
 
-void Gin::Signed::OPSmoothSubstraction::Execute(Graph::GraphContext ctx)
+void Gin::Module::Signed::OPSmoothSubstraction::Execute(Graph::GraphContext ctx)
 {
 	SpatialOperation([&](size_t idx, size_t x, size_t y, size_t z) {
 		distanceR[idx] = Math::SMax(-distanceA[idx], distanceB[idx], smoothFactor[idx]).x();
 		});
 }
 
-std::string Gin::Signed::OPSmoothSubstraction::GetName()
+std::string Gin::Module::Signed::OPSmoothSubstraction::GetName()
 {
 	return "OPSmoothSubstraction";
 }
 
-Gin::Signed::OPSmoothIntersection::OPSmoothIntersection()
+Gin::Module::Signed::OPSmoothIntersection::OPSmoothIntersection()
 {
 	AddInputPort("A", distanceA);
 	AddInputPort("B", distanceB);
@@ -112,14 +112,14 @@ Gin::Signed::OPSmoothIntersection::OPSmoothIntersection()
 	AddOutputPort("Signed Distance", distanceR);
 }
 
-void Gin::Signed::OPSmoothIntersection::Execute(Graph::GraphContext ctx)
+void Gin::Module::Signed::OPSmoothIntersection::Execute(Graph::GraphContext ctx)
 {
 	SpatialOperation([&](size_t idx, size_t x, size_t y, size_t z) {
 		distanceR[idx] = Math::SMax(distanceA[idx], distanceB[idx], smoothFactor[idx]).x();
 		});
 }
 
-std::string Gin::Signed::OPSmoothIntersection::GetName()
+std::string Gin::Module::Signed::OPSmoothIntersection::GetName()
 {
 	return "OPSmoothIntersection";
 }
