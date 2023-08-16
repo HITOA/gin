@@ -434,3 +434,69 @@ void Gin::Graph::Graph::Execute(GraphContext ctx)
 		}
 	}
 }
+
+
+void Gin::Graph::Graph::Execute(GraphContext ctx, Thread::ThreadPool& pool)
+{
+	for (size_t idx = 0; idx < program.size();) {
+		GraphAction& action = program[idx];
+		switch (action.type)
+		{
+		case Gin::Graph::GraphActionType::EXEC:
+			{
+				while (program[idx].type == Gin::Graph::GraphActionType::EXEC) {
+					std::shared_ptr<Node> nodeI = nodes[program[idx].nodeAIdx];
+					GraphContext ctxI = ctx;
+					++running;
+					pool.Execute([this, nodeI, ctxI]() {
+						nodeI->Initialize(ctxI);
+						nodeI->Execute(ctxI);
+						{
+							std::unique_lock<std::mutex> lock{ mutex };
+							--running;
+							cv.notify_all();
+						}
+					});
+					++idx;
+				}
+
+				while (running) {
+					std::unique_lock<std::mutex> lock{ mutex };
+					cv.wait(lock, [&] {
+						return running <= 0;
+						});
+				}
+
+				continue;
+			}
+
+			//nodes[action->nodeAIdx]->Initialize(ctx, pool);
+			//nodes[action->nodeAIdx]->Execute(ctx, pool);
+			break;
+		case Gin::Graph::GraphActionType::COPY:
+			if (action.nodeAIdx == std::numeric_limits<size_t>::max() - 1) {
+				//Output to graph output
+				Port& src = nodes[action.nodeBIdx]->GetOutputPort(action.portBIdx - nodes[action.nodeBIdx]->GetInputPortCount());
+				GraphPort& dst = outputs[action.portAIdx];
+				dst.CopyFrom(src);
+			}
+			else if (action.nodeBIdx == std::numeric_limits<size_t>::max()) {
+				//Graph input to input
+				GraphPort& src = inputs[action.portBIdx];
+				Port& dst = nodes[action.nodeAIdx]->GetInputPort(action.portAIdx);
+				dst.CopyFrom(src);
+			}
+			else {
+				Port& src = nodes[action.nodeBIdx]->GetOutputPort(action.portBIdx - nodes[action.nodeBIdx]->GetInputPortCount());
+				Port& dst = nodes[action.nodeAIdx]->GetInputPort(action.portAIdx);
+				dst.CopyFrom(src);
+			}
+			break;
+		case Gin::Graph::GraphActionType::MOVE:
+			break;
+		default:
+			break;
+		}
+		++idx;
+	}
+}

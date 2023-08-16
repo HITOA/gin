@@ -5,6 +5,7 @@
 #include <gin/graph/graphcontext.hpp>
 #include <gin/spatial/spatial.hpp>
 #include <gin/math/math.hpp>
+#include <gin/thread/threadpool.hpp>
 
 #define MAX_INPUT_PORT 32
 #define MAX_OUTPUT_PORT 32
@@ -14,7 +15,9 @@ namespace Gin::Graph {
 	class Node {
 	public:
 		virtual void Initialize(GraphContext ctx);
+		virtual void Initialize(GraphContext ctx, Thread::ThreadPool& pool);
 		virtual void Execute(GraphContext ctx) = 0;
+		virtual void Execute(GraphContext ctx, Thread::ThreadPool& pool);
 		virtual std::string GetName() = 0;
 
 		size_t AddInputPort(std::shared_ptr<Port> port);

@@ -112,8 +112,10 @@ void MeshBuilderWindow::BuildVolume(Gin::Graph::GraphContext ctx)
 
 	start = std::chrono::system_clock::now();
 
+	Gin::Thread::ThreadPool pool{};
+
 	try {
-		graph->Execute(ctx);
+		graph->Execute(ctx, pool);
 	}
 	catch (std::exception& e) {
 		Vin::Logger::Err("Graph Execution Error : {}", e.what());

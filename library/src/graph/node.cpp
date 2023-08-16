@@ -23,6 +23,33 @@ void Gin::Graph::Node::Initialize(GraphContext ctx)
     }
 }
 
+void Gin::Graph::Node::Initialize(GraphContext ctx, Thread::ThreadPool& pool)
+{
+    this->ctx = ctx;
+
+    Eigen::Vector3<double> t{ ctx.bounds.extent * 2.0 / ctx.scale };
+    Eigen::Vector3<int> size = Math::Ceil<double, int, 3>(t);
+
+    for (auto& output : outputs) {
+        if ((int)(output->GetType().type) & (int)PortType::Spatial) {
+            Spatial::BaseSpatial* spatial = (Spatial::BaseSpatial*)output->GetProperty();
+            spatial->Resize(size.x(), size.y(), size.z());
+        }
+    }
+
+    for (auto& input : inputs) {
+        if ((int)(input->GetType().type) & (int)PortType::Spatial) {
+            Spatial::BaseSpatial* spatial = (Spatial::BaseSpatial*)input->GetProperty();
+            spatial->Resize(size.x(), size.y(), size.z());
+        }
+    }
+}
+
+void Gin::Graph::Node::Execute(GraphContext ctx, Thread::ThreadPool& pool)
+{
+    Execute(ctx);
+}
+
 size_t Gin::Graph::Node::AddInputPort(std::shared_ptr<Port> port)
 {
     if (inputs.size() >= MAX_INPUT_PORT)

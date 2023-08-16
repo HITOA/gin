@@ -3,6 +3,7 @@
 #include <gin/graph/node.hpp>
 #include <gin/graph/graphport.hpp>
 #include <gin/graph/graphcontext.hpp>
+#include <gin/thread/threadpool.hpp>
 
 #include <vector>
 #include <memory>
@@ -10,6 +11,8 @@
 #include <string>
 #include <stdexcept>
 #include <unordered_map>
+#include <functional>
+#include <condition_variable>
 
 #define MAX_ORDER_ITERATION_STOP 1000
 
@@ -186,6 +189,7 @@ namespace Gin::Graph {
 
 		void Compile();
 		void Execute(GraphContext ctx);
+		void Execute(GraphContext ctx, Thread::ThreadPool& pool);
 
 	private:
 		std::vector<std::shared_ptr<Node>> nodes{};
@@ -195,6 +199,10 @@ namespace Gin::Graph {
 		std::vector<GraphPort> outputs{};
 
 		std::vector<GraphAction> program{};
+
+		unsigned int running{ 0 };
+		std::mutex mutex{};
+		std::condition_variable cv{};
 
 		friend class GraphPortOperator;
 		template<typename T>
