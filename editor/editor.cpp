@@ -8,6 +8,7 @@
 
 #include "grapheditorwindow.hpp"
 #include "meshbuilderwindow.hpp"
+#include "graphlist.hpp"
 
 Vin::Vector2<int> mouseLastPos{};
 float pitch = 0;
@@ -43,13 +44,17 @@ void GinEditorModule::Start()
 	camera->SetNearPlane(0.1);
 	camera->SetFarPlane(4000);
 
-	graph = std::make_shared<Gin::Graph::Graph>();
+	std::shared_ptr<GraphListEntry> entry{ std::make_shared<GraphListEntry>() };
+	entry->graph = std::make_shared<Gin::Graph::Graph>();
+
+
+	GetGraphList().push_back(entry);
 
 	std::unique_ptr<GraphEditorWindow> graphEditor{ std::make_unique<GraphEditorWindow>() };
-	graphEditor->SetGraph(graph);
+	graphEditor->SetEntry(entry);
 
 	std::unique_ptr<MeshBuilderWindow> meshBuilder{ std::make_unique<MeshBuilderWindow>() };
-	meshBuilder->SetGraph(graph);
+	meshBuilder->SetGraph(entry->graph);
 	meshBuilder->SetScene(scene);
 	meshBuilder->SetMaterial(material);
 

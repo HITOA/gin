@@ -181,6 +181,7 @@ namespace Gin::Graph {
 		inline GraphPort& GetInputPort(size_t idx) { return inputs[idx]; };
 		inline GraphPort& GetOutputPort(size_t idx) { return outputs[idx]; };
 		inline std::vector<GraphAction>& GetProgram() { return program; };
+		inline std::vector<std::vector<std::vector<std::pair<size_t, size_t>>>>& GetAdj() { return adj; };
 
 		void RemoveNode(size_t nodeIdx);
 		void RemoveInput(size_t idx);

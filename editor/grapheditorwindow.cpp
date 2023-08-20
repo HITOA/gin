@@ -3,6 +3,7 @@
 #include <imgui.h>
 #include <misc/cpp/imgui_stdlib.h>
 #include <misc/cpp/imgui_stdlib.cpp>
+#include <nfd.h>
 
 GraphEditorWindow::GraphEditorWindow()
 {
@@ -20,8 +21,6 @@ GraphEditorWindow::GraphEditorWindow()
 	style.Colors[ImNodesCol_Link] = IM_COL32(150, 150, 150, 255);
 	style.Colors[ImNodesCol_LinkSelected] = IM_COL32(180, 180, 180, 255);
 	style.Colors[ImNodesCol_LinkHovered] = IM_COL32(180, 180, 180, 255);
-
-	graph = std::make_shared<Gin::Graph::Graph>();
 }
 
 GraphEditorWindow::~GraphEditorWindow()
@@ -42,14 +41,18 @@ void GraphEditorWindow::Draw(bool* draw)
 		if (!ImGui::IsAnyItemHovered() && openPopup)
 			ImGui::OpenPopup("Add Node");
 
-		DrawAddNodePopup();
+		if (entry->graph) {
 
-		DrawGraphPortNode();
+			DrawAddNodePopup();
 
-		for (size_t i = 0; i < graph->GetNodeCount(); ++i)
-			DrawNode(graph->GetNode<Gin::Graph::Node>(i));
+			DrawGraphPortNode();
 
-		DrawLink();
+			for (size_t i = 0; i < entry->graph->GetNodeCount(); ++i)
+				DrawNode(entry->graph->GetNode<Gin::Graph::Node>(i));
+
+			DrawLink();
+
+		}
 
 		ImNodes::MiniMap();
 		ImNodes::EndNodeEditor();
@@ -66,9 +69,27 @@ std::string GraphEditorWindow::GetName()
 	return std::string{ "Graph Editor" };
 }
 
-void GraphEditorWindow::SetGraph(std::shared_ptr<Gin::Graph::Graph> graph)
+void GraphEditorWindow::SetEntry(std::shared_ptr<GraphListEntry> entry)
 {
-	this->graph = graph;
+	if (this->entry) {
+		this->entry->positions.clear();
+
+		this->entry->positions.push_back(ImNodes::GetNodeEditorSpacePos(std::numeric_limits<int>::max()));
+		this->entry->positions.push_back(ImNodes::GetNodeEditorSpacePos(std::numeric_limits<int>::max() - 1));
+
+		for (size_t i = 0; i < this->entry->graph->GetNodeCount(); ++i)
+			this->entry->positions.push_back(ImNodes::GetNodeEditorSpacePos(i));
+	}
+
+	this->entry = entry;
+
+	if (entry->positions.size() >= 2) {
+		ImNodes::SetNodeEditorSpacePos(std::numeric_limits<int>::max(), entry->positions[0]);
+		ImNodes::SetNodeEditorSpacePos(std::numeric_limits<int>::max() - 1, entry->positions[1]);
+
+		for (size_t i = 2; i < entry->positions.size(); ++i)
+			ImNodes::SetNodeEditorSpacePos(i - 2, entry->positions[i]);
+	}
 }
 
 void GraphEditorWindow::DrawToolWindow()
@@ -76,11 +97,13 @@ void GraphEditorWindow::DrawToolWindow()
 	static const float minWidth = 400;
 	const float width = ImGui::GetWindowWidth() * 0.15f > minWidth ? ImGui::GetWindowWidth() * 0.15f : minWidth;
 	if (ImGui::BeginChild("Graph Editor Tool Window", ImVec2{ width, 0 })) {
-		if (ImGui::Button("Compile")) {
-			Compile();
-		}
 
 		ImGui::BeginTabBar("Graph Editor Tool Window Tab Bar");
+
+		if (ImGui::BeginTabItem("Graph")) {
+			DrawGraphTab();
+			ImGui::EndTabItem();
+		}
 
 		if (ImGui::BeginTabItem("Graph Port")) {
 			DrawGraphPortTab();
@@ -99,6 +122,54 @@ void GraphEditorWindow::DrawToolWindow()
 		ImGui::EndTabBar();
 	}
 	ImGui::EndChild();
+}
+
+void GraphEditorWindow::DrawGraphTab()
+{
+	if (ImGui::BeginCombo("##Graph_List", entry->name.c_str())) {
+		for (size_t i = 0; i < GetGraphList().size(); ++i) {
+			std::string label = GetGraphList()[i]->name + "##" + std::to_string(i);
+			if (ImGui::Selectable(label.c_str())) {
+				SetEntry(GetGraphList()[i]);
+			}
+		}
+
+		ImGui::EndCombo();
+	}
+
+	ImGui::SameLine();
+
+	if (ImGui::Button("+")) {
+		std::shared_ptr<GraphListEntry> entry{ std::make_shared<GraphListEntry>() };
+		entry->graph = std::make_shared<Gin::Graph::Graph>();
+		GetGraphList().push_back(entry);
+		SetEntry(entry);
+	}
+
+	ImGui::TextUnformatted("Name : ");
+	ImGui::SameLine();
+	ImGui::InputText("##GraphName", &entry->name);
+
+	if (ImGui::Button("Save..")) {
+		if (entry->path.empty()) {
+			SaveAs();
+		}
+		else {
+			Save(entry->path);
+		}
+	}
+
+	ImGui::SameLine();
+
+	if (ImGui::Button("Save As..")) {
+		SaveAs();
+	}
+
+	ImGui::SameLine();
+
+	if (ImGui::Button("Open..")) {
+		Open();
+	}
 }
 
 void GraphEditorWindow::DrawGraphPort(size_t idx, Gin::Graph::GraphPort& port, bool input)
@@ -191,21 +262,21 @@ void GraphEditorWindow::DrawGraphPortTab()
 {
 	ImGui::TextUnformatted("Inputs : ");
 
-	for (size_t i = 0; i < graph->GetInputsCount(); ++i)
-		DrawGraphPort(i, graph->GetInputPort(i), true);
+	for (size_t i = 0; i < entry->graph->GetInputsCount(); ++i)
+		DrawGraphPort(i, entry->graph->GetInputPort(i), true);
 
 	if (ImGui::Button("Add Input")) {
-		graph->AddInput<int>("New Int (" + std::to_string(graph->GetInputsCount()) + ")");
+		entry->graph->AddInput<int>("New Int (" + std::to_string(entry->graph->GetInputsCount()) + ")");
 	}
 	ImGui::Separator();
 	
 	ImGui::TextUnformatted("Outputs : ");
 
-	for (size_t i = 0; i < graph->GetOutputsCount(); ++i)
-		DrawGraphPort(i, graph->GetOutputPort(i), false);
+	for (size_t i = 0; i < entry->graph->GetOutputsCount(); ++i)
+		DrawGraphPort(i, entry->graph->GetOutputPort(i), false);
 
 	if (ImGui::Button("Add Outputs")) {
-		graph->AddOutput<int>("New Int (" + std::to_string(graph->GetOutputsCount()) + ")");
+		entry->graph->AddOutput<int>("New Int (" + std::to_string(entry->graph->GetOutputsCount()) + ")");
 	}
 	ImGui::Separator();
 }
@@ -214,7 +285,11 @@ void GraphEditorWindow::DrawProgramTab()
 {
 	bool focused = false;
 
-	for (auto& action = graph->GetProgram().begin(); action != graph->GetProgram().end(); ++action) {
+	if (ImGui::Button("Compile")) {
+		Compile();
+	}
+
+	for (auto& action = entry->graph->GetProgram().begin(); action != entry->graph->GetProgram().end(); ++action) {
 		std::string text{};
 
 		switch (action->type)
@@ -244,7 +319,7 @@ void GraphEditorWindow::DrawProgramTab()
 		focusedAction = nullptr;
 }
 
-void GraphEditorWindow::DrawAddNodeMenu(std::string path, size_t idx, std::function<size_t(Gin::Graph::Graph&)> f, ImVec2 clickPos)
+void GraphEditorWindow::DrawAddNodeMenu(std::string path, size_t idx, std::function<size_t(Gin::Graph::Graph&, std::string)> f, ImVec2 clickPos)
 {
 	size_t i = idx;
 	do {
@@ -252,7 +327,7 @@ void GraphEditorWindow::DrawAddNodeMenu(std::string path, size_t idx, std::funct
 
 		if (i >= path.size()) {
 			if (ImGui::MenuItem(path.substr(idx, i - idx).c_str())) {
-				ImNodes::SetNodeScreenSpacePos(f(*graph), clickPos);
+				ImNodes::SetNodeScreenSpacePos(f(*entry->graph, path), clickPos);
 			}
 			return;
 		}
@@ -273,7 +348,7 @@ void GraphEditorWindow::DrawAddNodePopup()
 		ImGui::TextUnformatted("Add Node");
 		ImGui::Separator();
 		
-		for (auto& entry : Gin::Module::GetRegistry()) {
+		for (auto& entry : Gin::Module::GetNodeRegistry()) {
 			DrawAddNodeMenu(entry.first, 0, entry.second, clickPos);
 		}
 		
@@ -434,8 +509,8 @@ void GraphEditorWindow::DrawGraphPortNode()
 	ImGui::TextUnformatted("Graph Inputs");
 	ImNodes::EndNodeTitleBar();
 
-	for (size_t i = 0; i < graph->GetInputsCount(); ++i) {
-		Gin::Graph::GraphPort& port = graph->GetInputPort(i);
+	for (size_t i = 0; i < entry->graph->GetInputsCount(); ++i) {
+		Gin::Graph::GraphPort& port = entry->graph->GetInputPort(i);
 		DrawPin(port, std::numeric_limits<int>::max() - i, false);
 	}
 
@@ -448,8 +523,8 @@ void GraphEditorWindow::DrawGraphPortNode()
 	ImGui::TextUnformatted("Graph Outputs");
 	ImNodes::EndNodeTitleBar();
 
-	for (size_t i = 0; i < graph->GetOutputsCount(); ++i) {
-		Gin::Graph::GraphPort& port = graph->GetOutputPort(i);
+	for (size_t i = 0; i < entry->graph->GetOutputsCount(); ++i) {
+		Gin::Graph::GraphPort& port = entry->graph->GetOutputPort(i);
 		DrawPin(port, std::numeric_limits<int>::max() - i - MAX_PORT, true);
 	}
 
@@ -507,34 +582,38 @@ void GraphEditorWindow::DrawNode(Gin::Graph::GraphNodeOperator<Gin::Graph::Node>
 
 void GraphEditorWindow::DrawLink()
 {
-	for (size_t i = 0; i < links.size(); ++i) {
-		if (focusedAction) {
-			size_t start;
-			size_t end;
+	auto& adj = entry->graph->GetAdj();
 
-			if (links[i].first >= std::numeric_limits<int>::max() - MAX_PORT && focusedAction->nodeBIdx == std::numeric_limits<size_t>::max())
-				start = std::numeric_limits<int>::max() - focusedAction->portBIdx;
-			else
-				start = focusedAction->portBIdx + focusedAction->nodeBIdx * MAX_PORT;
+	int i = 0;
 
-			if (links[i].second >= std::numeric_limits<int>::max() - MAX_PORT * 2 && focusedAction->nodeAIdx == std::numeric_limits<size_t>::max() - 1)
-				end = std::numeric_limits<int>::max() - focusedAction->portAIdx - MAX_PORT;
-			else
-				end = focusedAction->portAIdx + focusedAction->nodeAIdx * MAX_PORT;
+	for (size_t nodeIdx = 0; nodeIdx < entry->graph->GetNodeCount(); ++nodeIdx) {
+		Gin::Graph::GraphNodeOperator<Gin::Graph::Node>& node = entry->graph->GetNode<Gin::Graph::Node>(nodeIdx);
 
-			if (focusedAction->type == Gin::Graph::GraphActionType::COPY && start == links[i].first && end == links[i].second) {
-				ImNodes::PushColorStyle(ImNodesCol_Link, IM_COL32(255, 200, 50, 255));
-				ImNodes::PushColorStyle(ImNodesCol_LinkHovered, IM_COL32(255, 200, 50, 255));
-				ImNodes::PushColorStyle(ImNodesCol_LinkSelected, IM_COL32(255, 200, 50, 255));
-				ImNodes::Link(i, links[i].first, links[i].second);
-				ImNodes::PopColorStyle();
-				ImNodes::PopColorStyle();
-				ImNodes::PopColorStyle();
-				continue;
+		for (size_t portIdx = 0; portIdx < node->GetInputPortCount(); ++portIdx) {
+			int portAIdx = (int)(portIdx + nodeIdx * MAX_PORT);
+			for (std::pair<size_t, size_t>& link : adj[nodeIdx][portIdx]) {
+				if (link.first == std::numeric_limits<size_t>::max()) {
+					int portBIdx = std::numeric_limits<int>::max() - (int)link.second;
+					ImNodes::Link(i, portAIdx, portBIdx);
+				}
+				else {
+					int portBIdx = (int)(link.second + link.first * MAX_PORT);
+					ImNodes::Link(i, portAIdx, portBIdx);
+				}
+				++i;
 			}
 		}
+	}
 
-		ImNodes::Link(i, links[i].first, links[i].second);
+	for (size_t portIdx = 0; portIdx < entry->graph->GetOutputsCount(); ++portIdx) {
+		auto& port = entry->graph->GetOutputPort(portIdx);
+		int portAIdx = std::numeric_limits<int>::max() - (int)(portIdx) - MAX_PORT;
+		
+		for (std::pair<size_t, size_t>& link : port.GetLinks()) {
+			int portBIdx = (int)(link.second + link.first * MAX_PORT);
+			ImNodes::Link(i, portAIdx, portBIdx);
+			++i;
+		}
 	}
 }
 
@@ -551,12 +630,8 @@ void GraphEditorWindow::HandleLinkCreation()
 			size_t nodeAIdx = (start - portAIdx) / MAX_PORT;
 			size_t nodeBIdx = (end - portBIdx) / MAX_PORT;
 
-			if (std::find(links.begin(), links.end(), std::make_pair((size_t)start, (size_t)end)) != std::end(links))
-				return;
-
 			try {
-				graph->GetNode<Gin::Graph::Node>(nodeAIdx).GetPort(portAIdx).Link(graph->GetNode<Gin::Graph::Node>(nodeBIdx).GetPort(portBIdx));
-				links.emplace_back(start, end);
+				entry->graph->GetNode<Gin::Graph::Node>(nodeAIdx).GetPort(portAIdx).Link(entry->graph->GetNode<Gin::Graph::Node>(nodeBIdx).GetPort(portBIdx));
 			}
 			catch (std::exception& e) {
 				Vin::Logger::Warn("Graph Editor : {}", e.what());
@@ -569,8 +644,7 @@ void GraphEditorWindow::HandleLinkCreation()
 				size_t nodeBIdx = (end - portBIdx) / MAX_PORT;
 
 				try {
-					graph->GetNode<Gin::Graph::Node>(nodeBIdx).GetPort(portBIdx).LinkGraphInput(graphInputIdx);
-					links.emplace_back(start, end);
+					entry->graph->GetNode<Gin::Graph::Node>(nodeBIdx).GetPort(portBIdx).LinkGraphInput(graphInputIdx);
 				}
 				catch (std::exception& e) {
 					Vin::Logger::Warn("Graph Editor : {}", e.what());
@@ -582,8 +656,7 @@ void GraphEditorWindow::HandleLinkCreation()
 				size_t nodeAIdx = (start - portAIdx) / MAX_PORT;
 
 				try {
-					graph->GetNode<Gin::Graph::Node>(nodeAIdx).GetPort(portAIdx).LinkGraphOutput(graphOutputIdx);
-					links.emplace_back(start, end);
+					entry->graph->GetNode<Gin::Graph::Node>(nodeAIdx).GetPort(portAIdx).LinkGraphOutput(graphOutputIdx);
 				}
 				catch (std::exception& e) {
 					Vin::Logger::Warn("Graph Editor : {}", e.what());
@@ -631,49 +704,37 @@ void GraphEditorWindow::HandleNodeDeletion()
 
 void GraphEditorWindow::DeleteLinkById(int id)
 {
-	std::pair<size_t, size_t> link = links[id];
+	auto& adj = entry->graph->GetAdj();
 
-	if (link.first < std::numeric_limits<int>::max() - MAX_PORT * 2 && link.second < std::numeric_limits<int>::max() - MAX_PORT * 2) {
+	int i = 0;
 
-		size_t portAIdx = link.first % MAX_PORT;
-		size_t portBIdx = link.second % MAX_PORT;
-		size_t nodeAIdx = (link.first - portAIdx) / MAX_PORT;
-		size_t nodeBIdx = (link.second - portBIdx) / MAX_PORT;
+	for (size_t nodeIdx = 0; nodeIdx < entry->graph->GetNodeCount(); ++nodeIdx) {
+		Gin::Graph::GraphNodeOperator<Gin::Graph::Node>& node = entry->graph->GetNode<Gin::Graph::Node>(nodeIdx);
 
-		try {
-			graph->GetNode<Gin::Graph::Node>(nodeAIdx).GetPort(portAIdx).Unlink(graph->GetNode<Gin::Graph::Node>(nodeBIdx).GetPort(portBIdx));
-			links.erase(links.begin() + id);
-		}
-		catch (std::exception& e) {
-			Vin::Logger::Warn("Graph Editor : {}", e.what());
+		for (size_t portIdx = 0; portIdx < node->GetInputPortCount(); ++portIdx) {
+			for (std::pair<size_t, size_t>& link : adj[nodeIdx][portIdx]) {
+				if (i == id) {
+					if (link.first == std::numeric_limits<size_t>::max()) {
+						entry->graph->GetNode<Gin::Graph::Node>(nodeIdx).GetPort(portIdx).UnlinkGraphInput(link.second);
+					}
+					else {
+						entry->graph->GetNode<Gin::Graph::Node>(nodeIdx).GetPort(portIdx).Unlink(entry->graph->GetNode<Gin::Graph::Node>(link.first).GetPort(link.second));
+					}
+					return;
+				}
+				++i;
+			}
 		}
 	}
-	else {
-		if (link.first > std::numeric_limits<int>::max() - MAX_PORT) {
-			size_t graphInputIdx = std::numeric_limits<int>::max() - link.first;
-			size_t portBIdx = link.second % MAX_PORT;
-			size_t nodeBIdx = (link.second - portBIdx) / MAX_PORT;
 
-			try {
-				graph->GetNode<Gin::Graph::Node>(nodeBIdx).GetPort(portBIdx).UnlinkGraphInput(graphInputIdx);
-				links.erase(links.begin() + id);
-			}
-			catch (std::exception& e) {
-				Vin::Logger::Warn("Graph Editor : {}", e.what());
-			}
-		}
-		else {
-			size_t graphOutputIdx = std::numeric_limits<int>::max() - link.second - MAX_PORT;
-			size_t portAIdx = link.first % MAX_PORT;
-			size_t nodeAIdx = (link.first - portAIdx) / MAX_PORT;
+	for (size_t portIdx = 0; portIdx < entry->graph->GetOutputsCount(); ++portIdx) {
+		auto& port = entry->graph->GetOutputPort(portIdx);
 
-			try {
-				graph->GetNode<Gin::Graph::Node>(nodeAIdx).GetPort(portAIdx).UnlinkGraphOutput(graphOutputIdx);
-				links.erase(links.begin() + id);
+		for (std::pair<size_t, size_t>& link : port.GetLinks()) {
+			if (i == id) {
+				entry->graph->GetNode<Gin::Graph::Node>(link.first).GetPort(link.second).UnlinkGraphOutput(portIdx);
 			}
-			catch (std::exception& e) {
-				Vin::Logger::Warn("Graph Editor : {}", e.what());
-			}
+			++i;
 		}
 	}
 }
@@ -683,68 +744,87 @@ void GraphEditorWindow::DeleteNodeById(int id)
 	if (id >= std::numeric_limits<int>::max() - 1)
 		return;
 
-	for (size_t i = (size_t)id; i < graph->GetNodeCount() - 1; ++i) {
+	for (size_t i = (size_t)id; i < entry->graph->GetNodeCount() - 1; ++i) {
 		ImNodes::SetNodeScreenSpacePos(i, ImNodes::GetNodeScreenSpacePos(i + 1));
 	}
 
-	graph->RemoveNode(id);
-
-	for (size_t i = 0; i < links.size();) {
-		size_t portAIdx = links[i].first % MAX_PORT;
-		size_t portBIdx = links[i].second % MAX_PORT;
-		size_t nodeAIdx = (links[i].first - portAIdx) / MAX_PORT;
-		size_t nodeBIdx = (links[i].second - portBIdx) / MAX_PORT;
-
-		if (nodeAIdx == id || nodeBIdx == id) {
-			links.erase(links.begin() + i);
-			continue;
-		}
-
-		if (nodeAIdx > id && links[i].first < std::numeric_limits<int>::max() - MAX_PORT * 2)
-			links[i].first -= MAX_PORT;
-		if (nodeBIdx > id && links[i].second < std::numeric_limits<int>::max() - MAX_PORT * 2)
-			links[i].second -= MAX_PORT;
-
-		++i;
-	}
+	entry->graph->RemoveNode(id);
 }
 
 void GraphEditorWindow::DeleteGraphInputByIdx(size_t idx)
 {
-	graph->RemoveInput(idx);
+	entry->graph->RemoveInput(idx);
 
 	int id = std::numeric_limits<int>::max() - idx;
-
-	for (size_t i = 0; i < links.size();) {
-		if (links[i].first == id) {
-			links.erase(links.begin() + i);
-			continue;
-		}
-
-		if (links[i].first > std::numeric_limits<int>::max() - MAX_PORT && links[i].first < id)
-			links[i].first += 1;
-
-		++i;
-	}
 }
 
 void GraphEditorWindow::DeleteGraphOutputByIdx(size_t idx)
 {
-	graph->RemoveOutput(idx);
+	entry->graph->RemoveOutput(idx);
 
 	int id = std::numeric_limits<int>::max() - idx - MAX_PORT;
+}
 
-	for (size_t i = 0; i < links.size();) {
-		if (links[i].second == id) {
-			links.erase(links.begin() + i);
-			continue;
-		}
+void GraphEditorWindow::Save(std::string path)
+{
+	entry->path = path;
 
-		if (links[i].second > std::numeric_limits<int>::max() - MAX_PORT * 2 && links[i].second < id)
-			links[i].second += 1;
+	Gin::Graph::Serialization::SerializedGraph serializedGraph{};
+	Gin::Graph::Serialization::SerializeGraph(*entry->graph.get(), serializedGraph);
 
-		++i;
+	{
+		ImVec2 inp = ImNodes::GetNodeEditorSpacePos(std::numeric_limits<int>::max());
+		ImVec2 onp = ImNodes::GetNodeEditorSpacePos(std::numeric_limits<int>::max() - 1);
+
+		serializedGraph.graphData["editor"]["inputs"]["position"][0] = inp.x;
+		serializedGraph.graphData["editor"]["inputs"]["position"][1] = inp.y;
+
+		serializedGraph.graphData["editor"]["outputs"]["position"][0] = onp.x;
+		serializedGraph.graphData["editor"]["outputs"]["position"][1] = onp.y;
 	}
+
+	for (size_t i = 0; i < serializedGraph.nodesData.size(); ++i) {
+		ImVec2 cnp = ImNodes::GetNodeEditorSpacePos(i);
+
+		serializedGraph.nodesData[i]["editor"]["position"][0] = cnp.x;
+		serializedGraph.nodesData[i]["editor"]["position"][1] = cnp.y;
+	}
+
+	serializedGraph.graphName = entry->name;
+
+	Gin::Graph::Serialization::SaveSerializedGraphToFile(serializedGraph, path);
+}
+
+void GraphEditorWindow::SaveAs()
+{
+	static nfdfilteritem_t filterItem[1] = { { "Gin Graph", "gg" } };
+	nfdchar_t* outPath;
+	nfdresult_t result = NFD_SaveDialog(&outPath, filterItem, 1, NULL, "newgraph");
+	if (result == NFD_OKAY)
+	{
+		std::string path{ outPath };
+		Save(path);
+		NFD_FreePath(outPath);
+	}
+}
+
+void GraphEditorWindow::Open()
+{
+	static nfdfilteritem_t filterItem[1] = { { "Gin Graph", "gg" } };
+	nfdchar_t* outPath;
+	nfdresult_t result = NFD_OpenDialog(&outPath, filterItem, 1, NULL);
+	if (result != NFD_OKAY)
+	{
+		return;
+		NFD_FreePath(outPath);
+	}
+
+	std::string path{ outPath };
+
+	Gin::Graph::Serialization::SerializedGraph serializedGraph{};
+	Gin::Graph::Serialization::LoadSerializedGraphFromFile(serializedGraph, path);
+
+	NFD_FreePath(outPath);
 }
 
 void GraphEditorWindow::Compile()
@@ -754,7 +834,7 @@ void GraphEditorWindow::Compile()
 	start = std::chrono::system_clock::now();
 
 	try {
-		graph->Compile();
+		entry->graph->Compile();
 	}
 	catch (std::exception& e) {
 		Vin::Logger::Err("Graph Compilation Error : {}", e.what());
@@ -771,7 +851,7 @@ void GraphEditorWindow::Execute(Gin::Graph::GraphContext ctx)
 	start = std::chrono::system_clock::now();
 
 	try {
-		graph->Execute(ctx);
+		entry->graph->Execute(ctx);
 	}
 	catch (std::exception& e) {
 		Vin::Logger::Err("Graph Execution Error : {}", e.what());

@@ -95,3 +95,13 @@ size_t Gin::Graph::Node::GetOutputPortCount()
 {
     return outputs.size();
 }
+
+void Gin::Graph::Node::SetPath(const std::string& path)
+{
+    this->path = path;
+}
+
+std::string Gin::Graph::Node::GetPath()
+{
+    return path;
+}

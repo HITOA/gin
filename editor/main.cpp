@@ -5,6 +5,7 @@
 #include <module/forwardrenderer/forwardrenderer.hpp>
 
 #include <module.hpp>
+#include <nfd.h>
 
 #include "editor.hpp"
 
@@ -25,9 +26,11 @@ public:
 
 Vin::App* Vin::CreateApp() {
 	Initialize();
+	NFD_Init();
 	return new GinEditor{};
 }
 
 void Vin::DestroyApp(Vin::App* app) {
+	NFD_Quit();
 	delete app;
 }

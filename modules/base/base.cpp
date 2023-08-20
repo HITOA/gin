@@ -7,10 +7,10 @@
 
 void InitializeBaseModule()
 {
-	Gin::Module::GetRegistry()["Base/Position"] = [&](Gin::Graph::Graph& graph) { return graph.AddNode<Gin::Module::Base::Position>().GetNodeIdx(); };
+	Gin::Module::AddNodesToRegistry<Gin::Module::Base::Position>("Base/Position");
 
-	Gin::Module::GetRegistry()["Base/Utils/Combine"] = [&](Gin::Graph::Graph& graph) { return graph.AddNode<Gin::Module::Base::Combine<double>>().GetNodeIdx(); };
-	Gin::Module::GetRegistry()["Base/Utils/CombineSpatial"] = [&](Gin::Graph::Graph& graph) { return graph.AddNode<Gin::Module::Base::CombineSpatial<double>>().GetNodeIdx(); };
+	Gin::Module::AddNodesToRegistry<Gin::Module::Base::Combine<double>>("Base/Utils/Combine");
+	Gin::Module::AddNodesToRegistry<Gin::Module::Base::CombineSpatial<double>>("Base/Utils/CombineSpatial");
 }
 
 void UninitializeBaseModule()

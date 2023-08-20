@@ -8,6 +8,7 @@ set(EXTERNAL_PATH ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty)
 add_subdirectory(${EXTERNAL_PATH}/eigen)
 add_subdirectory(${EXTERNAL_PATH}/vin-engine)
 add_subdirectory(${EXTERNAL_PATH}/nanobench)
+add_subdirectory(${EXTERNAL_PATH}/nativefiledialog-extended-1.1.0)
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data
      DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
@@ -51,4 +52,4 @@ target_link_libraries(gin_library Eigen3::Eigen)
 
 add_executable(gin_editor ${gin_editor_src})
 
-target_link_libraries(gin_editor gin_library vin_engine)
+target_link_libraries(gin_editor gin_library vin_engine nfd)

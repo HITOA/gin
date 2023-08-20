@@ -6,20 +6,20 @@
 
 void InitializeSignedModule()
 {
-	//Primitives
-	Gin::Module::GetRegistry()["Signed/3D/Primitives/Sphere"] = [&](Gin::Graph::Graph& graph) { return graph.AddNode<Gin::Module::Signed::SDSphere>().GetNodeIdx(); };
-	Gin::Module::GetRegistry()["Signed/3D/Primitives/Box"] = [&](Gin::Graph::Graph& graph) { return graph.AddNode<Gin::Module::Signed::SDBox>().GetNodeIdx(); };
-	Gin::Module::GetRegistry()["Signed/3D/Primitives/Ground"] = [&](Gin::Graph::Graph& graph) { return graph.AddNode<Gin::Module::Signed::SDGround>().GetNodeIdx(); };
-	Gin::Module::GetRegistry()["Signed/3D/Primitives/Plane"] = [&](Gin::Graph::Graph& graph) { return graph.AddNode<Gin::Module::Signed::SDPlane>().GetNodeIdx(); };
+
+	Gin::Module::AddNodesToRegistry<Gin::Module::Signed::SDSphere>("Signed/3D/Primitives/Sphere");
+	Gin::Module::AddNodesToRegistry<Gin::Module::Signed::SDBox>("Signed/3D/Primitives/Box");
+	Gin::Module::AddNodesToRegistry<Gin::Module::Signed::SDGround>("Signed/3D/Primitives/Ground");
+	Gin::Module::AddNodesToRegistry<Gin::Module::Signed::SDPlane>("Signed/3D/Primitives/Plane");
 
 	//Operations
-	Gin::Module::GetRegistry()["Signed/3D/Operations/Union"] = [&](Gin::Graph::Graph& graph) { return graph.AddNode<Gin::Module::Signed::OPUnion>().GetNodeIdx(); };
-	Gin::Module::GetRegistry()["Signed/3D/Operations/Substraction"] = [&](Gin::Graph::Graph& graph) { return graph.AddNode<Gin::Module::Signed::OPSubstraction>().GetNodeIdx(); };
-	Gin::Module::GetRegistry()["Signed/3D/Operations/Intersection"] = [&](Gin::Graph::Graph& graph) { return graph.AddNode<Gin::Module::Signed::OPIntersection>().GetNodeIdx(); };
+	Gin::Module::AddNodesToRegistry<Gin::Module::Signed::OPUnion>("Signed/3D/Operations/Union");
+	Gin::Module::AddNodesToRegistry<Gin::Module::Signed::OPSubstraction>("Signed/3D/Operations/Substraction");
+	Gin::Module::AddNodesToRegistry<Gin::Module::Signed::OPIntersection>("Signed/3D/Operations/Intersection");
 
-	Gin::Module::GetRegistry()["Signed/3D/Operations/SmoothUnion"] = [&](Gin::Graph::Graph& graph) { return graph.AddNode<Gin::Module::Signed::OPSmoothUnion>().GetNodeIdx(); };
-	Gin::Module::GetRegistry()["Signed/3D/Operations/SmoothSubstraction"] = [&](Gin::Graph::Graph& graph) { return graph.AddNode<Gin::Module::Signed::OPSmoothSubstraction>().GetNodeIdx(); };
-	Gin::Module::GetRegistry()["Signed/3D/Operations/SmoothIntersection"] = [&](Gin::Graph::Graph& graph) { return graph.AddNode<Gin::Module::Signed::OPSmoothIntersection>().GetNodeIdx(); };
+	Gin::Module::AddNodesToRegistry<Gin::Module::Signed::OPSmoothUnion>("Signed/3D/Operations/SmoothUnion");
+	Gin::Module::AddNodesToRegistry<Gin::Module::Signed::OPSmoothSubstraction>("Signed/3D/Operations/SmoothSubstraction");
+	Gin::Module::AddNodesToRegistry<Gin::Module::Signed::OPSmoothIntersection>("Signed/3D/Operations/SmoothIntersection");
 }
 
 void UninitializeSignedModule()

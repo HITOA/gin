@@ -19,5 +19,4 @@ private:
 private:
 	std::shared_ptr<Vin::Scene> scene{};
 	std::shared_ptr<Vin::Camera> camera{};
-	std::shared_ptr<Gin::Graph::Graph> graph{};
 };

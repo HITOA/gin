@@ -28,6 +28,9 @@ namespace Gin::Graph {
 		Port& GetOutputPort(size_t idx);
 		size_t GetOutputPortCount();
 
+		void SetPath(const std::string& path);
+		std::string GetPath();
+
 		template<typename T>
 		inline size_t AddInputPort(const char* name, T& property) {
 			return AddInputPort(CreateNodePort(name, property));
@@ -57,5 +60,6 @@ namespace Gin::Graph {
 		std::vector<std::shared_ptr<Port>> inputs{};
 		std::vector<std::shared_ptr<Port>> outputs{};
 		GraphContext ctx{};
+		std::string path{};
 	};
 }
