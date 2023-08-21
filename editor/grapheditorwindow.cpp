@@ -592,13 +592,37 @@ void GraphEditorWindow::DrawLink()
 		for (size_t portIdx = 0; portIdx < node->GetInputPortCount(); ++portIdx) {
 			int portAIdx = (int)(portIdx + nodeIdx * MAX_PORT);
 			for (std::pair<size_t, size_t>& link : adj[nodeIdx][portIdx]) {
-				if (link.first == std::numeric_limits<size_t>::max()) {
-					int portBIdx = std::numeric_limits<int>::max() - (int)link.second;
-					ImNodes::Link(i, portAIdx, portBIdx);
+				if (focusedAction) {
+					if (focusedAction->type == Gin::Graph::GraphActionType::COPY && focusedAction->nodeAIdx == nodeIdx && focusedAction->nodeBIdx == link.first && focusedAction->portBIdx == link.second) {
+						ImNodes::PushColorStyle(ImNodesCol_Link, IM_COL32(255, 200, 50, 255));
+						ImNodes::PushColorStyle(ImNodesCol_LinkHovered, IM_COL32(255, 200, 50, 255));
+						ImNodes::PushColorStyle(ImNodesCol_LinkSelected, IM_COL32(255, 200, 50, 255));
+					}
+
+					if (link.first == std::numeric_limits<size_t>::max()) {
+						int portBIdx = std::numeric_limits<int>::max() - (int)link.second;
+						ImNodes::Link(i, portAIdx, portBIdx);
+					}
+					else {
+						int portBIdx = (int)(link.second + link.first * MAX_PORT);
+						ImNodes::Link(i, portAIdx, portBIdx);
+					}
+
+					if (focusedAction->type == Gin::Graph::GraphActionType::COPY && focusedAction->nodeAIdx == nodeIdx && focusedAction->nodeBIdx == link.first && focusedAction->portBIdx == link.second) {
+						ImNodes::PopColorStyle();
+						ImNodes::PopColorStyle();
+						ImNodes::PopColorStyle();
+					}
 				}
 				else {
-					int portBIdx = (int)(link.second + link.first * MAX_PORT);
-					ImNodes::Link(i, portAIdx, portBIdx);
+					if (link.first == std::numeric_limits<size_t>::max()) {
+						int portBIdx = std::numeric_limits<int>::max() - (int)link.second;
+						ImNodes::Link(i, portAIdx, portBIdx);
+					}
+					else {
+						int portBIdx = (int)(link.second + link.first * MAX_PORT);
+						ImNodes::Link(i, portAIdx, portBIdx);
+					}
 				}
 				++i;
 			}
@@ -823,6 +847,23 @@ void GraphEditorWindow::Open()
 
 	Gin::Graph::Serialization::SerializedGraph serializedGraph{};
 	Gin::Graph::Serialization::LoadSerializedGraphFromFile(serializedGraph, path);
+
+	std::shared_ptr<GraphListEntry> entry{ std::make_shared<GraphListEntry>() };
+	entry->graph = std::make_shared<Gin::Graph::Graph>();
+	Gin::Graph::Serialization::DeserializeGraph(*entry->graph, serializedGraph);
+	entry->name = serializedGraph.graphName;
+	entry->path = path;
+
+	if (serializedGraph.graphData.contains("editor")) {
+		entry->positions.push_back(ImVec2{ serializedGraph.graphData["editor"]["inputs"]["position"][0], serializedGraph.graphData["editor"]["inputs"]["position"][1]});
+		entry->positions.push_back(ImVec2{ serializedGraph.graphData["editor"]["outputs"]["position"][0], serializedGraph.graphData["editor"]["outputs"]["position"][1] });
+
+		for (size_t i = 0; i < serializedGraph.nodesData.size(); ++i)
+			entry->positions.push_back(ImVec2{ serializedGraph.nodesData[i]["editor"]["position"][0], serializedGraph.nodesData[i]["editor"]["position"][1] });
+	}
+
+	SetEntry(entry);
+	GetGraphList().push_back(entry);
 
 	NFD_FreePath(outPath);
 }

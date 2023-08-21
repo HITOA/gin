@@ -1,5 +1,6 @@
 #include <gin/graph/node.hpp>
 #include <gin/math/math.hpp>
+#include <gin/spatial/spatial.hpp>
 
 void Gin::Graph::Node::Initialize(GraphContext ctx)
 {
@@ -48,6 +49,78 @@ void Gin::Graph::Node::Initialize(GraphContext ctx, Thread::ThreadPool& pool)
 void Gin::Graph::Node::Execute(GraphContext ctx, Thread::ThreadPool& pool)
 {
     Execute(ctx);
+}
+
+nlohmann::json Gin::Graph::Node::Serialize()
+{
+    nlohmann::json data{ nlohmann::json::object() };
+
+    for (auto& input : inputs) {
+        //Number
+        if (input->GetType() == GetPortTypeInfo<int>()) {
+            data[input->GetName()] = *(int*)input->GetProperty();
+            continue;
+        }
+        if (input->GetType() == GetPortTypeInfo<float>()) {
+            data[input->GetName()] = *(float*)input->GetProperty();
+            continue;
+        }
+        if (input->GetType() == GetPortTypeInfo<double>()) {
+            data[input->GetName()] = *(double*)input->GetProperty();
+            continue;
+        }
+
+        //Spatial Number
+        if (input->GetType() == GetPortTypeInfo<Spatial::Spatial<int>>()) {
+            data[input->GetName()] = (*(Spatial::Spatial<int>*)input->GetProperty())[0];
+            continue;
+        }
+        if (input->GetType() == GetPortTypeInfo<Spatial::Spatial<float>>()) {
+            data[input->GetName()] = (*(Spatial::Spatial<float>*)input->GetProperty())[0];
+            continue;
+        }
+        if (input->GetType() == GetPortTypeInfo<Spatial::Spatial<double>>()) {
+            data[input->GetName()] = (*(Spatial::Spatial<double>*)input->GetProperty())[0];
+            continue;
+        }
+    }
+
+    return data;
+}
+
+void Gin::Graph::Node::Deserialize(nlohmann::json data)
+{
+    for (auto& input : inputs) {
+        if (data.count(input->GetName())) {
+            //Number
+            if (input->GetType() == GetPortTypeInfo<int>()) {
+                *(int*)input->GetProperty() = data[input->GetName()];
+                continue;
+            }
+            if (input->GetType() == GetPortTypeInfo<float>()) {
+                *(float*)input->GetProperty() = data[input->GetName()];
+                continue;
+            }
+            if (input->GetType() == GetPortTypeInfo<double>()) {
+                *(double*)input->GetProperty() = data[input->GetName()];
+                continue;
+            }
+
+            //Spatial Number
+            if (input->GetType() == GetPortTypeInfo<Spatial::Spatial<int>>()) {
+                (*(Spatial::Spatial<int>*)input->GetProperty())[0] = data[input->GetName()];
+                continue;
+            }
+            if (input->GetType() == GetPortTypeInfo<Spatial::Spatial<float>>()) {
+                (*(Spatial::Spatial<float>*)input->GetProperty())[0] = data[input->GetName()];
+                continue;
+            }
+            if (input->GetType() == GetPortTypeInfo<Spatial::Spatial<double>>()) {
+                (*(Spatial::Spatial<double>*)input->GetProperty())[0] = data[input->GetName()];
+                continue;
+            }
+        }
+    }
 }
 
 size_t Gin::Graph::Node::AddInputPort(std::shared_ptr<Port> port)

@@ -6,6 +6,7 @@
 #include <gin/spatial/spatial.hpp>
 #include <gin/math/math.hpp>
 #include <gin/thread/threadpool.hpp>
+#include <gin/graph/serialization/json.hpp>
 
 #define MAX_INPUT_PORT 32
 #define MAX_OUTPUT_PORT 32
@@ -19,6 +20,8 @@ namespace Gin::Graph {
 		virtual void Execute(GraphContext ctx) = 0;
 		virtual void Execute(GraphContext ctx, Thread::ThreadPool& pool);
 		virtual std::string GetName() = 0;
+		virtual nlohmann::json Serialize();
+		virtual void Deserialize(nlohmann::json data);
 
 		size_t AddInputPort(std::shared_ptr<Port> port);
 		Port& GetInputPort(size_t idx);

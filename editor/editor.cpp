@@ -54,7 +54,7 @@ void GinEditorModule::Start()
 	graphEditor->SetEntry(entry);
 
 	std::unique_ptr<MeshBuilderWindow> meshBuilder{ std::make_unique<MeshBuilderWindow>() };
-	meshBuilder->SetGraph(entry->graph);
+	meshBuilder->SetEntry(entry);
 	meshBuilder->SetScene(scene);
 	meshBuilder->SetMaterial(material);
 

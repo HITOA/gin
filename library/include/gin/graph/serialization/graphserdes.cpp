@@ -2,6 +2,109 @@
 #include <fstream>
 #include <gin/module/registry.hpp>
 
+nlohmann::json SerializeGraphPort(Gin::Graph::GraphPort& port) {
+	nlohmann::json serializedPort{ nlohmann::json::object() };
+
+	serializedPort["type"] = port.GetType().info.get().hash_code();
+	serializedPort["name"] = port.GetName();
+
+	return serializedPort;
+}
+
+void DeserializeGraphOutputPort(nlohmann::json& serializedPort, Gin::Graph::Graph& graph) {
+	size_t typeHashCode = serializedPort["type"];
+
+	//Number
+
+	if (typeHashCode == typeid(int).hash_code()) {
+		graph.AddOutput<int>(serializedPort["name"]);
+		return;
+	}
+	if (typeHashCode == typeid(float).hash_code()) {
+		graph.AddOutput<float>(serializedPort["name"]);
+		return;
+	}
+	if (typeHashCode == typeid(double).hash_code()) {
+		graph.AddOutput<double>(serializedPort["name"]);
+		return;
+	}
+
+	//Vec2
+
+	if (typeHashCode == typeid(Eigen::Vector2<int>).hash_code()) {
+		graph.AddOutput<Eigen::Vector2<int>>(serializedPort["name"]);
+		return;
+	}
+	if (typeHashCode == typeid(Eigen::Vector2<float>).hash_code()) {
+		graph.AddOutput<Eigen::Vector2<float>>(serializedPort["name"]);
+		return;
+	}
+	if (typeHashCode == typeid(Eigen::Vector2<double>).hash_code()) {
+		graph.AddOutput<Eigen::Vector2<double>>(serializedPort["name"]);
+		return;
+	}
+
+	//Vec3
+
+	if (typeHashCode == typeid(Eigen::Vector3<int>).hash_code()) {
+		graph.AddOutput<Eigen::Vector3<int>>(serializedPort["name"]);
+		return;
+	}
+	if (typeHashCode == typeid(Eigen::Vector3<float>).hash_code()) {
+		graph.AddOutput<Eigen::Vector3<float>>(serializedPort["name"]);
+		return;
+	}
+	if (typeHashCode == typeid(Eigen::Vector3<double>).hash_code()) {
+		graph.AddOutput<Eigen::Vector3<double>>(serializedPort["name"]);
+		return;
+	}
+
+	//Spatial Number
+
+	if (typeHashCode == typeid(Gin::Spatial::Spatial<int>).hash_code()) {
+		graph.AddOutput<Gin::Spatial::Spatial<int>>(serializedPort["name"]);
+		return;
+	}
+	if (typeHashCode == typeid(Gin::Spatial::Spatial<float>).hash_code()) {
+		graph.AddOutput<Gin::Spatial::Spatial<float>>(serializedPort["name"]);
+		return;
+	}
+	if (typeHashCode == typeid(Gin::Spatial::Spatial<double>).hash_code()) {
+		graph.AddOutput<Gin::Spatial::Spatial<double>>(serializedPort["name"]);
+		return;
+	}
+
+	//Vec2
+
+	if (typeHashCode == typeid(Gin::Spatial::Spatial<Eigen::Vector2<int>>).hash_code()) {
+		graph.AddOutput<Gin::Spatial::Spatial<Eigen::Vector2<int>>>(serializedPort["name"]);
+		return;
+	}
+	if (typeHashCode == typeid(Gin::Spatial::Spatial<Eigen::Vector2<float>>).hash_code()) {
+		graph.AddOutput<Gin::Spatial::Spatial<Eigen::Vector2<float>>>(serializedPort["name"]);
+		return;
+	}
+	if (typeHashCode == typeid(Gin::Spatial::Spatial<Eigen::Vector2<double>>).hash_code()) {
+		graph.AddOutput<Gin::Spatial::Spatial<Eigen::Vector2<double>>>(serializedPort["name"]);
+		return;
+	}
+
+	//Vec3
+
+	if (typeHashCode == typeid(Gin::Spatial::Spatial<Eigen::Vector3<int>>).hash_code()) {
+		graph.AddOutput<Gin::Spatial::Spatial<Eigen::Vector3<int>>>(serializedPort["name"]);
+		return;
+	}
+	if (typeHashCode == typeid(Gin::Spatial::Spatial<Eigen::Vector3<float>>).hash_code()) {
+		graph.AddOutput<Gin::Spatial::Spatial<Eigen::Vector3<float>>>(serializedPort["name"]);
+		return;
+	}
+	if (typeHashCode == typeid(Gin::Spatial::Spatial<Eigen::Vector3<double>>).hash_code()) {
+		graph.AddOutput<Gin::Spatial::Spatial<Eigen::Vector3<double>>>(serializedPort["name"]);
+		return;
+	}
+}
+
 void Gin::Graph::Serialization::SerializeGraph(Graph& graph, SerializedGraph& serializedGraph)
 {
 	serializedGraph.graphData = nlohmann::json::object();
@@ -14,6 +117,17 @@ void Gin::Graph::Serialization::SerializeGraph(Graph& graph, SerializedGraph& se
 
 		serializedGraph.nodes[i] = node->GetPath();
 		serializedGraph.nodesData[i] = nlohmann::json::object();
+		serializedGraph.nodesData[i]["node"] = node->Serialize();
+	}
+
+	for (size_t i = 0; i < graph.GetInputsCount(); ++i) {
+		nlohmann::json serializedPort = SerializeGraphPort(graph.GetInputPort(i));
+		serializedGraph.graphData["inputs"][i] = serializedPort;
+	}
+
+	for (size_t i = 0; i < graph.GetOutputsCount(); ++i) {
+		nlohmann::json serializedPort = SerializeGraphPort(graph.GetOutputPort(i));
+		serializedGraph.graphData["outputs"][i] = serializedPort;
 	}
 
 	auto& adj = graph.GetAdj();
@@ -47,8 +161,31 @@ void Gin::Graph::Serialization::DeserializeGraph(Graph& graph, SerializedGraph& 
 {
 	for (size_t i = 0; i < serializedGraph.nodes.size(); ++i) {
 		std::string& nodePath = serializedGraph.nodes[i];
+		
+		if (Module::GetNodeRegistry().count(nodePath)) {
+			size_t nodeIdx = Module::GetNodeRegistry()[nodePath](graph, nodePath);
+			graph.GetNode<Node>(nodeIdx)->Deserialize(serializedGraph.nodesData[i]["node"]);
+		}
+	}
 
-		Module::GetNodeRegistry()[nodePath](graph, nodePath);
+	for (size_t i = 0; i < serializedGraph.graphData["outputs"].size(); ++i)
+		DeserializeGraphOutputPort(serializedGraph.graphData["outputs"][i], graph);
+
+	for (size_t i = 0; i < serializedGraph.links.size(); i += 4) {
+		size_t nodeAIdx = serializedGraph.links[i];
+		size_t portAIdx = serializedGraph.links[i + 1];
+		size_t nodeBIdx = serializedGraph.links[i + 2];
+		size_t portBIdx = serializedGraph.links[i + 3];
+
+		if (nodeBIdx == std::numeric_limits<int>::max()) {
+			graph.GetNode<Node>(nodeAIdx).GetPort(portAIdx).LinkGraphInput(portBIdx);
+		}
+		else if (nodeAIdx == std::numeric_limits<int>::max() - 1) {
+			graph.GetNode<Node>(nodeBIdx).GetPort(portBIdx).LinkGraphOutput(portAIdx);
+		}
+		else {
+			graph.GetNode<Node>(nodeAIdx).GetPort(portAIdx).Link(graph.GetNode<Node>(nodeBIdx).GetPort(portBIdx));
+		}
 	}
 }
 

@@ -18,6 +18,17 @@ void MeshBuilderWindow::Draw(bool* draw)
 {
 	if (ImGui::Begin("Mesh Builder", draw)) {
 
+		if (ImGui::BeginCombo("##Graph_List", entry->name.c_str())) {
+			for (size_t i = 0; i < GetGraphList().size(); ++i) {
+				std::string label = GetGraphList()[i]->name + "##" + std::to_string(i);
+				if (ImGui::Selectable(label.c_str())) {
+					SetEntry(GetGraphList()[i]);
+				}
+			}
+
+			ImGui::EndCombo();
+		}
+
 		ImGui::BeginTabBar("Mesh Builder Tool Window Tab Bar");
 
 		if (ImGui::BeginTabItem("HeightMap")) {
@@ -41,9 +52,9 @@ std::string MeshBuilderWindow::GetName()
 	return "Mesh Builder";
 }
 
-void MeshBuilderWindow::SetGraph(std::shared_ptr<Gin::Graph::Graph> graph)
+void MeshBuilderWindow::SetEntry(std::shared_ptr<GraphListEntry> entry)
 {
-	this->graph = graph;
+	this->entry = entry;
 }
 
 void MeshBuilderWindow::SetScene(std::shared_ptr<Vin::Scene> scene)
@@ -94,14 +105,14 @@ void MeshBuilderWindow::DrawVolumeTab()
 
 void MeshBuilderWindow::BuildVolume(Gin::Graph::GraphContext ctx)
 {
-	size_t volumeIdx = graph->HasOutput("_Volume");
+	size_t volumeIdx = entry->graph->HasOutput("_Volume");
 
 	if (volumeIdx == std::numeric_limits<size_t>::max()) {
 		Vin::Logger::Err("Can't build volume : a Spatial<Float> _Volume output is required.");
 		return;
 	}
 
-	Gin::Graph::GraphPort& volumePort = graph->GetOutputPort(volumeIdx);
+	Gin::Graph::GraphPort& volumePort = entry->graph->GetOutputPort(volumeIdx);
 
 	if (volumePort.GetType().type != (Gin::Graph::PortType)((int)Gin::Graph::PortType::Number + (int)Gin::Graph::PortType::Spatial)) {
 		Vin::Logger::Err("Can't build volume : a Spatial<Float> _Volume output is required.");
@@ -115,13 +126,26 @@ void MeshBuilderWindow::BuildVolume(Gin::Graph::GraphContext ctx)
 	Gin::Thread::ThreadPool pool{};
 
 	try {
-		graph->Execute(ctx, pool);
+		entry->graph->Execute(ctx, pool);
 	}
 	catch (std::exception& e) {
-		Vin::Logger::Err("Graph Execution Error : {}", e.what());
+		Vin::Logger::Err("Graph Parallel Execution Error : {}", e.what());
 	}
 
 	std::chrono::duration<double> elapsed = std::chrono::system_clock::now() - start;
+	Vin::Logger::Log("Graph Parallel Execution Took : {}ms", elapsed.count() * 1000.0);
+
+
+	start = std::chrono::system_clock::now();
+
+	try {
+		entry->graph->Execute(ctx);
+	}
+	catch (std::exception& e) {
+		Vin::Logger::Err("Graph Execution Took : {}", e.what());
+	}
+
+	elapsed = std::chrono::system_clock::now() - start;
 	Vin::Logger::Log("Graph Execution Took : {}ms", elapsed.count() * 1000.0);
 
 	Gin::Spatial::Spatial<float> spatial = *(Gin::Spatial::Spatial<float>*)volumePort.GetProperty();
