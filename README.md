@@ -3,3 +3,4 @@
 - Nanobench
 - ImNodes
 - Nlohmann json
+- FastNoise2

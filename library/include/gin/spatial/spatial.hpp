@@ -41,6 +41,10 @@ namespace Gin::Spatial {
 			std::fill(&data[0], &data[width * height * depth], v);
 		}
 
+		inline T* Data() {
+			return data.get();
+		}
+
 		inline T& operator[](size_t idx) {
 			return data[idx];
 		}

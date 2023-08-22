@@ -9,6 +9,7 @@ add_subdirectory(${EXTERNAL_PATH}/eigen)
 add_subdirectory(${EXTERNAL_PATH}/vin-engine)
 add_subdirectory(${EXTERNAL_PATH}/nanobench)
 add_subdirectory(${EXTERNAL_PATH}/nativefiledialog-extended-1.1.0)
+add_subdirectory(${EXTERNAL_PATH}/FastNoise2)
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data
      DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
@@ -48,7 +49,7 @@ file(WRITE ${CMAKE_CURRENT_SOURCE_DIR}/modules/module.hpp ${module_file_src})
 add_library(gin_library STATIC ${gin_library_src} ${gin_modules_src} ${CMAKE_CURRENT_SOURCE_DIR}/modules/module.hpp)
 
 target_include_directories(gin_library PUBLIC library/include modules)
-target_link_libraries(gin_library Eigen3::Eigen)
+target_link_libraries(gin_library Eigen3::Eigen FastNoise)
 
 add_executable(gin_editor ${gin_editor_src})
 

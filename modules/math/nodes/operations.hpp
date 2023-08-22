@@ -146,7 +146,7 @@ namespace Gin::Module::Math {
 		virtual void Execute(Graph::GraphContext ctx) final {
 			SpatialOperation([&](size_t idx, size_t _x, size_t _y, size_t _z) {
 				r[idx] = a[idx] + b[idx];
-				});
+			});
 		}
 
 		virtual std::string GetName() final {

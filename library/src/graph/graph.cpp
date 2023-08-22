@@ -401,11 +401,15 @@ void Gin::Graph::Graph::Compile()
 
 void Gin::Graph::Graph::Execute(GraphContext ctx)
 {
+	for (auto& action : program) {
+		if (action.type == Gin::Graph::GraphActionType::EXEC)
+			nodes[action.nodeAIdx]->Initialize(ctx);
+	}
+
 	for (auto& action = program.begin(); action != program.end(); ++action) {
 		switch (action->type)
 		{
 		case Gin::Graph::GraphActionType::EXEC:
-			nodes[action->nodeAIdx]->Initialize(ctx);
 			nodes[action->nodeAIdx]->Execute(ctx);
 			break;
 		case Gin::Graph::GraphActionType::COPY:
@@ -438,6 +442,11 @@ void Gin::Graph::Graph::Execute(GraphContext ctx)
 
 void Gin::Graph::Graph::Execute(GraphContext ctx, Thread::ThreadPool& pool)
 {
+	for (auto& action : program) {
+		if (action.type == Gin::Graph::GraphActionType::EXEC)
+			nodes[action.nodeAIdx]->Initialize(ctx);
+	}
+
 	for (size_t idx = 0; idx < program.size();) {
 		GraphAction& action = program[idx];
 		switch (action.type)
@@ -449,7 +458,6 @@ void Gin::Graph::Graph::Execute(GraphContext ctx, Thread::ThreadPool& pool)
 					GraphContext ctxI = ctx;
 					++running;
 					pool.Execute([this, nodeI, ctxI]() {
-						nodeI->Initialize(ctxI);
 						nodeI->Execute(ctxI);
 						{
 							std::unique_lock<std::mutex> lock{ mutex };
