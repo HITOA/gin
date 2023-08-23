@@ -66,4 +66,20 @@ namespace Gin::Module::Math {
 		Spatial::Spatial<Eigen::Vector3<double>> out{};
 	};
 
+	class DomainRepeat : public Graph::Node {
+	public:
+		DomainRepeat();
+
+		virtual void Execute(Graph::GraphContext ctx) final;
+
+		virtual std::string GetName() final;
+
+	private:
+		Spatial::Spatial<Eigen::Vector3<double>> in{};
+		Eigen::Vector3<double> domain{};
+
+		Spatial::Spatial<Eigen::Vector3<double>> out{};
+		Spatial::Spatial<Eigen::Vector3<double>> domainPosition{};
+	};
+
 }

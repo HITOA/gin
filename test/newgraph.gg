@@ -1,0 +1,157 @@
+{
+    "data": {
+        "editor": {
+            "inputs": {
+                "position": [
+                    120.0,
+                    112.0
+                ]
+            },
+            "outputs": {
+                "position": [
+                    1469.0,
+                    412.0
+                ]
+            }
+        },
+        "outputs": [
+            {
+                "name": "_Volume",
+                "type": 723322602726554400
+            }
+        ]
+    },
+    "links": [
+        0,
+        0,
+        1,
+        4,
+        0,
+        1,
+        3,
+        2,
+        1,
+        1,
+        6,
+        3,
+        3,
+        0,
+        2,
+        0,
+        3,
+        1,
+        4,
+        4,
+        5,
+        0,
+        3,
+        3,
+        6,
+        0,
+        5,
+        1,
+        2147483646,
+        0,
+        0,
+        2
+    ],
+    "name": "<new graph>",
+    "nodes": [
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        1066.0,
+                        405.0
+                    ]
+                },
+                "node": {}
+            },
+            "path": "Signed/3D/Primitives/Box"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        773.0,
+                        308.0
+                    ]
+                },
+                "node": {
+                    "X": 12.082820583639117,
+                    "Y": 12.082820583639117,
+                    "Z": 12.082820583639117
+                }
+            },
+            "path": "Base/Utils/CombineSpatial"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        -464.0,
+                        470.0
+                    ]
+                },
+                "node": {}
+            },
+            "path": "Base/Position"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        -165.0,
+                        460.0
+                    ]
+                },
+                "node": {}
+            },
+            "path": "Math/Transform/Domain Repeat"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        -467.0,
+                        557.0
+                    ]
+                },
+                "node": {
+                    "X": 16.0,
+                    "Y": 1e+17,
+                    "Z": 16.0
+                }
+            },
+            "path": "Base/Utils/Combine"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        150.0,
+                        332.0
+                    ]
+                },
+                "node": {}
+            },
+            "path": "Math/Hash/Hash Vector3"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        366.0,
+                        333.0
+                    ]
+                },
+                "node": {
+                    "Hash": 1252541491,
+                    "Max": 15.0,
+                    "Min": 8.0
+                }
+            },
+            "path": "Math/Hash/Uniform Distribution"
+        }
+    ]
+}

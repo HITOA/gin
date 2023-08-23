@@ -74,3 +74,28 @@ std::string Gin::Module::Math::Scale::GetName()
 {
 	return "Scale";
 }
+
+Gin::Module::Math::DomainRepeat::DomainRepeat()
+{
+	AddInputPort("In", in);
+	AddInputPort("Domain Extent", domain);
+
+	AddOutputPort("Out", out);
+	AddOutputPort("Id", domainPosition);
+}
+
+void Gin::Module::Math::DomainRepeat::Execute(Graph::GraphContext ctx)
+{
+	SpatialOperation([&](size_t idx, size_t _x, size_t _y, size_t _z) {
+		domainPosition[idx].x() = std::floor((in[idx].x() + domain.x()) / (domain.x() * 2));
+		domainPosition[idx].y() = std::floor((in[idx].y() + domain.y()) / (domain.y() * 2));
+		domainPosition[idx].z() = std::floor((in[idx].z() + domain.z()) / (domain.z() * 2));
+
+		out[idx] = in[idx] - domainPosition[idx].cwiseProduct(domain * 2);
+	});
+}
+
+std::string Gin::Module::Math::DomainRepeat::GetName()
+{
+	return "Domain Repeat";
+}

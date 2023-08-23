@@ -5,6 +5,7 @@
 
 #include <math/nodes/operations.hpp>
 #include <math/nodes/transform.hpp>
+#include <math/nodes/hash.hpp>
 
 void InitializeMathModule()
 {
@@ -21,6 +22,13 @@ void InitializeMathModule()
 	Gin::Module::AddNodesToRegistry<Gin::Module::Math::Translate>("Math/Transform/Translate");
 	Gin::Module::AddNodesToRegistry<Gin::Module::Math::Rotate>("Math/Transform/Rotate");
 	Gin::Module::AddNodesToRegistry<Gin::Module::Math::Scale>("Math/Transform/Scale");
+
+	Gin::Module::AddNodesToRegistry<Gin::Module::Math::DomainRepeat>("Math/Transform/Domain Repeat");
+
+	Gin::Module::AddNodesToRegistry<Gin::Module::Math::HashNumber>("Math/Hash/Hash Number");
+	Gin::Module::AddNodesToRegistry<Gin::Module::Math::HashVector3>("Math/Hash/Hash Vector3");
+
+	Gin::Module::AddNodesToRegistry<Gin::Module::Math::UniformDistribution>("Math/Hash/Uniform Distribution");
 }
 
 void UninitializeMathModule()
