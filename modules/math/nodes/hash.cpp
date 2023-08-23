@@ -87,5 +87,5 @@ void Gin::Module::Math::NormalDistribution::Execute(Graph::GraphContext ctx)
 
 std::string Gin::Module::Math::NormalDistribution::GetName()
 {
-	return std::string();
+	return "Normal Distribution";
 }

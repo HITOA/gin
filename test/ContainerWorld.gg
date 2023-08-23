@@ -1,0 +1,310 @@
+{
+    "data": {
+        "editor": {
+            "inputs": {
+                "position": [
+                    -252.0,
+                    676.0
+                ]
+            },
+            "outputs": {
+                "position": [
+                    2421.0,
+                    421.0
+                ]
+            }
+        },
+        "outputs": [
+            {
+                "name": "_Volume",
+                "type": 723322602726554400
+            }
+        ]
+    },
+    "links": [
+        0,
+        0,
+        1,
+        4,
+        0,
+        1,
+        7,
+        2,
+        1,
+        0,
+        11,
+        3,
+        1,
+        2,
+        11,
+        3,
+        2,
+        0,
+        3,
+        4,
+        2,
+        1,
+        4,
+        2,
+        4,
+        0,
+        7,
+        2,
+        4,
+        1,
+        5,
+        4,
+        6,
+        0,
+        2,
+        2,
+        6,
+        1,
+        0,
+        2,
+        7,
+        0,
+        8,
+        0,
+        7,
+        1,
+        9,
+        4,
+        10,
+        0,
+        7,
+        3,
+        11,
+        0,
+        10,
+        1,
+        12,
+        1,
+        13,
+        0,
+        14,
+        0,
+        6,
+        2,
+        14,
+        1,
+        12,
+        2,
+        2147483646,
+        0,
+        14,
+        3
+    ],
+    "name": "ContainerWorld",
+    "nodes": [
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        1193.0,
+                        468.0
+                    ]
+                },
+                "node": {}
+            },
+            "path": "Signed/3D/Primitives/Box"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        927.0,
+                        396.0
+                    ]
+                },
+                "node": {
+                    "X": 4.49991210005242,
+                    "Y": 4.0,
+                    "Z": 4.49991210005242
+                }
+            },
+            "path": "Base/Utils/CombineSpatial"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        1214.0,
+                        182.0
+                    ]
+                },
+                "node": {}
+            },
+            "path": "Signed/3D/Primitives/Box"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        937.0,
+                        80.0
+                    ]
+                },
+                "node": {
+                    "X": 3.5,
+                    "Y": 4.0,
+                    "Z": 3.5
+                }
+            },
+            "path": "Base/Utils/CombineSpatial"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        950.0,
+                        218.0
+                    ]
+                },
+                "node": {}
+            },
+            "path": "Math/Transform/Translate"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        687.0,
+                        272.0
+                    ]
+                },
+                "node": {
+                    "X": 0.0,
+                    "Y": -0.5,
+                    "Z": 0.0
+                }
+            },
+            "path": "Base/Utils/CombineSpatial"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        1569.0,
+                        334.0
+                    ]
+                },
+                "node": {
+                    "A": 4.5,
+                    "B": 4.0
+                }
+            },
+            "path": "Signed/3D/Operations/Substraction"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        161.0,
+                        473.0
+                    ]
+                },
+                "node": {}
+            },
+            "path": "Math/Transform/Domain Repeat"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        -12.0,
+                        450.0
+                    ]
+                },
+                "node": {}
+            },
+            "path": "Base/Position"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        -103.0,
+                        537.0
+                    ]
+                },
+                "node": {
+                    "X": 8.0,
+                    "Y": 800000000000000.0,
+                    "Z": 8.0
+                }
+            },
+            "path": "Base/Utils/Combine"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        466.0,
+                        560.0
+                    ]
+                },
+                "node": {}
+            },
+            "path": "Math/Hash/Hash Vector3"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        650.0,
+                        544.0
+                    ]
+                },
+                "node": {
+                    "Hash": 1252541491,
+                    "Max": 5.0,
+                    "Min": 3.8
+                }
+            },
+            "path": "Math/Hash/Uniform Distribution"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        1355.0,
+                        666.0
+                    ]
+                },
+                "node": {
+                    "Height": -2.0
+                }
+            },
+            "path": "Signed/3D/Primitives/Ground"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        1161.0,
+                        706.0
+                    ]
+                },
+                "node": {}
+            },
+            "path": "Base/Position"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        1944.0,
+                        466.0
+                    ]
+                },
+                "node": {
+                    "A": 4.0,
+                    "B": -6.0,
+                    "Smooth Factor": 4.0
+                }
+            },
+            "path": "Signed/3D/Operations/SmoothUnion"
+        }
+    ]
+}

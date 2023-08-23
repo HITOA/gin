@@ -75,6 +75,42 @@ std::string Gin::Module::Math::Scale::GetName()
 	return "Scale";
 }
 
+Gin::Module::Math::Transform::Transform()
+{
+	AddInputPort("In", in);
+	AddInputPort("Translate", translate);
+	AddInputPort("Scale", rotate);
+	AddInputPort("Scale", scale);
+
+	AddOutputPort("Out", out);
+}
+
+void Gin::Module::Math::Transform::Execute(Graph::GraphContext ctx)
+{
+	SpatialOperation([&](size_t idx, size_t _x, size_t _y, size_t _z) {
+		double cr = std::cos(rotate[idx].x() * 0.5);
+		double sr = std::sin(rotate[idx].x() * 0.5);
+		double cp = std::cos(rotate[idx].y() * 0.5);
+		double sp = std::sin(rotate[idx].y() * 0.5);
+		double cy = std::cos(rotate[idx].z() * 0.5);
+		double sy = std::sin(rotate[idx].z() * 0.5);
+		Eigen::Quaternion<double> q{
+			cr * cp * cy + sr * sp * sy,
+			sr * cp * cy - cr * sp * sy,
+			cr * sp * cy + sr * cp * sy,
+			cr * cp * sy - sr * sp * cy
+		};
+
+		out[idx] = translate[idx] + (q * in[idx].cwiseProduct(scale[idx]));
+	});
+}
+
+std::string Gin::Module::Math::Transform::GetName()
+{
+	return "Scale";
+}
+
+
 Gin::Module::Math::DomainRepeat::DomainRepeat()
 {
 	AddInputPort("In", in);
