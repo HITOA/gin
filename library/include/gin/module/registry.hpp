@@ -5,7 +5,7 @@
 #include <module.hpp>
 
 namespace Gin::Module {
-	std::unordered_map<std::string, std::function<size_t(Graph::Graph&, std::string)>>& GetNodeRegistry();
+	std::map<std::string, std::function<size_t(Graph::Graph&, std::string)>>& GetNodeRegistry();
 	
 	template<typename T>
 	inline void AddNodesToRegistry(const std::string& path) {
