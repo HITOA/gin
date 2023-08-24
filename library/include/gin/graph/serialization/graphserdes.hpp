@@ -23,4 +23,5 @@ namespace Gin::Graph::Serialization {
 
 	void SaveSerializedGraphToFile(SerializedGraph& serializedGraph, std::string path);
 	void LoadSerializedGraphFromFile(SerializedGraph& serializedGraph, std::string path);
+	void LoadSerializedGraphFromJson(SerializedGraph& serializedGraph, nlohmann::json json);
 }

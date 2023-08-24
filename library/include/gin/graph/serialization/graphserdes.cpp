@@ -235,3 +235,25 @@ void Gin::Graph::Serialization::LoadSerializedGraphFromFile(SerializedGraph& ser
 		serializedGraph.links[i] = jsonGraph["links"][i];
 	}
 }
+
+void Gin::Graph::Serialization::LoadSerializedGraphFromJson(SerializedGraph& serializedGraph, nlohmann::json json)
+{
+	serializedGraph.graphName = json["name"];
+	serializedGraph.graphData = json["data"];
+
+	nlohmann::json jsonNodes{ json["nodes"] };
+
+	serializedGraph.nodes.resize(jsonNodes.size());
+	serializedGraph.nodesData.resize(jsonNodes.size());
+
+	for (size_t i = 0; i < jsonNodes.size(); ++i) {
+		serializedGraph.nodes[i] = jsonNodes[i]["path"];
+		serializedGraph.nodesData[i] = jsonNodes[i]["data"];
+	}
+
+	serializedGraph.links.resize(json["links"].size());
+
+	for (size_t i = 0; i < json["links"].size(); ++i) {
+		serializedGraph.links[i] = json["links"][i];
+	}
+}
