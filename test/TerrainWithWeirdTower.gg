@@ -1,0 +1,337 @@
+{
+    "data": {
+        "editor": {
+            "inputs": {
+                "position": [
+                    -1305.661865234375,
+                    229.73785400390625
+                ]
+            },
+            "outputs": {
+                "position": [
+                    1190.338134765625,
+                    320.73785400390625
+                ]
+            }
+        },
+        "outputs": [
+            {
+                "name": "_Volume",
+                "type": 723322602726554400
+            }
+        ]
+    },
+    "links": [
+        0,
+        0,
+        4,
+        2,
+        0,
+        1,
+        1,
+        0,
+        3,
+        0,
+        5,
+        4,
+        4,
+        0,
+        3,
+        3,
+        5,
+        0,
+        2,
+        0,
+        6,
+        0,
+        7,
+        4,
+        6,
+        1,
+        13,
+        2,
+        7,
+        1,
+        12,
+        3,
+        8,
+        0,
+        0,
+        2,
+        8,
+        1,
+        6,
+        2,
+        9,
+        0,
+        1,
+        0,
+        9,
+        1,
+        10,
+        4,
+        11,
+        0,
+        9,
+        3,
+        12,
+        0,
+        11,
+        1,
+        13,
+        0,
+        9,
+        2,
+        13,
+        1,
+        14,
+        4,
+        14,
+        0,
+        15,
+        3,
+        14,
+        2,
+        15,
+        3,
+        15,
+        0,
+        11,
+        1,
+        2147483646,
+        0,
+        8,
+        3
+    ],
+    "name": "TerrainWithWeirdTower",
+    "nodes": [
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        77.338134765625,
+                        211.73785400390625
+                    ]
+                },
+                "node": {
+                    "Height": 1.2018837928771973
+                }
+            },
+            "path": "Signed/3D/Primitives/Ground"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        -1197.661865234375,
+                        343.73785400390625
+                    ]
+                },
+                "node": {}
+            },
+            "path": "Base/Position"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        -1123.661865234375,
+                        90.73785400390625
+                    ]
+                },
+                "node": {}
+            },
+            "path": "FastNoise2/Generator/Simplex"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        -595.661865234375,
+                        84.73785400390625
+                    ]
+                },
+                "node": {
+                    "Frequency": 0.009999999776482582,
+                    "Seed": 1234
+                }
+            },
+            "path": "FastNoise2/Sampler2D"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        -255.661865234375,
+                        107.73785400390625
+                    ]
+                },
+                "node": {
+                    "A": 0.050078488886356354,
+                    "B": 24.0
+                }
+            },
+            "path": "Math/Operation/MultiplySpatial"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        -917.661865234375,
+                        76.73785400390625
+                    ]
+                },
+                "node": {
+                    "Gain": 0.5,
+                    "Lacunarity": 2.0,
+                    "Octaves": 6
+                }
+            },
+            "path": "FastNoise2/Fractal/FractalFBm"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        424.338134765625,
+                        486.73785400390625
+                    ]
+                },
+                "node": {}
+            },
+            "path": "Signed/3D/Primitives/Box"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        111.338134765625,
+                        396.73785400390625
+                    ]
+                },
+                "node": {
+                    "X": 6.0,
+                    "Y": 24.165641167278235,
+                    "Z": 6.0
+                }
+            },
+            "path": "Base/Utils/CombineSpatial"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        762.338134765625,
+                        317.73785400390625
+                    ]
+                },
+                "node": {
+                    "A": -33.20188522338867,
+                    "B": 7.8343586921691895,
+                    "Smooth Factor": 4.0
+                }
+            },
+            "path": "Signed/3D/Operations/SmoothUnion"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        -938.661865234375,
+                        515.7378540039063
+                    ]
+                },
+                "node": {}
+            },
+            "path": "Math/Transform/Domain Repeat"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        -1272.661865234375,
+                        594.7378540039063
+                    ]
+                },
+                "node": {
+                    "X": 32.0,
+                    "Y": 8e+16,
+                    "Z": 32.0
+                }
+            },
+            "path": "Base/Utils/Combine"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        -676.661865234375,
+                        608.7378540039063
+                    ]
+                },
+                "node": {}
+            },
+            "path": "Math/Hash/Hash Vector3"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        -443.661865234375,
+                        590.7378540039063
+                    ]
+                },
+                "node": {
+                    "Hash": 1252541491,
+                    "Max": 30.0,
+                    "Min": 16.0
+                }
+            },
+            "path": "Math/Hash/Uniform Distribution"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        170.338134765625,
+                        539.7378540039063
+                    ]
+                },
+                "node": {}
+            },
+            "path": "Math/Transform/Translate"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        -125.661865234375,
+                        712.7378540039063
+                    ]
+                },
+                "node": {
+                    "X": 2.6643226680645355,
+                    "Y": 0.0,
+                    "Z": 2.6643226680645355
+                }
+            },
+            "path": "Base/Utils/CombineSpatial"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        -469.661865234375,
+                        734.7378540039063
+                    ]
+                },
+                "node": {
+                    "Hash": 1252541491,
+                    "Max": 16.0,
+                    "Min": -16.0
+                }
+            },
+            "path": "Math/Hash/Uniform Distribution"
+        }
+    ]
+}

@@ -10,12 +10,20 @@ namespace Gin::Spatial {
 	public:
 		Sampler(Spatial<T> spatial) : spatial{ spatial } {};
 
-		void SetScale(float scale) {
+		inline void SetScale(float scale) {
 			this->scale = scale;
 		}
 
-		void SetBounds(Math::Bounds<double, 3> bounds) {
+		inline float GetScale() {
+			return scale;
+		}
+
+		inline void SetBounds(Math::Bounds<double, 3> bounds) {
 			this->bounds = bounds;
+		}
+
+		inline Math::Bounds<double, 3> GetBounds() {
+			return bounds;
 		}
 
 		inline T nearest(Eigen::Vector3<double> position) {

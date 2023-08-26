@@ -2,6 +2,7 @@
 #include <imgui.h>
 #include <gin/spatial/sampler.hpp>
 #include <gin/mesh/marchingcube.hpp>
+#include <gin/mesh/indexedmesh.hpp>
 
 MeshBuilderWindow::MeshBuilderWindow()
 {
@@ -163,7 +164,8 @@ void MeshBuilderWindow::BuildVolume(Gin::Graph::GraphContext ctx)
 
 	try {
 		builder.Build(indexedMesh, sampler);
-		indexedMesh.RecalculateNormal();
+		indexedMesh.BuildIndex();
+		//indexedMesh.RecalculateNormal();
 	}
 	catch (std::exception& e) {
 		Vin::Logger::Err("Mesh Builder Execution Error : {}", e.what());
@@ -172,11 +174,11 @@ void MeshBuilderWindow::BuildVolume(Gin::Graph::GraphContext ctx)
 	elapsed = std::chrono::system_clock::now() - start;
 	Vin::Logger::Log("Mesh Builder Execution Took : {}ms", elapsed.count() * 1000.0);
 
-	Vin::Logger::Log("Vertex Count : {}", indexedMesh.GetVertexBufferSize());
-	Vin::Logger::Log("Indices Count : {}", indexedMesh.GetIndexBufferSize());
+	std::vector<Gin::Mesh::IndexedMeshVertexData>& vertexData{ indexedMesh.GetIndexedMeshVertexData() };
+	std::vector<int>& indices{ indexedMesh.GetIndices() };
 
-	mesh->SetVertexData(indexedMesh.GetVertexBuffer(), indexedMesh.GetVertexBufferSize());
-	mesh->SetIndexData(indexedMesh.GetIndexBuffer(), indexedMesh.GetIndexBufferSize());
+	mesh->SetVertexData(vertexData.data(), vertexData.size());
+	mesh->SetIndexData(indices.data(), indices.size());
 	mesh->SetMaterialCount(1);
 	mesh->SetMaterial(material, 0);
 }

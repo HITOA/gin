@@ -294,6 +294,9 @@ void Gin::Mesh::MarchingCubeMeshBuilder::Build(Mesh& mesh, Spatial::Sampler<floa
            {0.0, scale, scale}
     };
 
+    std::vector<Eigen::Vector3<float>> vertices{};
+    std::vector<Eigen::Vector3<float>> normals{};
+
     for (double z = -bounds.extent.z(); z < bounds.extent.z(); z += scale) {
         for (double y = -bounds.extent.y(); y < bounds.extent.y(); y += scale) {
             for (double x = -bounds.extent.x(); x < bounds.extent.x(); x += scale) {
@@ -312,21 +315,40 @@ void Gin::Mesh::MarchingCubeMeshBuilder::Build(Mesh& mesh, Spatial::Sampler<floa
                 if (cubeEdges == 0x00 || cubeEdges == 0xFF)
                     continue;
 
-                for (int i = 0; triangleConnectionTable[cubeIdx][i] != -1; ++i) {
-                    Eigen::Vector2<int> voxels = GetVoxelsFromEdge(triangleConnectionTable[cubeIdx][i]);
+                for (int i = 0; triangleConnectionTable[cubeIdx][i] != -1; i += 3) {
+                    Eigen::Vector2<int> v1 = GetVoxelsFromEdge(triangleConnectionTable[cubeIdx][i]);
+                    Eigen::Vector2<int> v2 = GetVoxelsFromEdge(triangleConnectionTable[cubeIdx][i + 1]);
+                    Eigen::Vector2<int> v3 = GetVoxelsFromEdge(triangleConnectionTable[cubeIdx][i + 2]);
 
-                    float midPoint = -data.distance[(int)voxels.x()] / (data.distance[(int)voxels.y()] - data.distance[(int)voxels.x()]);
+                    float mp1 = -data.distance[(int)v1.x()] / (data.distance[(int)v1.y()] - data.distance[(int)v1.x()]);
+                    float mp2 = -data.distance[(int)v2.x()] / (data.distance[(int)v2.y()] - data.distance[(int)v2.x()]);
+                    float mp3 = -data.distance[(int)v3.x()] / (data.distance[(int)v3.y()] - data.distance[(int)v3.x()]);
 
-                    VertexData vertexData{};
+                    Eigen::Vector3<double> p1 = Math::Linear(data.position[(int)v1.x()], data.position[(int)v1.y()], mp1);
+                    Eigen::Vector3<double> p2 = Math::Linear(data.position[(int)v2.x()], data.position[(int)v2.y()], mp2);
+                    Eigen::Vector3<double> p3 = Math::Linear(data.position[(int)v3.x()], data.position[(int)v3.y()], mp3);
 
-                    Eigen::Vector3<double> p = Math::Linear(data.position[(int)voxels.x()], data.position[(int)voxels.y()], midPoint);
-
-                    vertexData.position = Eigen::Vector3<float>{ (float)p.x(), (float)p.y(), (float)p.z()};
-                    vertexData.normal = CalculateNormal(p, sampler);
-
-                    mesh.AddVertexData(vertexData);
+                    if (GetTriangleWindingOrder() == TriangleWindingOrder::COUNTER_CLOCK_WISE) {
+                        vertices.push_back(Eigen::Vector3<float>{ (float)p1.x(), (float)p1.y(), (float)p1.z()});
+                        normals.push_back(CalculateNormal(p1, sampler));
+                        vertices.push_back(Eigen::Vector3<float>{ (float)p2.x(), (float)p2.y(), (float)p2.z()});
+                        normals.push_back(CalculateNormal(p2, sampler));
+                        vertices.push_back(Eigen::Vector3<float>{ (float)p3.x(), (float)p3.y(), (float)p3.z()});
+                        normals.push_back(CalculateNormal(p3, sampler));
+                    }
+                    else {
+                        vertices.push_back(Eigen::Vector3<float>{ (float)p3.x(), (float)p3.y(), (float)p3.z()});
+                        normals.push_back(CalculateNormal(p3, sampler));
+                        vertices.push_back(Eigen::Vector3<float>{ (float)p2.x(), (float)p2.y(), (float)p2.z()});
+                        normals.push_back(CalculateNormal(p2, sampler));
+                        vertices.push_back(Eigen::Vector3<float>{ (float)p1.x(), (float)p1.y(), (float)p1.z()});
+                        normals.push_back(CalculateNormal(p1, sampler));
+                    }
                 }
             }
         }
     }
+
+    mesh.SetVertices(vertices.data(), vertices.size());
+    mesh.SetNormals(normals.data(), normals.size());
 }

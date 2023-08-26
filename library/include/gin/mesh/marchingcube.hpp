@@ -34,12 +34,11 @@ namespace Gin::Mesh {
 		}
 
 		inline Eigen::Vector3<float> CalculateNormal(Eigen::Vector3<double> point, Spatial::Sampler<float>& sampler) {
-			static float EPSILON = 0.001f;
-			static Eigen::Vector3<double> offsets[3]{ { EPSILON, 0.0f, 0.0f }, { 0.0f, EPSILON, 0.0f }, { 0.0f, 0.0f, EPSILON } };
+			Eigen::Vector3<double> offsets[3]{ { sampler.GetScale(), 0.0f, 0.0f}, {0.0f, sampler.GetScale(), 0.0f}, {0.0f, 0.0f, sampler.GetScale()}};
 
 			Eigen::Vector3<float> d{ sampler.nearest(point), sampler.nearest(point), sampler.nearest(point) };
 			Eigen::Vector3<float> r{ sampler.nearest(point + offsets[0]), sampler.nearest(point + offsets[1]), sampler.nearest(point + offsets[2]) };
-			return (r - d);
+			return (r - d).normalized();
 		}
 	public:
 		Math::Bounds<double, 3> bounds{};
