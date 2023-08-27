@@ -35,6 +35,14 @@ namespace Gin::Spatial {
 			return spatial[idx];
 		}
 
+		Spatial<T>* operator->() {
+			return &spatial;
+		}
+
+		inline T& operator[](size_t idx) {
+			return spatial[idx];
+		}
+
 	private:
 		float scale{ 1.0f };
 		Math::Bounds<double, 3> bounds{};

@@ -40,9 +40,6 @@ namespace Gin::Mesh {
 			Eigen::Vector3<float> r{ sampler.nearest(point + offsets[0]), sampler.nearest(point + offsets[1]), sampler.nearest(point + offsets[2]) };
 			return (r - d).normalized();
 		}
-	public:
-		Math::Bounds<double, 3> bounds{};
-		float scale{ 1.0f };
 	};
 
 }

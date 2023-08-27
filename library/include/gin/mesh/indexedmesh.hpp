@@ -17,6 +17,7 @@ namespace Gin::Mesh {
 		virtual void Clear() final;
 
 		void BuildIndex();
+		void RecalculateNormals();
 
 		std::vector<Eigen::Vector3<float>>& GetVertices();
 		std::vector<Eigen::Vector3<float>>& GetNormals();

@@ -285,28 +285,28 @@ void Gin::Mesh::MarchingCubeMeshBuilder::Build(Mesh& mesh, Spatial::Sampler<floa
 {
     Eigen::Vector3<double> offsets[8] = {
            {0.0, 0.0, 0.0},
-           {scale, 0.0, 0.0},
-           {scale, 0.0, scale},
-           {0.0, 0.0, scale},
-           {0.0, scale, 0.0},
-           {scale, scale, 0.0},
-           {scale, scale, scale},
-           {0.0, scale, scale}
+           {sampler.GetScale(), 0.0, 0.0},
+           {sampler.GetScale(), 0.0, sampler.GetScale()},
+           {0.0, 0.0, sampler.GetScale()},
+           {0.0, sampler.GetScale(), 0.0},
+           {sampler.GetScale(), sampler.GetScale(), 0.0},
+           {sampler.GetScale(), sampler.GetScale(), sampler.GetScale()},
+           {0.0, sampler.GetScale(), sampler.GetScale()}
     };
 
     std::vector<Eigen::Vector3<float>> vertices{};
     std::vector<Eigen::Vector3<float>> normals{};
 
-    for (double z = -bounds.extent.z(); z < bounds.extent.z(); z += scale) {
-        for (double y = -bounds.extent.y(); y < bounds.extent.y(); y += scale) {
-            for (double x = -bounds.extent.x(); x < bounds.extent.x(); x += scale) {
+    for (double z = -sampler.GetBounds().extent.z(); z < sampler.GetBounds().extent.z(); z += sampler.GetScale()) {
+        for (double y = -sampler.GetBounds().extent.y(); y < sampler.GetBounds().extent.y(); y += sampler.GetScale()) {
+            for (double x = -sampler.GetBounds().extent.x(); x < sampler.GetBounds().extent.x(); x += sampler.GetScale()) {
                 Eigen::Vector3<double> point{ x, y, z };
 
                 CubeData data{};
 
                 for (int i = 0; i < 8; ++i) {
                     data.position[i] = point + offsets[i];
-                    data.distance[i] = sampler.nearest(data.position[i] + bounds.origin);
+                    data.distance[i] = sampler.nearest(data.position[i] + sampler.GetBounds().origin);
                 }
 
                 unsigned char cubeIdx = GetCubeIndex(data);

@@ -24,4 +24,9 @@ namespace Gin::Math {
 		return v * v * (3.0f - 2.0f * v);
 	}
 
+	template<typename T>
+	inline T InverseLerp(T a, T b, float t) {
+		return (t - a) / (b - a);
+	}
+
 }

@@ -5,6 +5,11 @@
 #include <gin/graph/graph.hpp>
 #include "graphlist.hpp"
 
+enum class VolumeMeshingAlgorithm {
+	MarchingCube,
+	SurfaceNet
+};
+
 class MeshBuilderWindow : public Vin::EditorWindow {
 public:
 	MeshBuilderWindow();
@@ -29,4 +34,5 @@ private:
 	std::shared_ptr<Vin::Scene> scene{};
 	std::shared_ptr<Vin::Material> material{};
 	std::shared_ptr<Vin::DynamicMesh> mesh{};
+	VolumeMeshingAlgorithm volumeMeshingAlgorithm{ VolumeMeshingAlgorithm::MarchingCube };
 };

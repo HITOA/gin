@@ -2,6 +2,7 @@
 #include <imgui.h>
 #include <gin/spatial/sampler.hpp>
 #include <gin/mesh/marchingcube.hpp>
+#include <gin/mesh/surfacenet.hpp>
 #include <gin/mesh/indexedmesh.hpp>
 
 MeshBuilderWindow::MeshBuilderWindow()
@@ -73,9 +74,33 @@ void MeshBuilderWindow::DrawHeightmapTab()
 {
 }
 
+const char* GetVolumeMeshingAlgorithmName(VolumeMeshingAlgorithm meshingAlgorithm) {
+	switch (meshingAlgorithm) {
+	case VolumeMeshingAlgorithm::MarchingCube:
+		return "Marching Cube";
+	case VolumeMeshingAlgorithm::SurfaceNet:
+		return "Surface Net";
+	default:
+		return "Unknown";
+	}
+}
+
 void MeshBuilderWindow::DrawVolumeTab()
 {
 	static Gin::Graph::GraphContext ctx{};
+
+	if (ImGui::BeginCombo("Meshing Algorithm", GetVolumeMeshingAlgorithmName(volumeMeshingAlgorithm))) {
+
+		if (ImGui::Selectable(GetVolumeMeshingAlgorithmName(VolumeMeshingAlgorithm::MarchingCube))) {
+			volumeMeshingAlgorithm = VolumeMeshingAlgorithm::MarchingCube;
+		}
+
+		if (ImGui::Selectable(GetVolumeMeshingAlgorithmName(VolumeMeshingAlgorithm::SurfaceNet))) {
+			volumeMeshingAlgorithm = VolumeMeshingAlgorithm::SurfaceNet;
+		}
+
+		ImGui::EndCombo();
+	}
 
 	ImGui::InputFloat("Scale", &ctx.scale);
 
@@ -156,21 +181,37 @@ void MeshBuilderWindow::BuildVolume(Gin::Graph::GraphContext ctx)
 	sampler.SetBounds(ctx.bounds);
 
 	Gin::Mesh::IndexedMesh indexedMesh{};
-	Gin::Mesh::MarchingCubeMeshBuilder builder{};
-	builder.bounds = ctx.bounds;
-	builder.scale = ctx.scale;
 
-	start = std::chrono::system_clock::now();
+	if (volumeMeshingAlgorithm == VolumeMeshingAlgorithm::MarchingCube) {
 
-	try {
-		builder.Build(indexedMesh, sampler);
-		indexedMesh.BuildIndex();
-		//indexedMesh.RecalculateNormal();
+		Gin::Mesh::MarchingCubeMeshBuilder builder{};
+
+		start = std::chrono::system_clock::now();
+
+		try {
+			builder.Build(indexedMesh, sampler);
+			indexedMesh.BuildIndex();
+			indexedMesh.RecalculateNormals();
+		}
+		catch (std::exception& e) {
+			Vin::Logger::Err("Mesh Builder Execution Error : {}", e.what());
+		}
+
 	}
-	catch (std::exception& e) {
-		Vin::Logger::Err("Mesh Builder Execution Error : {}", e.what());
-	}
+	else if (volumeMeshingAlgorithm == VolumeMeshingAlgorithm::SurfaceNet) {
+		Gin::Mesh::SurfaceNetMeshBuilder builder{};
 
+		start = std::chrono::system_clock::now();
+
+		try {
+			builder.Build(indexedMesh, sampler);
+			indexedMesh.RecalculateNormals();
+		}
+		catch (std::exception& e) {
+			Vin::Logger::Err("Mesh Builder Execution Error : {}", e.what());
+		}
+	}
+ 
 	elapsed = std::chrono::system_clock::now() - start;
 	Vin::Logger::Log("Mesh Builder Execution Took : {}ms", elapsed.count() * 1000.0);
 

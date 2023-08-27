@@ -1,4 +1,5 @@
 #include <gin/mesh/indexedmesh.hpp>
+#include <Eigen/Dense>
 
 void Gin::Mesh::IndexedMesh::SetVertices(Eigen::Vector3<float>* vertices, size_t count)
 {
@@ -30,6 +31,31 @@ void Gin::Mesh::IndexedMesh::BuildIndex() {
 
 	for (int i = 0; i < vertices.size(); ++i) {
 		indices[i] = i;
+	}
+}
+
+void Gin::Mesh::IndexedMesh::RecalculateNormals()
+{
+	for (int i = 0; i < vertices.size(); ++i) {
+		normals[i] = Eigen::Vector3<float>{ 0.0f, 0.0f, 0.0f };
+	}
+
+	for (int i = 0; i < indices.size(); i += 3) {
+		Eigen::Vector3<float> a{ vertices[indices[i]] };
+		Eigen::Vector3<float> b{ vertices[indices[i + 1]] };
+		Eigen::Vector3<float> c{ vertices[indices[i + 2]] };
+
+		Eigen::Vector3<float> ba{ b - a };
+		Eigen::Vector3<float> ca{ c - a };
+
+		Eigen::Vector3<float> normal = ba.cross(ca);
+		normals[indices[i]] += normal;
+		normals[indices[i + 1]] += normal;
+		normals[indices[i + 2]] += normal;
+	}
+
+	for (int i = 0; i < vertices.size(); ++i) {
+		normals[i].normalize();
 	}
 }
 
