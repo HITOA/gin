@@ -457,8 +457,8 @@ void Gin::Graph::Graph::Execute(GraphContext ctx, Thread::ThreadPool& pool)
 					std::shared_ptr<Node> nodeI = nodes[program[idx].nodeAIdx];
 					GraphContext ctxI = ctx;
 					++running;
-					pool.Execute([this, nodeI, ctxI]() {
-						nodeI->Execute(ctxI);
+					pool.Execute([this, nodeI, ctxI, &pool]() {
+						nodeI->Execute(ctxI, pool);
 						{
 							std::unique_lock<std::mutex> lock{ mutex };
 							--running;

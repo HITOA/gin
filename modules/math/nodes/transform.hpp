@@ -9,6 +9,7 @@ namespace Gin::Module::Math {
 		Translate();
 
 		virtual void Execute(Graph::GraphContext ctx) final;
+		virtual void Execute(Graph::GraphContext ctx, Thread::ThreadPool& pool) final;
 
 		virtual std::string GetName() final;
 
@@ -24,6 +25,7 @@ namespace Gin::Module::Math {
 		Rotate();
 
 		virtual void Execute(Graph::GraphContext ctx) final;
+		virtual void Execute(Graph::GraphContext ctx, Thread::ThreadPool& pool) final;
 
 		virtual std::string GetName() final;
 
@@ -39,6 +41,7 @@ namespace Gin::Module::Math {
 		Scale();
 
 		virtual void Execute(Graph::GraphContext ctx) final;
+		virtual void Execute(Graph::GraphContext ctx, Thread::ThreadPool& pool) final;
 
 		virtual std::string GetName() final;
 
@@ -54,6 +57,7 @@ namespace Gin::Module::Math {
 		Transform();
 
 		virtual void Execute(Graph::GraphContext ctx) final;
+		virtual void Execute(Graph::GraphContext ctx, Thread::ThreadPool& pool) final;
 
 		virtual std::string GetName() final;
 
@@ -71,6 +75,7 @@ namespace Gin::Module::Math {
 		DomainRepeat();
 
 		virtual void Execute(Graph::GraphContext ctx) final;
+		virtual void Execute(Graph::GraphContext ctx, Thread::ThreadPool& pool) final;
 
 		virtual std::string GetName() final;
 

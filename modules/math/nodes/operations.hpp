@@ -122,6 +122,12 @@ namespace Gin::Module::Math {
 			});
 		}
 
+		virtual void Execute(Graph::GraphContext ctx, Thread::ThreadPool& pool) final {
+			SpatialOperation(pool, [&](size_t idx, size_t _x, size_t _y, size_t _z) {
+				r[idx] = a[idx] * b[idx];
+				});
+		}
+
 		virtual std::string GetName() final {
 			return "Multiply";
 		}
@@ -147,6 +153,12 @@ namespace Gin::Module::Math {
 			SpatialOperation([&](size_t idx, size_t _x, size_t _y, size_t _z) {
 				r[idx] = a[idx] + b[idx];
 			});
+		}
+
+		virtual void Execute(Graph::GraphContext ctx, Thread::ThreadPool& pool) final {
+			SpatialOperation(pool, [&](size_t idx, size_t _x, size_t _y, size_t _z) {
+				r[idx] = a[idx] + b[idx];
+				});
 		}
 
 		virtual std::string GetName() final {
@@ -176,6 +188,12 @@ namespace Gin::Module::Math {
 				});
 		}
 
+		virtual void Execute(Graph::GraphContext ctx, Thread::ThreadPool& pool) final {
+			SpatialOperation(pool, [&](size_t idx, size_t _x, size_t _y, size_t _z) {
+				r[idx] = a[idx] - b[idx];
+			});
+		}
+
 		virtual std::string GetName() final {
 			return "Substract";
 		}
@@ -199,6 +217,12 @@ namespace Gin::Module::Math {
 
 		virtual void Execute(Graph::GraphContext ctx) final {
 			SpatialOperation([&](size_t idx, size_t _x, size_t _y, size_t _z) {
+				r[idx] = a[idx] / b[idx];
+				});
+		}
+
+		virtual void Execute(Graph::GraphContext ctx, Thread::ThreadPool& pool) final {
+			SpatialOperation(pool, [&](size_t idx, size_t _x, size_t _y, size_t _z) {
 				r[idx] = a[idx] / b[idx];
 				});
 		}

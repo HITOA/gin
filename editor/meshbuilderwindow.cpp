@@ -149,30 +149,30 @@ void MeshBuilderWindow::BuildVolume(Gin::Graph::GraphContext ctx)
 
 	start = std::chrono::system_clock::now();
 
+	try {
+		entry->graph->Execute(ctx);
+	}
+	catch (std::exception& e) {
+		Vin::Logger::Err("Graph Execution Error : {}", e.what());
+	}
+
+	std::chrono::duration<double> elapsed = std::chrono::system_clock::now() - start;
+	Vin::Logger::Log("Graph Execution Took : {}ms", elapsed.count() * 1000.0);
+
+
+	start = std::chrono::system_clock::now();
+
 	Gin::Thread::ThreadPool pool{};
 
 	try {
 		entry->graph->Execute(ctx, pool);
 	}
 	catch (std::exception& e) {
-		Vin::Logger::Err("Graph Parallel Execution Error : {}", e.what());
-	}
-
-	std::chrono::duration<double> elapsed = std::chrono::system_clock::now() - start;
-	Vin::Logger::Log("Graph Parallel Execution Took : {}ms", elapsed.count() * 1000.0);
-
-
-	start = std::chrono::system_clock::now();
-
-	try {
-		entry->graph->Execute(ctx);
-	}
-	catch (std::exception& e) {
-		Vin::Logger::Err("Graph Execution Took : {}", e.what());
+		Vin::Logger::Err("Graph Parallel Execution Took : {}", e.what());
 	}
 
 	elapsed = std::chrono::system_clock::now() - start;
-	Vin::Logger::Log("Graph Execution Took : {}ms", elapsed.count() * 1000.0);
+	Vin::Logger::Log("Graph Parallel Execution Took : {}ms", elapsed.count() * 1000.0);
 
 	Gin::Spatial::Spatial<float> spatial = *(Gin::Spatial::Spatial<float>*)volumePort.GetProperty();
 	Gin::Spatial::Sampler<float> sampler{ spatial };

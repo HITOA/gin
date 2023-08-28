@@ -16,6 +16,13 @@ void Gin::Module::Signed::OPUnion::Execute(Graph::GraphContext ctx)
 	});
 }
 
+void Gin::Module::Signed::OPUnion::Execute(Graph::GraphContext ctx, Thread::ThreadPool& pool)
+{
+	SpatialOperation(pool, [&](size_t idx, size_t x, size_t y, size_t z) {
+		distanceR[idx] = Math::Min<float>(distanceA[idx], distanceB[idx]);
+	});
+}
+
 std::string Gin::Module::Signed::OPUnion::GetName()
 {
 	return "OPUnion";
@@ -36,6 +43,13 @@ void Gin::Module::Signed::OPSubstraction::Execute(Graph::GraphContext ctx)
 	});
 }
 
+void Gin::Module::Signed::OPSubstraction::Execute(Graph::GraphContext ctx, Thread::ThreadPool& pool)
+{
+	SpatialOperation(pool, [&](size_t idx, size_t x, size_t y, size_t z) {
+		distanceR[idx] = Math::Max<float>(-distanceA[idx], distanceB[idx]);
+	});
+}
+
 std::string Gin::Module::Signed::OPSubstraction::GetName()
 {
 	return "OPSubstraction";
@@ -52,6 +66,13 @@ Gin::Module::Signed::OPIntersection::OPIntersection()
 void Gin::Module::Signed::OPIntersection::Execute(Graph::GraphContext ctx)
 {
 	SpatialOperation([&](size_t idx, size_t x, size_t y, size_t z) {
+		distanceR[idx] = Math::Max<float>(distanceA[idx], distanceB[idx]);
+	});
+}
+
+void Gin::Module::Signed::OPIntersection::Execute(Graph::GraphContext ctx, Thread::ThreadPool& pool)
+{
+	SpatialOperation(pool, [&](size_t idx, size_t x, size_t y, size_t z) {
 		distanceR[idx] = Math::Max<float>(distanceA[idx], distanceB[idx]);
 	});
 }
@@ -77,6 +98,13 @@ void Gin::Module::Signed::OPSmoothUnion::Execute(Graph::GraphContext ctx)
 	});
 }
 
+void Gin::Module::Signed::OPSmoothUnion::Execute(Graph::GraphContext ctx, Thread::ThreadPool& pool)
+{
+	SpatialOperation(pool, [&](size_t idx, size_t x, size_t y, size_t z) {
+		distanceR[idx] = Math::SMin(distanceA[idx], distanceB[idx], smoothFactor[idx]).x();
+	});
+}
+
 std::string Gin::Module::Signed::OPSmoothUnion::GetName()
 {
 	return "OPSmoothUnion";
@@ -95,7 +123,14 @@ void Gin::Module::Signed::OPSmoothSubstraction::Execute(Graph::GraphContext ctx)
 {
 	SpatialOperation([&](size_t idx, size_t x, size_t y, size_t z) {
 		distanceR[idx] = Math::SMax(-distanceA[idx], distanceB[idx], smoothFactor[idx]).x();
-		});
+	});
+}
+
+void Gin::Module::Signed::OPSmoothSubstraction::Execute(Graph::GraphContext ctx, Thread::ThreadPool& pool)
+{
+	SpatialOperation(pool, [&](size_t idx, size_t x, size_t y, size_t z) {
+		distanceR[idx] = Math::SMax(-distanceA[idx], distanceB[idx], smoothFactor[idx]).x();
+	});
 }
 
 std::string Gin::Module::Signed::OPSmoothSubstraction::GetName()
@@ -116,7 +151,14 @@ void Gin::Module::Signed::OPSmoothIntersection::Execute(Graph::GraphContext ctx)
 {
 	SpatialOperation([&](size_t idx, size_t x, size_t y, size_t z) {
 		distanceR[idx] = Math::SMax(distanceA[idx], distanceB[idx], smoothFactor[idx]).x();
-		});
+	});
+}
+
+void Gin::Module::Signed::OPSmoothIntersection::Execute(Graph::GraphContext ctx, Thread::ThreadPool& pool)
+{
+	SpatialOperation(pool, [&](size_t idx, size_t x, size_t y, size_t z) {
+		distanceR[idx] = Math::SMax(distanceA[idx], distanceB[idx], smoothFactor[idx]).x();
+	});
 }
 
 std::string Gin::Module::Signed::OPSmoothIntersection::GetName()

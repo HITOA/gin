@@ -11,6 +11,9 @@ Gin::Module::Noise::Sampler3D::Sampler3D()
 
 void Gin::Module::Noise::Sampler3D::Execute(Graph::GraphContext ctx)
 {
+	if (source.get() == nullptr)
+		return;
+
 	Eigen::Vector3<double> t = (ctx.bounds.origin - ctx.bounds.extent) / ctx.scale;
 	Eigen::Vector3<int> o = Math::Ceil<double, int, 3>(t);
 	source->GenUniformGrid3D(output.Data(), o.x(), o.y(), o.z(), output.GetWidth(), output.GetHeight(), output.GetDepth(), ctx.scale * frequency, seed);
@@ -32,6 +35,9 @@ Gin::Module::Noise::Sampler2D::Sampler2D()
 
 void Gin::Module::Noise::Sampler2D::Execute(Graph::GraphContext ctx)
 {
+	if (source.get() == nullptr)
+		return;
+
 	Eigen::Vector3<double> t = (ctx.bounds.origin - ctx.bounds.extent) / ctx.scale;
 	Eigen::Vector3<int> o = Math::Ceil<double, int, 3>(t);
 

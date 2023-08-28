@@ -9,6 +9,7 @@ namespace Gin::Module::Base {
 		Position();
 
 		virtual void Execute(Graph::GraphContext ctx) final;
+		virtual void Execute(Graph::GraphContext ctx, Thread::ThreadPool& pool) final;
 		virtual std::string GetName() final;
 
 	private:

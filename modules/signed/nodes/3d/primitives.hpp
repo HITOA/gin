@@ -12,6 +12,7 @@ namespace Gin::Module::Signed {
 		SDSphere();
 
 		virtual void Execute(Graph::GraphContext ctx) final;
+		virtual void Execute(Graph::GraphContext ctx, Thread::ThreadPool& pool) final;
 		virtual std::string GetName() final;
 
 	private:
@@ -29,6 +30,7 @@ namespace Gin::Module::Signed {
 		SDBox();
 
 		virtual void Execute(Graph::GraphContext ctx) final;
+		virtual void Execute(Graph::GraphContext ctx, Thread::ThreadPool& pool) final;
 		virtual std::string GetName() final;
 
 	private:
@@ -46,6 +48,7 @@ namespace Gin::Module::Signed {
 		SDGround();
 
 		virtual void Execute(Graph::GraphContext ctx) final;
+		virtual void Execute(Graph::GraphContext ctx, Thread::ThreadPool& pool) final;
 		virtual std::string GetName() final;
 
 	private:
@@ -64,6 +67,7 @@ namespace Gin::Module::Signed {
 		SDPlane();
 
 		virtual void Execute(Graph::GraphContext ctx) final;
+		virtual void Execute(Graph::GraphContext ctx, Thread::ThreadPool& pool) final;
 		virtual std::string GetName() final;
 
 	private:

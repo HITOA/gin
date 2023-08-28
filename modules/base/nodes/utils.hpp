@@ -60,6 +60,16 @@ namespace Gin::Module::Base {
 			});
 		};
 
+		virtual void Execute(Graph::GraphContext ctx, Thread::ThreadPool& pool) final {
+			SpatialOperation(pool, [&](size_t idx, size_t _x, size_t _y, size_t _z) {
+				vec2[idx].x() = x[idx];
+				vec2[idx].y() = y[idx];
+				vec3[idx].x() = x[idx];
+				vec3[idx].y() = y[idx];
+				vec3[idx].z() = z[idx];
+			});
+		};
+
 		virtual std::string GetName() final {
 			return "Combine";
 		};

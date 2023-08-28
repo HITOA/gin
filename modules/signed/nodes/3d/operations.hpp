@@ -12,6 +12,7 @@ namespace Gin::Module::Signed {
 		OPUnion();
 
 		virtual void Execute(Graph::GraphContext ctx) final;
+		virtual void Execute(Graph::GraphContext ctx, Thread::ThreadPool& pool) final;
 		virtual std::string GetName() final;
 
 	private:
@@ -29,6 +30,7 @@ namespace Gin::Module::Signed {
 		OPSubstraction();
 
 		virtual void Execute(Graph::GraphContext ctx) final;
+		virtual void Execute(Graph::GraphContext ctx, Thread::ThreadPool& pool) final;
 		virtual std::string GetName() final;
 
 	private:
@@ -46,6 +48,7 @@ namespace Gin::Module::Signed {
 		OPIntersection();
 
 		virtual void Execute(Graph::GraphContext ctx) final;
+		virtual void Execute(Graph::GraphContext ctx, Thread::ThreadPool& pool) final;
 		virtual std::string GetName() final;
 
 	private:
@@ -63,6 +66,7 @@ namespace Gin::Module::Signed {
 		OPSmoothUnion();
 
 		virtual void Execute(Graph::GraphContext ctx) final;
+		virtual void Execute(Graph::GraphContext ctx, Thread::ThreadPool& pool) final;
 		virtual std::string GetName() final;
 
 	private:
@@ -81,6 +85,7 @@ namespace Gin::Module::Signed {
 		OPSmoothSubstraction();
 
 		virtual void Execute(Graph::GraphContext ctx) final;
+		virtual void Execute(Graph::GraphContext ctx, Thread::ThreadPool& pool) final;
 		virtual std::string GetName() final;
 
 	private:
@@ -99,6 +104,7 @@ namespace Gin::Module::Signed {
 		OPSmoothIntersection();
 
 		virtual void Execute(Graph::GraphContext ctx) final;
+		virtual void Execute(Graph::GraphContext ctx, Thread::ThreadPool& pool) final;
 		virtual std::string GetName() final;
 
 	private:

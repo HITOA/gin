@@ -16,6 +16,7 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data
 
 file(GLOB_RECURSE gin_library_src "library/*.cpp" "library/*.hpp")
 file(GLOB_RECURSE gin_editor_src "editor/*.cpp" "editor/*.hpp")
+file(GLOB_RECURSE gin_bench_src "bench/*.cpp" "bench/*.hpp")
 
 file(GLOB files "modules/*")
 foreach(file ${files})
@@ -54,3 +55,7 @@ target_link_libraries(gin_library Eigen3::Eigen FastNoise)
 add_executable(gin_editor ${gin_editor_src})
 
 target_link_libraries(gin_editor gin_library vin_engine nfd)
+
+add_executable(gin_bench ${gin_bench_src})
+
+target_link_libraries(gin_bench gin_library nanobench)

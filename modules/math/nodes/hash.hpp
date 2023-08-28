@@ -9,6 +9,7 @@ namespace Gin::Module::Math {
 		HashNumber();
 
 		virtual void Execute(Graph::GraphContext ctx) final;
+		virtual void Execute(Graph::GraphContext ctx, Thread::ThreadPool& pool) final;
 
 		virtual std::string GetName() final;
 
@@ -23,6 +24,7 @@ namespace Gin::Module::Math {
 		HashVector3();
 
 		virtual void Execute(Graph::GraphContext ctx) final;
+		virtual void Execute(Graph::GraphContext ctx, Thread::ThreadPool& pool) final;
 
 		virtual std::string GetName() final;
 
@@ -37,6 +39,7 @@ namespace Gin::Module::Math {
 		UniformDistribution();
 
 		virtual void Execute(Graph::GraphContext ctx) final;
+		virtual void Execute(Graph::GraphContext ctx, Thread::ThreadPool& pool) final;
 
 		virtual std::string GetName() final;
 
