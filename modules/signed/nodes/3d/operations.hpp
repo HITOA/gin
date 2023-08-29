@@ -20,6 +20,7 @@ namespace Gin::Module::Signed {
 		Spatial::Spatial<float> distanceB{};
 
 		Spatial::Spatial<float> distanceR{};
+		Spatial::Spatial<float> t{};
 	};
 
 	/**
@@ -38,6 +39,7 @@ namespace Gin::Module::Signed {
 		Spatial::Spatial<float> distanceB{};
 
 		Spatial::Spatial<float> distanceR{};
+		Spatial::Spatial<float> t{};
 	};
 
 	/**
@@ -56,6 +58,7 @@ namespace Gin::Module::Signed {
 		Spatial::Spatial<float> distanceB{};
 
 		Spatial::Spatial<float> distanceR{};
+		Spatial::Spatial<float> t{};
 	};
 
 	/**
@@ -75,6 +78,7 @@ namespace Gin::Module::Signed {
 		Spatial::Spatial<float> smoothFactor{};
 
 		Spatial::Spatial<float> distanceR{};
+		Spatial::Spatial<float> t{};
 	};
 
 	/**
@@ -94,6 +98,7 @@ namespace Gin::Module::Signed {
 		Spatial::Spatial<float> smoothFactor{};
 
 		Spatial::Spatial<float> distanceR{};
+		Spatial::Spatial<float> t{};
 	};
 
 	/**
@@ -113,5 +118,6 @@ namespace Gin::Module::Signed {
 		Spatial::Spatial<float> smoothFactor{};
 
 		Spatial::Spatial<float> distanceR{};
+		Spatial::Spatial<float> t{};
 	};
 }

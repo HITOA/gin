@@ -8,6 +8,7 @@ out vec4 fragcolor;
 in struct FsInput {
     vec4 positionWS; //World space position
     vec4 positionLS; //Light space position
+    vec4 color;
     vec3 normalOS;
     vec3 cameraPosition;
 } fsinput;
@@ -50,7 +51,7 @@ void main()
 
     vec3 color = CalculatePBR(GetMainLight(), inputData, surfaceData, brdfData) + 0.025;
     color *= c;
-    color *= mix(vec3(0.4, 0.4, 0.2), vec3(0.3, 0.9, 0.1), max(fsinput.normalOS.y, 0.0));
+    color *= fsinput.color.xyz;
     
     color = color / (color + vec3(1.0));
     color = pow(color, vec3(1.0/2.2)); 

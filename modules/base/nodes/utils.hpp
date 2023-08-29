@@ -11,9 +11,11 @@ namespace Gin::Module::Base {
 			AddInputPort("X", x);
 			AddInputPort("Y", y);
 			AddInputPort("Z", z);
+			AddInputPort("W", w);
 
 			AddOutputPort("Vector2", vec2);
 			AddOutputPort("Vector3", vec3);
+			AddOutputPort("Color", color);
 		}
 
 		virtual void Execute(Graph::GraphContext ctx) final {
@@ -23,6 +25,11 @@ namespace Gin::Module::Base {
 			vec3.x() = x;
 			vec3.y() = y;
 			vec3.z() = z;
+
+			color.x() = (float)x;
+			color.y() = (float)y;
+			color.z() = (float)z;
+			color.w() = (float)w;
 		};
 
 		virtual std::string GetName() final {
@@ -33,9 +40,11 @@ namespace Gin::Module::Base {
 		T x{};
 		T y{};
 		T z{};
+		T w{};
 
 		Eigen::Vector2<T> vec2{};
 		Eigen::Vector3<T> vec3{};
+		Eigen::Vector4<float> color{};
 	};
 
 	template<typename T>
@@ -45,18 +54,26 @@ namespace Gin::Module::Base {
 			AddInputPort("X", x);
 			AddInputPort("Y", y);
 			AddInputPort("Z", z);
+			AddInputPort("W", w);
 
 			AddOutputPort("Vector2", vec2);
 			AddOutputPort("Vector3", vec3);
+			AddOutputPort("Color", color);
 		}
 
 		virtual void Execute(Graph::GraphContext ctx) final {
 			SpatialOperation([&](size_t idx, size_t _x, size_t _y, size_t _z) {
 				vec2[idx].x() = x[idx];
 				vec2[idx].y() = y[idx];
+
 				vec3[idx].x() = x[idx];
 				vec3[idx].y() = y[idx];
 				vec3[idx].z() = z[idx];
+
+				color[idx].x() = (float)x[idx];
+				color[idx].y() = (float)y[idx];
+				color[idx].z() = (float)z[idx];
+				color[idx].w() = (float)w[idx];
 			});
 		};
 
@@ -64,9 +81,15 @@ namespace Gin::Module::Base {
 			SpatialOperation(pool, [&](size_t idx, size_t _x, size_t _y, size_t _z) {
 				vec2[idx].x() = x[idx];
 				vec2[idx].y() = y[idx];
+
 				vec3[idx].x() = x[idx];
 				vec3[idx].y() = y[idx];
 				vec3[idx].z() = z[idx];
+
+				color[idx].x() = (float)x[idx];
+				color[idx].y() = (float)y[idx];
+				color[idx].z() = (float)z[idx];
+				color[idx].w() = (float)w[idx];
 			});
 		};
 
@@ -78,9 +101,11 @@ namespace Gin::Module::Base {
 		Spatial::Spatial<T> x{};
 		Spatial::Spatial<T> y{};
 		Spatial::Spatial<T> z{};
+		Spatial::Spatial<T> w{};
 
 		Spatial::Spatial<Eigen::Vector2<T>> vec2{};
 		Spatial::Spatial<Eigen::Vector3<T>> vec3{};
+		Spatial::Spatial<Eigen::Vector4<float>> color{};
 	};
 
 }

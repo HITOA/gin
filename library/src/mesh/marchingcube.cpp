@@ -281,32 +281,32 @@ int triangleConnectionTable[256][16] =
         {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1}
 };
 
-void Gin::Mesh::MarchingCubeMeshBuilder::Build(Mesh& mesh, Spatial::Sampler<float>& sampler)
+void Gin::Mesh::MarchingCubeMeshBuilder::Build(Mesh& mesh, Spatial::Sampler<float>& volume, Spatial::Sampler<Eigen::Vector4<float>>& colors)
 {
     Eigen::Vector3<double> offsets[8] = {
            {0.0, 0.0, 0.0},
-           {sampler.GetScale(), 0.0, 0.0},
-           {sampler.GetScale(), 0.0, sampler.GetScale()},
-           {0.0, 0.0, sampler.GetScale()},
-           {0.0, sampler.GetScale(), 0.0},
-           {sampler.GetScale(), sampler.GetScale(), 0.0},
-           {sampler.GetScale(), sampler.GetScale(), sampler.GetScale()},
-           {0.0, sampler.GetScale(), sampler.GetScale()}
+           {volume.GetScale(), 0.0, 0.0},
+           {volume.GetScale(), 0.0, volume.GetScale()},
+           {0.0, 0.0, volume.GetScale()},
+           {0.0, volume.GetScale(), 0.0},
+           {volume.GetScale(), volume.GetScale(), 0.0},
+           {volume.GetScale(), volume.GetScale(), volume.GetScale()},
+           {0.0, volume.GetScale(), volume.GetScale()}
     };
 
     std::vector<Eigen::Vector3<float>> vertices{};
     std::vector<Eigen::Vector3<float>> normals{};
 
-    for (double z = -sampler.GetBounds().extent.z(); z < sampler.GetBounds().extent.z(); z += sampler.GetScale()) {
-        for (double y = -sampler.GetBounds().extent.y(); y < sampler.GetBounds().extent.y(); y += sampler.GetScale()) {
-            for (double x = -sampler.GetBounds().extent.x(); x < sampler.GetBounds().extent.x(); x += sampler.GetScale()) {
+    for (double z = -volume.GetBounds().extent.z(); z < volume.GetBounds().extent.z(); z += volume.GetScale()) {
+        for (double y = -volume.GetBounds().extent.y(); y < volume.GetBounds().extent.y(); y += volume.GetScale()) {
+            for (double x = -volume.GetBounds().extent.x(); x < volume.GetBounds().extent.x(); x += volume.GetScale()) {
                 Eigen::Vector3<double> point{ x, y, z };
 
                 CubeData data{};
 
                 for (int i = 0; i < 8; ++i) {
                     data.position[i] = point + offsets[i];
-                    data.distance[i] = sampler.nearest(data.position[i] + sampler.GetBounds().origin);
+                    data.distance[i] = volume.nearest(data.position[i] + volume.GetBounds().origin);
                 }
 
                 unsigned char cubeIdx = GetCubeIndex(data);
@@ -330,19 +330,19 @@ void Gin::Mesh::MarchingCubeMeshBuilder::Build(Mesh& mesh, Spatial::Sampler<floa
 
                     if (GetTriangleWindingOrder() == TriangleWindingOrder::COUNTER_CLOCK_WISE) {
                         vertices.push_back(Eigen::Vector3<float>{ (float)p1.x(), (float)p1.y(), (float)p1.z()});
-                        normals.push_back(CalculateNormal(p1, sampler));
+                        normals.push_back(CalculateNormal(p1, volume));
                         vertices.push_back(Eigen::Vector3<float>{ (float)p2.x(), (float)p2.y(), (float)p2.z()});
-                        normals.push_back(CalculateNormal(p2, sampler));
+                        normals.push_back(CalculateNormal(p2, volume));
                         vertices.push_back(Eigen::Vector3<float>{ (float)p3.x(), (float)p3.y(), (float)p3.z()});
-                        normals.push_back(CalculateNormal(p3, sampler));
+                        normals.push_back(CalculateNormal(p3, volume));
                     }
                     else {
                         vertices.push_back(Eigen::Vector3<float>{ (float)p3.x(), (float)p3.y(), (float)p3.z()});
-                        normals.push_back(CalculateNormal(p3, sampler));
+                        normals.push_back(CalculateNormal(p3, volume));
                         vertices.push_back(Eigen::Vector3<float>{ (float)p2.x(), (float)p2.y(), (float)p2.z()});
-                        normals.push_back(CalculateNormal(p2, sampler));
+                        normals.push_back(CalculateNormal(p2, volume));
                         vertices.push_back(Eigen::Vector3<float>{ (float)p1.x(), (float)p1.y(), (float)p1.z()});
-                        normals.push_back(CalculateNormal(p1, sampler));
+                        normals.push_back(CalculateNormal(p1, volume));
                     }
                 }
             }

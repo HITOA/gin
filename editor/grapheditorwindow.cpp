@@ -215,6 +215,11 @@ void GraphEditorWindow::DrawGraphPort(size_t idx, Gin::Graph::GraphPort& port, b
 			if (ImGui::Selectable("Vec3<Double>"))
 				SetGraphPortType<Eigen::Vector3<double>>(idx, input);
 
+			ImGui::Separator();
+
+			if (ImGui::Selectable("Color"))
+				SetGraphPortType<Eigen::Vector4<float>>(idx, input);
+
 			if (!input) {
 				ImGui::Separator();
 
@@ -242,6 +247,11 @@ void GraphEditorWindow::DrawGraphPort(size_t idx, Gin::Graph::GraphPort& port, b
 					SetGraphPortType<Gin::Spatial::Spatial<Eigen::Vector3<float>>>(idx, input);
 				if (ImGui::Selectable("Spatial<Vec3<Double>>"))
 					SetGraphPortType<Gin::Spatial::Spatial<Eigen::Vector3<double>>>(idx, input);
+
+				ImGui::Separator();
+
+				if (ImGui::Selectable("Spatial<Color>"))
+					SetGraphPortType<Gin::Spatial::Spatial<Eigen::Vector4<float>>>(idx, input);
 			}
 
 			ImGui::EndCombo();

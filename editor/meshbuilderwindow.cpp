@@ -9,7 +9,8 @@ MeshBuilderWindow::MeshBuilderWindow()
 {
 	mesh = std::make_shared<Vin::DynamicMesh>(Vin::VertexBufferLayout{
 			   Vin::VertexBufferElement{ Vin::VertexAttribute::Position, Vin::VertexAttributeType::Float3 },
-			   Vin::VertexBufferElement{ Vin::VertexAttribute::Normal, Vin::VertexAttributeType::Float3 } }, Vin::BufferIndexType::UnsignedInt32);
+			   Vin::VertexBufferElement{ Vin::VertexAttribute::Normal, Vin::VertexAttributeType::Float3 },
+			   Vin::VertexBufferElement{ Vin::VertexAttribute::Color, Vin::VertexAttributeType::Float4 } }, Vin::BufferIndexType::UnsignedInt32);
 }
 
 MeshBuilderWindow::~MeshBuilderWindow()
@@ -174,11 +175,31 @@ void MeshBuilderWindow::BuildVolume(Gin::Graph::GraphContext ctx)
 	elapsed = std::chrono::system_clock::now() - start;
 	Vin::Logger::Log("Graph Parallel Execution Took : {}ms", elapsed.count() * 1000.0);
 
-	Gin::Spatial::Spatial<float> spatial = *(Gin::Spatial::Spatial<float>*)volumePort.GetProperty();
-	Gin::Spatial::Sampler<float> sampler{ spatial };
+	Gin::Spatial::Spatial<float> volume = *(Gin::Spatial::Spatial<float>*)volumePort.GetProperty();
+	Gin::Spatial::Sampler<float> volumeSampler{ volume };
 
-	sampler.SetScale(ctx.scale);
-	sampler.SetBounds(ctx.bounds);
+	Gin::Spatial::Spatial<Eigen::Vector4<float>> colors{ Eigen::Vector4<float>{1.0f, 1.0f, 1.0f, 1.0f} };
+
+	size_t colorsIdx = entry->graph->HasOutput("_Color");
+	if (colorsIdx != std::numeric_limits<size_t>::max()) {
+		Gin::Graph::GraphPort& colorsPort = entry->graph->GetOutputPort(colorsIdx);
+		if (colorsPort.GetType().type == (Gin::Graph::PortType)((int)Gin::Graph::PortType::Color + (int)Gin::Graph::PortType::Spatial)) {
+			colors = *(Gin::Spatial::Spatial<Eigen::Vector4<float>>*)(colorsPort.GetProperty());
+		}
+		else {
+			colors.Resize(volume.GetWidth(), volume.GetHeight(), volume.GetDepth());
+		}
+	}
+	else {
+		colors.Resize(volume.GetWidth(), volume.GetHeight(), volume.GetDepth());
+	}
+
+	Gin::Spatial::Sampler<Eigen::Vector4<float>> colorsSampler{ colors };
+
+	volumeSampler.SetScale(ctx.scale);
+	volumeSampler.SetBounds(ctx.bounds);
+	colorsSampler.SetScale(ctx.scale);
+	colorsSampler.SetBounds(ctx.bounds);
 
 	Gin::Mesh::IndexedMesh indexedMesh{};
 
@@ -189,7 +210,7 @@ void MeshBuilderWindow::BuildVolume(Gin::Graph::GraphContext ctx)
 		start = std::chrono::system_clock::now();
 
 		try {
-			builder.Build(indexedMesh, sampler);
+			builder.Build(indexedMesh, volumeSampler, colorsSampler);
 			indexedMesh.BuildIndex();
 			indexedMesh.RecalculateNormals();
 		}
@@ -204,7 +225,7 @@ void MeshBuilderWindow::BuildVolume(Gin::Graph::GraphContext ctx)
 		start = std::chrono::system_clock::now();
 
 		try {
-			builder.Build(indexedMesh, sampler);
+			builder.Build(indexedMesh, volumeSampler, colorsSampler);
 			indexedMesh.RecalculateNormals();
 		}
 		catch (std::exception& e) {
@@ -217,6 +238,7 @@ void MeshBuilderWindow::BuildVolume(Gin::Graph::GraphContext ctx)
 
 	std::vector<Gin::Mesh::IndexedMeshVertexData>& vertexData{ indexedMesh.GetIndexedMeshVertexData() };
 	std::vector<int>& indices{ indexedMesh.GetIndices() };
+
 
 	mesh->SetVertexData(vertexData.data(), vertexData.size());
 	mesh->SetIndexData(indices.data(), indices.size());

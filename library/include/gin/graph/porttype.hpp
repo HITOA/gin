@@ -11,7 +11,8 @@ namespace Gin::Graph {
 		Number = 2,
 		Vector2 = 4,
 		Vector3 = 8,
-		Spatial = 16
+		Color = 16,
+		Spatial = 32
 	};
 
 	template<typename T>
@@ -149,6 +150,23 @@ namespace Gin::Graph {
 		return "Vec3<Double>";
 	}
 
+	//Color
+
+	template<>
+	inline PortType GetPortType<Eigen::Vector4<float>>() {
+		return PortType::Color;
+	}
+
+	template<>
+	inline const char* GetPortTypeShortName<Eigen::Vector4<float>>() {
+		return "Color";
+	}
+
+	template<>
+	inline const char* GetPortTypeFullName<Eigen::Vector4<float>>() {
+		return "Color";
+	}
+
 	//Spatial Number
 	template<>
 	inline PortType GetPortType<Spatial::Spatial<int>>() {
@@ -268,6 +286,23 @@ namespace Gin::Graph {
 	template<>
 	inline const char* GetPortTypeFullName<Spatial::Spatial<Eigen::Vector3<double>>>() {
 		return "Spatial<Vec3<Double>>";
+	}
+
+	//Spatial Color
+
+	template<>
+	inline PortType GetPortType<Spatial::Spatial<Eigen::Vector4<float>>>() {
+		return (PortType)((int)PortType::Color + (int)PortType::Spatial);
+	}
+
+	template<>
+	inline const char* GetPortTypeShortName<Spatial::Spatial<Eigen::Vector4<float>>>() {
+		return "Color";
+	}
+
+	template<>
+	inline const char* GetPortTypeFullName<Spatial::Spatial<Eigen::Vector4<float>>>() {
+		return "Spatial<Color>";
 	}
 
 	//TypeInfo

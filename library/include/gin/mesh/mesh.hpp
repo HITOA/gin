@@ -10,6 +10,7 @@ namespace Gin::Mesh {
 	public:
 		virtual void SetVertices(Eigen::Vector3<float>* vertices, size_t count) = 0;
 		virtual void SetNormals(Eigen::Vector3<float>* normals, size_t count) = 0;
+		virtual void SetColors(Eigen::Vector4<float>* colors, size_t count) = 0;
 		virtual void SetIndices(int* indices, size_t count) = 0;
 		virtual void Clear() = 0;
 	};

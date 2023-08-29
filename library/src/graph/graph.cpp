@@ -93,7 +93,7 @@ void  Gin::Graph::GraphPortOperator::LinkGraphOutput(size_t idx) {
 		throw std::invalid_argument{ "Can't link input port to graph output" };
 
 	if (graph->outputs.size() <= idx)
-		throw std::invalid_argument{ "Invalid graph input index" };
+		throw std::invalid_argument{ "Invalid graph output index" };
 
 	//if (node->GetOutputPort(portIdx - node->GetInputPortCount()).type != graph->outputs[idx].type)
 	//	throw std::invalid_argument{ "Can't link port that are not the same type" };

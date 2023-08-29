@@ -7,12 +7,14 @@ Gin::Module::Signed::OPUnion::OPUnion()
 	AddInputPort("B", distanceB);
 
 	AddOutputPort("Signed Distance", distanceR);
+	AddOutputPort("T", t);
 }
 
 void Gin::Module::Signed::OPUnion::Execute(Graph::GraphContext ctx)
 {
 	SpatialOperation([&](size_t idx, size_t x, size_t y, size_t z) {
 		distanceR[idx] = Math::Min<float>(distanceA[idx], distanceB[idx]);
+		t[idx] = distanceA[idx] < distanceB[idx] ? 0.0f : 1.0f;
 	});
 }
 
@@ -20,6 +22,7 @@ void Gin::Module::Signed::OPUnion::Execute(Graph::GraphContext ctx, Thread::Thre
 {
 	SpatialOperation(pool, [&](size_t idx, size_t x, size_t y, size_t z) {
 		distanceR[idx] = Math::Min<float>(distanceA[idx], distanceB[idx]);
+		t[idx] = distanceA[idx] < distanceB[idx] ? 0.0f : 1.0f;
 	});
 }
 
@@ -34,12 +37,14 @@ Gin::Module::Signed::OPSubstraction::OPSubstraction()
 	AddInputPort("B", distanceB);
 
 	AddOutputPort("Signed Distance", distanceR);
+	AddOutputPort("T", t);
 }
 
 void Gin::Module::Signed::OPSubstraction::Execute(Graph::GraphContext ctx)
 {
 	SpatialOperation([&](size_t idx, size_t x, size_t y, size_t z) {
 		distanceR[idx] = Math::Max<float>(-distanceA[idx], distanceB[idx]);
+		t[idx] = -distanceA[idx] > distanceB[idx] ? 0.0f : 1.0f;
 	});
 }
 
@@ -47,6 +52,7 @@ void Gin::Module::Signed::OPSubstraction::Execute(Graph::GraphContext ctx, Threa
 {
 	SpatialOperation(pool, [&](size_t idx, size_t x, size_t y, size_t z) {
 		distanceR[idx] = Math::Max<float>(-distanceA[idx], distanceB[idx]);
+		t[idx] = -distanceA[idx] > distanceB[idx] ? 0.0f : 1.0f;
 	});
 }
 
@@ -61,12 +67,14 @@ Gin::Module::Signed::OPIntersection::OPIntersection()
 	AddInputPort("B", distanceB);
 
 	AddOutputPort("Signed Distance", distanceR);
+	AddOutputPort("T", t);
 }
 
 void Gin::Module::Signed::OPIntersection::Execute(Graph::GraphContext ctx)
 {
 	SpatialOperation([&](size_t idx, size_t x, size_t y, size_t z) {
 		distanceR[idx] = Math::Max<float>(distanceA[idx], distanceB[idx]);
+		t[idx] = distanceA[idx] > distanceB[idx] ? 0.0f : 1.0f;
 	});
 }
 
@@ -74,6 +82,7 @@ void Gin::Module::Signed::OPIntersection::Execute(Graph::GraphContext ctx, Threa
 {
 	SpatialOperation(pool, [&](size_t idx, size_t x, size_t y, size_t z) {
 		distanceR[idx] = Math::Max<float>(distanceA[idx], distanceB[idx]);
+		t[idx] = distanceA[idx] > distanceB[idx] ? 0.0f : 1.0f;
 	});
 }
 
@@ -89,19 +98,24 @@ Gin::Module::Signed::OPSmoothUnion::OPSmoothUnion()
 	AddInputPort("Smooth Factor", smoothFactor);
 
 	AddOutputPort("Signed Distance", distanceR);
+	AddOutputPort("T", t);
 }
 
 void Gin::Module::Signed::OPSmoothUnion::Execute(Graph::GraphContext ctx)
 {
 	SpatialOperation([&](size_t idx, size_t x, size_t y, size_t z) {
-		distanceR[idx] = Math::SMin(distanceA[idx], distanceB[idx], smoothFactor[idx]).x();
+		Eigen::Vector2<float> r = Math::SMin(distanceA[idx], distanceB[idx], smoothFactor[idx]);
+		distanceR[idx] = r.x();
+		t[idx] = r.y();
 	});
 }
 
 void Gin::Module::Signed::OPSmoothUnion::Execute(Graph::GraphContext ctx, Thread::ThreadPool& pool)
 {
 	SpatialOperation(pool, [&](size_t idx, size_t x, size_t y, size_t z) {
-		distanceR[idx] = Math::SMin(distanceA[idx], distanceB[idx], smoothFactor[idx]).x();
+		Eigen::Vector2<float> r = Math::SMin(distanceA[idx], distanceB[idx], smoothFactor[idx]);
+		distanceR[idx] = r.x();
+		t[idx] = r.y();
 	});
 }
 
@@ -117,19 +131,24 @@ Gin::Module::Signed::OPSmoothSubstraction::OPSmoothSubstraction()
 	AddInputPort("Smooth Factor", smoothFactor);
 
 	AddOutputPort("Signed Distance", distanceR);
+	AddOutputPort("T", t);
 }
 
 void Gin::Module::Signed::OPSmoothSubstraction::Execute(Graph::GraphContext ctx)
 {
 	SpatialOperation([&](size_t idx, size_t x, size_t y, size_t z) {
-		distanceR[idx] = Math::SMax(-distanceA[idx], distanceB[idx], smoothFactor[idx]).x();
+		Eigen::Vector2<float> r = Math::SMax(-distanceA[idx], distanceB[idx], smoothFactor[idx]);
+		distanceR[idx] = r.x();
+		t[idx] = r.y();
 	});
 }
 
 void Gin::Module::Signed::OPSmoothSubstraction::Execute(Graph::GraphContext ctx, Thread::ThreadPool& pool)
 {
 	SpatialOperation(pool, [&](size_t idx, size_t x, size_t y, size_t z) {
-		distanceR[idx] = Math::SMax(-distanceA[idx], distanceB[idx], smoothFactor[idx]).x();
+		Eigen::Vector2<float> r = Math::SMax(-distanceA[idx], distanceB[idx], smoothFactor[idx]);
+		distanceR[idx] = r.x();
+		t[idx] = r.y();
 	});
 }
 
@@ -145,19 +164,24 @@ Gin::Module::Signed::OPSmoothIntersection::OPSmoothIntersection()
 	AddInputPort("Smooth Factor", smoothFactor);
 
 	AddOutputPort("Signed Distance", distanceR);
+	AddOutputPort("T", t);
 }
 
 void Gin::Module::Signed::OPSmoothIntersection::Execute(Graph::GraphContext ctx)
 {
 	SpatialOperation([&](size_t idx, size_t x, size_t y, size_t z) {
-		distanceR[idx] = Math::SMax(distanceA[idx], distanceB[idx], smoothFactor[idx]).x();
+		Eigen::Vector2<float> r = Math::SMax(distanceA[idx], distanceB[idx], smoothFactor[idx]);
+		distanceR[idx] = r.x();
+		t[idx] = r.y();
 	});
 }
 
 void Gin::Module::Signed::OPSmoothIntersection::Execute(Graph::GraphContext ctx, Thread::ThreadPool& pool)
 {
 	SpatialOperation(pool, [&](size_t idx, size_t x, size_t y, size_t z) {
-		distanceR[idx] = Math::SMax(distanceA[idx], distanceB[idx], smoothFactor[idx]).x();
+		Eigen::Vector2<float> r = Math::SMax(distanceA[idx], distanceB[idx], smoothFactor[idx]);
+		distanceR[idx] = r.x();
+		t[idx] = r.y();
 	});
 }
 

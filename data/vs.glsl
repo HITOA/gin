@@ -4,10 +4,12 @@
 
 VIN_POSITION vec3 _position;
 VIN_NORMAL vec3 _normal;
+VIN_COLOR vec4 _color;
 
 out struct FsInput {
     vec4 positionWS; //World space position
     vec4 positionLS; //Light space position
+    vec4 color;
     vec3 normalOS;
     vec3 cameraPosition;
 } fsinput;
@@ -16,6 +18,7 @@ void main()
 {
     fsinput.positionWS = vin_matrix_model * vec4(_position, 1.0);
     fsinput.positionLS = vin_matrix_lightspace * vec4(_position, 1.0);
+    fsinput.color = _color;
     fsinput.normalOS = _normal;
     fsinput.cameraPosition = _WorldSpaceCameraPosition;
 

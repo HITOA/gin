@@ -12,7 +12,7 @@ namespace Gin::Mesh {
 
 	class MeshBuilder {
 	public:
-		virtual void Build(Mesh& mesh, Spatial::Sampler<float>& field) = 0;
+		virtual void Build(Mesh& mesh, Spatial::Sampler<float>& volume, Spatial::Sampler<Eigen::Vector4<float>>& colors) = 0;
 		
 		inline void SetTriangleWindingOrder(TriangleWindingOrder windingOrder) {
 			triangleWindingOrder = windingOrder;

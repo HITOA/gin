@@ -13,7 +13,7 @@ namespace Gin::Mesh {
 
 	class MarchingCubeMeshBuilder : public MeshBuilder {
 	public:
-		void Build(Mesh& mesh, Spatial::Sampler<float>& sampler) final;
+		void Build(Mesh& mesh, Spatial::Sampler<float>& volume, Spatial::Sampler<Eigen::Vector4<float>>& colors) final;
 
 	private:
 		inline unsigned char GetCubeIndex(CubeData& data) {
