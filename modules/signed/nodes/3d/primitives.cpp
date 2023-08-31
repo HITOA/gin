@@ -119,3 +119,39 @@ std::string Gin::Module::Signed::SDPlane::GetName()
 {
 	return "SDPlane";
 }
+
+Gin::Module::Signed::SDTorus::SDTorus()
+{
+	AddInputPort("Inner Radius", innerRadius);
+	AddInputPort("Outter Radius", outterRadius);
+	AddInputPort("Position", position);
+
+	AddOutputPort("Signed Distance", distance);
+}
+
+void Gin::Module::Signed::SDTorus::Execute(Graph::GraphContext ctx)
+{
+	SpatialOperation([&](size_t idx, size_t x, size_t y, size_t z) {
+		Eigen::Vector2<float> t{ innerRadius[idx], outterRadius[idx] };
+		Eigen::Vector2<float> p{ position[idx].x(), position[idx].z() };
+		Eigen::Vector2<float> q{ p.dot(p) - t.x(), position[idx].y() };
+		
+		distance[idx] = q.dot(q) - t.y();
+	});
+}
+
+void Gin::Module::Signed::SDTorus::Execute(Graph::GraphContext ctx, Thread::ThreadPool& pool)
+{
+	SpatialOperation(pool, [&](size_t idx, size_t x, size_t y, size_t z) {
+		Eigen::Vector2<float> t{ innerRadius[idx], outterRadius[idx] };
+		Eigen::Vector2<float> p{ position[idx].x(), position[idx].z() };
+		Eigen::Vector2<float> q{ sqrt(p.dot(p)) - t.x(), position[idx].y() };
+
+		distance[idx] = sqrt(q.dot(q)) - t.y();
+	});
+}
+
+std::string Gin::Module::Signed::SDTorus::GetName()
+{
+	return "SDTorus";
+}

@@ -38,6 +38,11 @@ namespace Gin::Math {
 		return a >= b ? a : b;
 	}
 
+	template<typename T>
+	inline T Clamp(const T& a, const T& min, const T& max) {
+		return Max<T>(Min<T>(a, max), min);
+	}
+
 	inline Eigen::Vector2<float> SMin(float a, float b, float k) {
 		float h = Max<float>(k - abs(a - b), 0.0f) / k;
 		float m = h * h * 0.5f;

@@ -1,5 +1,7 @@
 #include "editor.hpp"
 
+#include <assets/serdes/textureserdes.hpp>
+
 #include <module/windowing/windowmodule.hpp>
 #include <vfs/vfs.hpp>
 #include <utils/shaderutils.hpp>
@@ -21,8 +23,17 @@ void GinEditorModule::Start()
 {
 	Vin::VFS::AddFileSystem(std::make_shared<Vin::NativeFS>("./data"));
 
-	program = Vin::LoadProgram("vs.glsl", "fs.glsl");
+	Vin::Asset<Vin::Texture> topDiff = Vin::AssetDatabase::LoadAsset<Vin::Texture>("textures/aerial_grass_rock_diff_4k.jpg");
+	Vin::Asset<Vin::Texture> sideDiff = Vin::AssetDatabase::LoadAsset<Vin::Texture>("textures/rock_08_diff_4k.jpg");
+
+	program = Vin::LoadProgram("shaders/pbrvs.glsl", "shaders/pbrfs.glsl");
+
 	material = std::make_shared<Vin::Material>(program);
+
+	material->SetFloat("_TriplanarSharpness", 8.0f);
+
+	material->SetTexture("_TopDiffuseTex", topDiff);
+	material->SetTexture("_SideDiffuseTex", sideDiff);
 
 	scene = std::make_shared<Vin::Scene>();
 
@@ -42,7 +53,7 @@ void GinEditorModule::Start()
 	camera = std::shared_ptr<Vin::Camera>{ new Vin::Camera{ {windowInfo->width, windowInfo->height} } };
 	camera->SetFOV(40);
 	camera->SetNearPlane(0.1);
-	camera->SetFarPlane(4000);
+	camera->SetFarPlane(16000);
 
 	std::shared_ptr<GraphListEntry> entry{ std::make_shared<GraphListEntry>() };
 	entry->graph = std::make_shared<Gin::Graph::Graph>();

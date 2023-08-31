@@ -77,4 +77,23 @@ namespace Gin::Module::Signed {
 
 		Spatial::Spatial<float> distance{};
 	};
+
+	/**
+	 * Signed Distance Function For A Torus.
+	 */
+	class SDTorus : public Graph::Node {
+	public:
+		SDTorus();
+
+		virtual void Execute(Graph::GraphContext ctx) final;
+		virtual void Execute(Graph::GraphContext ctx, Thread::ThreadPool& pool) final;
+		virtual std::string GetName() final;
+
+	private:
+		Spatial::Spatial<float> innerRadius{ 1.0f };
+		Spatial::Spatial<float> outterRadius{ 1.0f };
+		Spatial::Spatial<Eigen::Vector3<double>> position{};
+
+		Spatial::Spatial<float> distance{};
+	};
 }

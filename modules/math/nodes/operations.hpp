@@ -104,6 +104,31 @@ namespace Gin::Module::Math {
 		T r{};
 	};
 
+	template<typename T>
+	class Pow : public Graph::Node {
+	public:
+		Pow() {
+			AddInputPort("A", a);
+			AddInputPort("Power", p);
+
+			AddOutputPort("Result", r);
+		}
+
+		virtual void Execute(Graph::GraphContext ctx) final {
+			r = pow(a, p);
+		}
+
+		virtual std::string GetName() final {
+			return "Pow";
+		}
+
+	private:
+		T a{};
+		T p{};
+
+		T r{};
+	};
+
 	//Spatial
 
 	template<typename T>
@@ -234,6 +259,39 @@ namespace Gin::Module::Math {
 	private:
 		Spatial::Spatial<T> a{};
 		Spatial::Spatial<T> b{};
+
+		Spatial::Spatial<T> r{};
+	};
+
+	template<typename T>
+	class PowSpatial : public Graph::Node {
+	public:
+		PowSpatial() {
+			AddInputPort("A", a);
+			AddInputPort("Power", p);
+
+			AddOutputPort("Result", r);
+		}
+
+		virtual void Execute(Graph::GraphContext ctx) final {
+			SpatialOperation([&](size_t idx, size_t _x, size_t _y, size_t _z) {
+				r[idx] = pow(a[idx], p[idx]);
+			});
+		}
+
+		virtual void Execute(Graph::GraphContext ctx, Thread::ThreadPool& pool) final {
+			SpatialOperation(pool, [&](size_t idx, size_t _x, size_t _y, size_t _z) {
+				r[idx] = pow(a[idx], p[idx]);
+			});
+		}
+
+		virtual std::string GetName() final {
+			return "Pow";
+		}
+
+	private:
+		Spatial::Spatial<T> a{};
+		Spatial::Spatial<T> p{};
 
 		Spatial::Spatial<T> r{};
 	};

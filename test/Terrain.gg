@@ -1,0 +1,247 @@
+{
+    "data": {
+        "editor": {
+            "inputs": {
+                "position": [
+                    -1902.0,
+                    164.0
+                ]
+            },
+            "outputs": {
+                "position": [
+                    864.0,
+                    249.0
+                ]
+            }
+        },
+        "outputs": [
+            {
+                "name": "_Volume",
+                "type": 723322602726554400
+            },
+            {
+                "name": "_Color",
+                "type": 16881987616362436548
+            }
+        ]
+    },
+    "links": [
+        0,
+        0,
+        6,
+        2,
+        0,
+        1,
+        1,
+        0,
+        2,
+        1,
+        1,
+        0,
+        3,
+        0,
+        4,
+        0,
+        5,
+        0,
+        3,
+        4,
+        6,
+        0,
+        5,
+        3,
+        7,
+        0,
+        0,
+        2,
+        7,
+        1,
+        2,
+        2,
+        8,
+        0,
+        9,
+        6,
+        8,
+        1,
+        10,
+        6,
+        8,
+        2,
+        7,
+        4,
+        2147483646,
+        0,
+        7,
+        3,
+        2147483646,
+        1,
+        8,
+        3
+    ],
+    "name": "Terrain",
+    "nodes": [
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        -417.0,
+                        186.0
+                    ]
+                },
+                "node": {
+                    "Height": 800.0
+                }
+            },
+            "path": "Signed/3D/Primitives/Ground"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        -686.0,
+                        239.0
+                    ]
+                },
+                "node": {}
+            },
+            "path": "Base/Position"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        -417.0,
+                        311.0
+                    ]
+                },
+                "node": {
+                    "Height": 0.0
+                }
+            },
+            "path": "Signed/3D/Primitives/Ground"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        -1397.0,
+                        -20.0
+                    ]
+                },
+                "node": {
+                    "Gain": 0.5,
+                    "Lacunarity": 2.0,
+                    "Octaves": 16
+                }
+            },
+            "path": "FastNoise2/Fractal/Fractal Ridged"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        -1590.0,
+                        -19.0
+                    ]
+                },
+                "node": {}
+            },
+            "path": "FastNoise2/Generator/Simplex"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        -1068.0,
+                        -19.0
+                    ]
+                },
+                "node": {
+                    "Frequency": 9.999999747378752e-05,
+                    "Seed": 1042
+                }
+            },
+            "path": "FastNoise2/Sampler2D"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        -749.0,
+                        -21.0
+                    ]
+                },
+                "node": {
+                    "A": 1.0,
+                    "B": 800.0
+                }
+            },
+            "path": "Math/Operation/MultiplySpatial"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        -58.0,
+                        237.0
+                    ]
+                },
+                "node": {
+                    "A": -1824.0,
+                    "B": -1024.0,
+                    "Smooth Factor": 100.0
+                }
+            },
+            "path": "Signed/3D/Operations/SmoothUnion"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        462.0,
+                        465.0
+                    ]
+                },
+                "node": {
+                    "T": 0.0
+                }
+            },
+            "path": "Color/Blend"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        55.0,
+                        401.0
+                    ]
+                },
+                "node": {
+                    "W": 0.0,
+                    "X": 1.0,
+                    "Y": 1.0,
+                    "Z": 1.0
+                }
+            },
+            "path": "Base/Utils/CombineSpatial"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        50.0,
+                        538.0
+                    ]
+                },
+                "node": {
+                    "W": 0.0,
+                    "X": 0.6,
+                    "Y": 1.0,
+                    "Z": 0.5
+                }
+            },
+            "path": "Base/Utils/CombineSpatial"
+        }
+    ]
+}

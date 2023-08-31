@@ -11,6 +11,7 @@ void InitializeSignedModule()
 	Gin::Module::AddNodesToRegistry<Gin::Module::Signed::SDBox>("Signed/3D/Primitives/Box");
 	Gin::Module::AddNodesToRegistry<Gin::Module::Signed::SDGround>("Signed/3D/Primitives/Ground");
 	Gin::Module::AddNodesToRegistry<Gin::Module::Signed::SDPlane>("Signed/3D/Primitives/Plane");
+	Gin::Module::AddNodesToRegistry<Gin::Module::Signed::SDTorus>("Signed/3D/Primitives/Torus");
 
 	//Operations
 	Gin::Module::AddNodesToRegistry<Gin::Module::Signed::OPUnion>("Signed/3D/Operations/Union");
