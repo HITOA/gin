@@ -11,6 +11,7 @@ void InitializeNoiseModule()
 	Gin::Module::AddNodesToRegistry<Gin::Module::Noise::OpenSimplex2>("FastNoise2/Generator/OpenSimplex2");
 	Gin::Module::AddNodesToRegistry<Gin::Module::Noise::OpenSimplex2S>("FastNoise2/Generator/OpenSimplex2S");
 	Gin::Module::AddNodesToRegistry<Gin::Module::Noise::Cellular>("FastNoise2/Generator/Cellular");
+	Gin::Module::AddNodesToRegistry<Gin::Module::Noise::CellularDistance>("FastNoise2/Generator/CellularDistance");
 
 	Gin::Module::AddNodesToRegistry<Gin::Module::Noise::FractalFBm>("FastNoise2/Fractal/FractalFBm");
 	Gin::Module::AddNodesToRegistry<Gin::Module::Noise::FractalRidged>("FastNoise2/Fractal/Fractal Ridged");

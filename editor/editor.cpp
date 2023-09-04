@@ -30,7 +30,7 @@ void GinEditorModule::Start()
 
 	material = std::make_shared<Vin::Material>(program);
 
-	material->SetFloat("_TriplanarSharpness", 8.0f);
+	material->SetFloat("_TriplanarSharpness", 4.0f);
 
 	material->SetTexture("_TopDiffuseTex", topDiff);
 	material->SetTexture("_SideDiffuseTex", sideDiff);

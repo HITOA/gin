@@ -59,6 +59,18 @@ namespace Gin::Module::Noise {
 		FastNoise::SmartNode<> cellular{};
 	};
 
+	class CellularDistance : public Graph::Node {
+	public:
+		CellularDistance();
+
+		virtual void Execute(Graph::GraphContext ctx) final;
+
+		virtual std::string GetName() final;
+
+	private:
+		FastNoise::SmartNode<> cellular{};
+	};
+
 	// Fractal
 
 	class FractalFBm : public Graph::Node {

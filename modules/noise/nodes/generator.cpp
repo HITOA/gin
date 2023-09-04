@@ -59,6 +59,21 @@ std::string Gin::Module::Noise::Cellular::GetName()
 	return "Cellular";
 }
 
+Gin::Module::Noise::CellularDistance::CellularDistance()
+{
+	AddOutputPort("Cellular", cellular);
+}
+
+void Gin::Module::Noise::CellularDistance::Execute(Graph::GraphContext ctx)
+{
+	cellular = FastNoise::New<FastNoise::CellularDistance>();
+}
+
+std::string Gin::Module::Noise::CellularDistance::GetName()
+{
+	return "Cellular Distance";
+}
+
 Gin::Module::Noise::FractalFBm::FractalFBm()
 {
 	AddInputPort("Source", source);

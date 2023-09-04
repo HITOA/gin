@@ -49,7 +49,7 @@ void main()
     InitializeBRDFData(inputData, surfaceData, brdfData);
 
     vec3 color = CalculatePBR(GetMainLight(), inputData, surfaceData, brdfData);
-    //color += vec3(0.015, 0.015, 0.03);
+    color += diffuse.xyz * vec3(0.015, 0.015, 0.02);
     
     color = color / (color + vec3(1.0));
     color = pow(color, vec3(1.0 / gamma)); 

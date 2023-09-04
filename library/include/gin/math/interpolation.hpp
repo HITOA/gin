@@ -20,7 +20,7 @@ namespace Gin::Math {
 	template<typename T>
 	inline T Smoothstep(T v, T edge0 = T{ 0.0f }, T edge1 = T{ 1.0f }) {
 		v = (v - edge0) / (edge1 - edge0);
-		v = v < 0.0f ? 0.0f : v > 1.0f ? 1.0f : v;
+		v = v < 0.0f ? 0.0f : (v > 1.0f ? 1.0f : v);
 		return v * v * (3.0f - 2.0f * v);
 	}
 

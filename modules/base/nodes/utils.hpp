@@ -48,6 +48,35 @@ namespace Gin::Module::Base {
 	};
 
 	template<typename T>
+	class Split3 : public Graph::Node {
+	public:
+		Split3() {
+			AddInputPort("Vector3", vec3);
+
+			AddOutputPort("X", x);
+			AddOutputPort("Y", y);
+			AddOutputPort("Z", z);
+		}
+
+		virtual void Execute(Graph::GraphContext ctx) final {
+			x = vec3.x();
+			y = vec3.y();
+			z = vec3.z();
+		};
+
+		virtual std::string GetName() final {
+			return "Split3";
+		};
+
+	private:
+		Eigen::Vector3<T> vec3{};
+
+		T x{};
+		T y{};
+		T z{};
+	};
+
+	template<typename T>
 	class CombineSpatial : public Graph::Node {
 	public:
 		CombineSpatial() {
@@ -106,6 +135,45 @@ namespace Gin::Module::Base {
 		Spatial::Spatial<Eigen::Vector2<T>> vec2{};
 		Spatial::Spatial<Eigen::Vector3<T>> vec3{};
 		Spatial::Spatial<Eigen::Vector4<float>> color{};
+	};
+
+	template<typename T>
+	class Split3Spatial : public Graph::Node {
+	public:
+		Split3Spatial() {
+			AddInputPort("Vector3", vec3);
+
+			AddOutputPort("X", x);
+			AddOutputPort("Y", y);
+			AddOutputPort("Z", z);
+		}
+
+		virtual void Execute(Graph::GraphContext ctx) final {
+			SpatialOperation([&](size_t idx, size_t _x, size_t _y, size_t _z) {
+				x[idx] = vec3[idx].x();
+				y[idx] = vec3[idx].y();
+				z[idx] = vec3[idx].z();
+			});
+		};
+
+		virtual void Execute(Graph::GraphContext ctx, Thread::ThreadPool& pool) final {
+			SpatialOperation(pool, [&](size_t idx, size_t _x, size_t _y, size_t _z) {
+				x[idx] = vec3[idx].x();
+				y[idx] = vec3[idx].y();
+				z[idx] = vec3[idx].z();
+				});
+		};
+
+		virtual std::string GetName() final {
+			return "Split3";
+		};
+
+	private:
+		Spatial::Spatial<Eigen::Vector3<T>> vec3{};
+
+		Spatial::Spatial<T> x{};
+		Spatial::Spatial<T> y{};
+		Spatial::Spatial<T> z{};
 	};
 
 }
