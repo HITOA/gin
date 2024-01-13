@@ -1,6 +1,6 @@
-#include <gin/graph/serialization/graphserdes.hpp>
+#include "gin/graph/serialization/graphserdes.hpp"
 #include <fstream>
-#include <gin/module/registry.hpp>
+#include "gin/module/registry.hpp"
 
 nlohmann::json SerializeGraphPort(Gin::Graph::GraphPort& port) {
 	nlohmann::json serializedPort{ nlohmann::json::object() };
@@ -127,7 +127,7 @@ void Gin::Graph::Serialization::SerializeGraph(Graph& graph, SerializedGraph& se
 	serializedGraph.nodesData.resize(graph.GetNodeCount());
 
 	for (size_t i = 0; i < graph.GetNodeCount(); ++i) {
-		GraphNodeOperator<Node>& node = graph.GetNode<Node>(i);
+		GraphNodeOperator<Node> node = graph.GetNode<Node>(i);
 
 		serializedGraph.nodes[i] = node->GetPath();
 		serializedGraph.nodesData[i] = nlohmann::json::object();
@@ -147,7 +147,7 @@ void Gin::Graph::Serialization::SerializeGraph(Graph& graph, SerializedGraph& se
 	auto& adj = graph.GetAdj();
 
 	for (size_t nodeIdx = 0; nodeIdx < graph.GetNodeCount(); ++nodeIdx) {
-		Gin::Graph::GraphNodeOperator<Gin::Graph::Node>& node = graph.GetNode<Gin::Graph::Node>(nodeIdx);
+		Gin::Graph::GraphNodeOperator<Gin::Graph::Node> node = graph.GetNode<Gin::Graph::Node>(nodeIdx);
 
 		for (size_t portIdx = 0; portIdx < node->GetInputPortCount(); ++portIdx) {
 			for (std::pair<size_t, size_t>& link : adj[nodeIdx][portIdx]) {

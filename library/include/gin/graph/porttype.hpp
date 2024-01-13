@@ -316,12 +316,12 @@ namespace Gin::Graph {
 		PortTypeInfo(const std::type_info& info, PortType type, const char* shortName, const char* fullName) : info{ info }, type{ type }, shortName{ shortName }, fullName{ fullName } {};
 		PortTypeInfo() : info{ typeid(void) }, type{ PortType::Object }, shortName{ GetPortTypeShortName<void>() } {};
 
-		inline bool operator==(PortTypeInfo& typeInfo) {
-			return info.get() == typeInfo.info.get();
+		friend inline bool operator==(const PortTypeInfo& v1, const PortTypeInfo& v2) {
+			return v1.info.get() == v2.info.get();
 		}
 
-		inline bool operator!=(PortTypeInfo& typeInfo) {
-			return !(*this == typeInfo);
+		friend inline bool operator!=(const PortTypeInfo& v1, const PortTypeInfo& v2) {
+			return !(v1 == v2);
 		}
 	};
 

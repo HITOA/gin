@@ -102,7 +102,7 @@ namespace Gin::Graph {
 
 		template<typename T>
 		inline void SetInput(std::string_view name, T value) {
-			auto& it = std::find_if(inputs.begin(), inputs.end(), [&](GraphPort& port) {
+			auto it = std::find_if(inputs.begin(), inputs.end(), [&](GraphPort& port) {
 				return name == port.GetName();
 			});
 
@@ -114,7 +114,7 @@ namespace Gin::Graph {
 
 		template<typename T>
 		inline void SetOutput(std::string_view name, T value) {
-			auto& it = std::find_if(outputs.begin(), outputs.end(), [&](GraphPort& port) {
+			auto it = std::find_if(outputs.begin(), outputs.end(), [&](GraphPort& port) {
 				return name == port.GetName();
 				});
 
@@ -126,7 +126,7 @@ namespace Gin::Graph {
 
 		template<typename T>
 		inline T GetInput(std::string_view name) {
-			auto& it = std::find_if(inputs.begin(), inputs.end(), [&](GraphPort& port) {
+			auto it = std::find_if(inputs.begin(), inputs.end(), [&](GraphPort& port) {
 				return name == port.GetName();
 				});
 
@@ -138,7 +138,7 @@ namespace Gin::Graph {
 
 		template<typename T>
 		inline T GetOutput(std::string_view name) {
-			auto& it = std::find_if(outputs.begin(), outputs.end(), [&](GraphPort& port) {
+			auto it = std::find_if(outputs.begin(), outputs.end(), [&](GraphPort& port) {
 				return name == port.GetName();
 				});
 
@@ -149,7 +149,7 @@ namespace Gin::Graph {
 		}
 
 		inline size_t HasInput(std::string_view name) {
-			auto& it = std::find_if(inputs.begin(), inputs.end(), [&](GraphPort& port) {
+			auto it = std::find_if(inputs.begin(), inputs.end(), [&](GraphPort& port) {
 				return name == port.GetName();
 				});
 
@@ -160,7 +160,7 @@ namespace Gin::Graph {
 		}
 
 		inline size_t HasOutput(std::string_view name) {
-			auto& it = std::find_if(outputs.begin(), outputs.end(), [&](GraphPort& port) {
+			auto it = std::find_if(outputs.begin(), outputs.end(), [&](GraphPort& port) {
 				return name == port.GetName();
 				});
 
@@ -244,16 +244,16 @@ namespace Gin::Graph {
 
 		inline size_t GetNodeIdx() { return nodeIdx; };
 
-		template<typename T>
-		inline GraphPortOperator GetPort(T& property) {
+		template<typename U>
+		inline GraphPortOperator GetPort(U& property) {
 			auto& node = graph->nodes[nodeIdx];
 
 			for (size_t i = 0; i < node->GetInputPortCount(); ++i)
-				if (node->GetInputPort(i).property == &property)
+				if (node->GetInputPort(i).GetProperty() == &property)
 					return GraphPortOperator { graph, nodeIdx, i};
 
 			for (size_t i = 0; i < node->GetOutputPortCount(); ++i)
-				if (node->GetOutputPort(i).property == &property)
+				if (node->GetOutputPort(i).GetProperty() == &property)
 					return GraphPortOperator { graph, nodeIdx, i + node->GetInputPortCount()};
 
 			throw std::invalid_argument{ "This property does not have any input/output port." };

@@ -86,7 +86,7 @@ Gin::Module::Noise::FractalFBm::FractalFBm()
 
 void Gin::Module::Noise::FractalFBm::Execute(Graph::GraphContext ctx)
 {
-	auto& fr = FastNoise::New<FastNoise::FractalFBm>();
+	auto fr = FastNoise::New<FastNoise::FractalFBm>();
 	
 	fr->SetSource(source);
 	fr->SetGain(gain);
@@ -113,7 +113,7 @@ Gin::Module::Noise::FractalRidged::FractalRidged()
 
 void Gin::Module::Noise::FractalRidged::Execute(Graph::GraphContext ctx)
 {
-	auto& fr = FastNoise::New<FastNoise::FractalRidged>();
+	auto fr = FastNoise::New<FastNoise::FractalRidged>();
 
 	fr->SetSource(source);
 	fr->SetGain(gain);
@@ -139,7 +139,7 @@ Gin::Module::Noise::DomainWarp::DomainWarp()
 
 void Gin::Module::Noise::DomainWarp::Execute(Graph::GraphContext ctx)
 {
-	auto& warp = FastNoise::New<FastNoise::DomainWarpGradient>();
+	auto warp = FastNoise::New<FastNoise::DomainWarpGradient>();
 
 	warp->SetSource(source);
 	warp->SetWarpAmplitude(amplitude);

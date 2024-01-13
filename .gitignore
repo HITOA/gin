@@ -1,2 +1,6 @@
 /build
 /modules/module.hpp
+/cmake-build-debug
+/cmake-build-release
+/cmake-build-relwithdebinfo
+/.idea

@@ -6,7 +6,6 @@ set(CMAKE_CXX_STANDARD 17)
 set(EXTERNAL_PATH ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty)
 
 add_subdirectory(${EXTERNAL_PATH}/eigen)
-add_subdirectory(${EXTERNAL_PATH}/vin-engine)
 add_subdirectory(${EXTERNAL_PATH}/nanobench)
 add_subdirectory(${EXTERNAL_PATH}/nativefiledialog-extended-1.1.0)
 add_subdirectory(${EXTERNAL_PATH}/FastNoise2)
@@ -54,7 +53,7 @@ target_link_libraries(gin_library Eigen3::Eigen FastNoise)
 
 add_executable(gin_editor ${gin_editor_src})
 
-target_link_libraries(gin_editor gin_library vin_engine nfd)
+target_link_libraries(gin_editor gin_library nfd)
 
 add_executable(gin_bench ${gin_bench_src})
 

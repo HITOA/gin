@@ -4,6 +4,3 @@
 [submodule "3rdparty/nanobench"]
 	path = 3rdparty/nanobench
 	url = https://github.com/martinus/nanobench
-[submodule "3rdparty/vin-engine"]
-	path = 3rdparty/vin-engine
-	url = https://github.com/HITOA/vin-engine

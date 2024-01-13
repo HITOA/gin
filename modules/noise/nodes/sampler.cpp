@@ -41,7 +41,7 @@ void Gin::Module::Noise::Sampler2D::Execute(Graph::GraphContext ctx)
 	Eigen::Vector3<double> t = (ctx.bounds.origin - ctx.bounds.extent) / ctx.scale;
 	Eigen::Vector3<int> o = Math::Ceil<double, int, 3>(t);
 
-	auto& rd = FastNoise::New<FastNoise::RemoveDimension>();
+	auto rd = FastNoise::New<FastNoise::RemoveDimension>();
 
 	rd->SetSource(source);
 	rd->SetRemoveDimension(FastNoise::Dim::Y);

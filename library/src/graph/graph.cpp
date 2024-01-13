@@ -50,8 +50,8 @@ void Gin::Graph::GraphPortOperator::Unlink(GraphPortOperator port)
 	if (port.graph != graph)
 		throw std::invalid_argument{ "Can't unlink port node because it does not belong to the same graph." };
 
-	auto& linkAit = std::find(graph->adj[nodeIdx][portIdx].begin(), graph->adj[nodeIdx][portIdx].end(), std::make_pair(port.nodeIdx, port.portIdx));
-	auto& linkBit = std::find(graph->adj[port.nodeIdx][port.portIdx].begin(), graph->adj[port.nodeIdx][port.portIdx].end(), std::make_pair(nodeIdx, portIdx));
+	auto linkAit = std::find(graph->adj[nodeIdx][portIdx].begin(), graph->adj[nodeIdx][portIdx].end(), std::make_pair(port.nodeIdx, port.portIdx));
+	auto linkBit = std::find(graph->adj[port.nodeIdx][port.portIdx].begin(), graph->adj[port.nodeIdx][port.portIdx].end(), std::make_pair(nodeIdx, portIdx));
 
 	if (linkAit == std::end(graph->adj[nodeIdx][portIdx]) || linkBit == std::end(graph->adj[port.nodeIdx][port.portIdx]))
 		return;
@@ -113,7 +113,7 @@ void  Gin::Graph::GraphPortOperator::LinkGraphOutput(size_t idx) {
 
 void Gin::Graph::GraphPortOperator::LinkGraphInput(std::string_view name)
 {
-	auto& portIt = std::find_if(graph->inputs.begin(), graph->inputs.end(), [&](GraphPort& port) {
+	auto portIt = std::find_if(graph->inputs.begin(), graph->inputs.end(), [&](GraphPort& port) {
 		return port.GetName() == name;
 	});
 
@@ -125,7 +125,7 @@ void Gin::Graph::GraphPortOperator::LinkGraphInput(std::string_view name)
 
 void Gin::Graph::GraphPortOperator::LinkGraphOutput(std::string_view name)
 {
-	auto& portIt = std::find_if(graph->outputs.begin(), graph->outputs.end(), [&](GraphPort& port) {
+	auto portIt = std::find_if(graph->outputs.begin(), graph->outputs.end(), [&](GraphPort& port) {
 		return port.GetName() == name;
 		});
 
@@ -140,8 +140,8 @@ void Gin::Graph::GraphPortOperator::UnlinkGraphInput(size_t idx)
 	if (graph->adj[nodeIdx][portIdx].size() < 1)
 		return;
 
-	auto& linkGIt = std::find(graph->inputs[idx].GetLinks().begin(), graph->inputs[idx].GetLinks().end(), std::make_pair(nodeIdx, portIdx));
-	auto& linkAIt = std::find(graph->adj[nodeIdx][portIdx].begin(), graph->adj[nodeIdx][portIdx].end(), std::make_pair(std::numeric_limits<size_t>::max(), idx));
+	auto linkGIt = std::find(graph->inputs[idx].GetLinks().begin(), graph->inputs[idx].GetLinks().end(), std::make_pair(nodeIdx, portIdx));
+	auto linkAIt = std::find(graph->adj[nodeIdx][portIdx].begin(), graph->adj[nodeIdx][portIdx].end(), std::make_pair(std::numeric_limits<size_t>::max(), idx));
 
 	if (linkGIt == std::end(graph->inputs[idx].GetLinks()) || linkAIt == std::end(graph->adj[nodeIdx][portIdx]))
 		return;
@@ -155,8 +155,8 @@ void Gin::Graph::GraphPortOperator::UnlinkGraphOutput(size_t idx)
 	if (graph->outputs[idx].GetLinks().size() < 1)
 		return;
 
-	auto& linkGIt = std::find(graph->outputs[idx].GetLinks().begin(), graph->outputs[idx].GetLinks().end(), std::make_pair(nodeIdx, portIdx));
-	auto& linkAIt = std::find(graph->adj[nodeIdx][portIdx].begin(), graph->adj[nodeIdx][portIdx].end(), std::make_pair(std::numeric_limits<size_t>::max() - 1, idx));
+	auto linkGIt = std::find(graph->outputs[idx].GetLinks().begin(), graph->outputs[idx].GetLinks().end(), std::make_pair(nodeIdx, portIdx));
+	auto linkAIt = std::find(graph->adj[nodeIdx][portIdx].begin(), graph->adj[nodeIdx][portIdx].end(), std::make_pair(std::numeric_limits<size_t>::max() - 1, idx));
 
 	if (linkGIt == std::end(graph->outputs[idx].GetLinks()) || linkAIt == std::end(graph->adj[nodeIdx][portIdx]))
 		return;
@@ -167,7 +167,7 @@ void Gin::Graph::GraphPortOperator::UnlinkGraphOutput(size_t idx)
 
 void Gin::Graph::GraphPortOperator::UnlinkGraphInput(std::string_view name)
 {
-	auto& portIt = std::find_if(graph->inputs.begin(), graph->inputs.end(), [&](GraphPort& port) {
+	auto portIt = std::find_if(graph->inputs.begin(), graph->inputs.end(), [&](GraphPort& port) {
 		return port.GetName() == name;
 		});
 
@@ -179,7 +179,7 @@ void Gin::Graph::GraphPortOperator::UnlinkGraphInput(std::string_view name)
 
 void Gin::Graph::GraphPortOperator::UnlinkGraphOutput(std::string_view name)
 {
-	auto& portIt = std::find_if(graph->outputs.begin(), graph->outputs.end(), [&](GraphPort& port) {
+	auto portIt = std::find_if(graph->outputs.begin(), graph->outputs.end(), [&](GraphPort& port) {
 		return port.GetName() == name;
 		});
 
@@ -406,7 +406,7 @@ void Gin::Graph::Graph::Execute(GraphContext ctx)
 			nodes[action.nodeAIdx]->Initialize(ctx);
 	}
 
-	for (auto& action = program.begin(); action != program.end(); ++action) {
+	for (auto action = program.begin(); action != program.end(); ++action) {
 		switch (action->type)
 		{
 		case Gin::Graph::GraphActionType::EXEC:
