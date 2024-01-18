@@ -5,10 +5,26 @@ project(gin)
 set(CMAKE_CXX_STANDARD 17)
 set(EXTERNAL_PATH ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty)
 
+option(GIN_BUILD_BENCH "Build gin benchmark" ON)
+option(GIN_BUILD_EDITOR "Build gin editor" ON)
+option(GIN_BUILD_EDITOR_WITH_WAYLAND "Build gin editor using wayland" OFF)
+
+if (GIN_BUILD_EDITOR_WITH_WAYLAND)
+    set(GLFW_BUILD_WAYLAND ON)
+    set(GLFW_BUILD_X11 OFF)
+else()
+    set(GLFW_BUILD_WAYLAND OFF)
+    set(GLFW_BUILD_X11 ON)
+endif()
+
+
 add_subdirectory(${EXTERNAL_PATH}/eigen)
 add_subdirectory(${EXTERNAL_PATH}/nanobench)
 add_subdirectory(${EXTERNAL_PATH}/nativefiledialog-extended-1.1.0)
 add_subdirectory(${EXTERNAL_PATH}/FastNoise2)
+add_subdirectory(${EXTERNAL_PATH}/glfw)
+add_subdirectory(${EXTERNAL_PATH}/imgui)
+add_subdirectory(${EXTERNAL_PATH}/imgui-node-editor)
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data
      DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
@@ -51,10 +67,13 @@ add_library(gin_library STATIC ${gin_library_src} ${gin_modules_src} ${CMAKE_CUR
 target_include_directories(gin_library PUBLIC library/include modules)
 target_link_libraries(gin_library Eigen3::Eigen FastNoise)
 
-add_executable(gin_editor ${gin_editor_src})
+if(GIN_BUILD_EDITOR)
+    add_executable(gin_editor ${gin_editor_src})
+    target_link_libraries(gin_editor gin_library nfd glfw imgui imgui_node_editor)
+    target_include_directories(gin_editor PRIVATE ${EXTERNAL_PATH}/glad/include)
+endif()
 
-target_link_libraries(gin_editor gin_library nfd)
-
-add_executable(gin_bench ${gin_bench_src})
-
-target_link_libraries(gin_bench gin_library nanobench)
+if(GIN_BUILD_BENCH)
+    add_executable(gin_bench ${gin_bench_src})
+    target_link_libraries(gin_bench gin_library nanobench)
+endif ()

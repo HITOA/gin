@@ -53,7 +53,7 @@ void Gin::Graph::Node::Execute(GraphContext ctx, Thread::ThreadPool& pool)
 
 nlohmann::json Gin::Graph::Node::Serialize()
 {
-    nlohmann::json data{ nlohmann::json::object() };
+    nlohmann::json data = nlohmann::json::object();
 
     for (auto& input : inputs) {
         //Number

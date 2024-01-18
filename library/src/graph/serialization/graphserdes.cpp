@@ -3,7 +3,7 @@
 #include "gin/module/registry.hpp"
 
 nlohmann::json SerializeGraphPort(Gin::Graph::GraphPort& port) {
-	nlohmann::json serializedPort{ nlohmann::json::object() };
+	nlohmann::json serializedPort = nlohmann::json::object();
 
 	serializedPort["type"] = port.GetType().info.get().hash_code();
 	serializedPort["name"] = port.GetName();
@@ -146,25 +146,25 @@ void Gin::Graph::Serialization::SerializeGraph(Graph& graph, SerializedGraph& se
 
 	auto& adj = graph.GetAdj();
 
-	for (size_t nodeIdx = 0; nodeIdx < graph.GetNodeCount(); ++nodeIdx) {
-		Gin::Graph::GraphNodeOperator<Gin::Graph::Node> node = graph.GetNode<Gin::Graph::Node>(nodeIdx);
+	for (GraphId nodeId = 0; nodeId < graph.GetNodeCount(); ++nodeId) {
+		Gin::Graph::GraphNodeOperator<Gin::Graph::Node> node = graph.GetNode<Gin::Graph::Node>(nodeId);
 
-		for (size_t portIdx = 0; portIdx < node->GetInputPortCount(); ++portIdx) {
-			for (std::pair<size_t, size_t>& link : adj[nodeIdx][portIdx]) {
-				serializedGraph.links.push_back(nodeIdx);
-				serializedGraph.links.push_back(portIdx);
+		for (GraphId portId = 0; portId < node->GetInputPortCount(); ++portId) {
+			for (std::pair<GraphId, GraphId>& link : adj[nodeId][portId]) {
+				serializedGraph.links.push_back(nodeId);
+				serializedGraph.links.push_back(portId);
 				serializedGraph.links.push_back(link.first);
 				serializedGraph.links.push_back(link.second);
 			}
 		}
 	}
 
-	for (size_t portIdx = 0; portIdx < graph.GetOutputsCount(); ++portIdx) {
-		auto& port = graph.GetOutputPort(portIdx);
+	for (GraphId portId = 0; portId < graph.GetOutputsCount(); ++portId) {
+		auto& port = graph.GetOutputPort(portId);
 
-		for (std::pair<size_t, size_t>& link : port.GetLinks()) {
-			serializedGraph.links.push_back(std::numeric_limits<int>::max() - 1);
-			serializedGraph.links.push_back(portIdx);
+		for (std::pair<GraphId, GraphId>& link : port.GetLinks()) {
+			serializedGraph.links.push_back(GRAPH_OUTPUT_NODE_ID);
+			serializedGraph.links.push_back(portId);
 			serializedGraph.links.push_back(link.first);
 			serializedGraph.links.push_back(link.second);
 		}
@@ -177,28 +177,30 @@ void Gin::Graph::Serialization::DeserializeGraph(Graph& graph, SerializedGraph& 
 		std::string& nodePath = serializedGraph.nodes[i];
 		
 		if (Module::GetNodeRegistry().count(nodePath)) {
-			size_t nodeIdx = Module::GetNodeRegistry()[nodePath](graph, nodePath);
-			graph.GetNode<Node>(nodeIdx)->Deserialize(serializedGraph.nodesData[i]["node"]);
-		}
+            GraphId nodeId = Module::GetNodeRegistry()[nodePath](graph, nodePath);
+			graph.GetNode<Node>(nodeId)->Deserialize(serializedGraph.nodesData[i]["node"]);
+		} else {
+            throw std::runtime_error{ "Missing node, can't deserialize this graph." };
+        }
 	}
 
 	for (size_t i = 0; i < serializedGraph.graphData["outputs"].size(); ++i)
 		DeserializeGraphOutputPort(serializedGraph.graphData["outputs"][i], graph);
 
 	for (size_t i = 0; i < serializedGraph.links.size(); i += 4) {
-		size_t nodeAIdx = serializedGraph.links[i];
-		size_t portAIdx = serializedGraph.links[i + 1];
-		size_t nodeBIdx = serializedGraph.links[i + 2];
-		size_t portBIdx = serializedGraph.links[i + 3];
+		GraphId nodeAId = serializedGraph.links[i];
+		GraphId portAId = serializedGraph.links[i + 1];
+		GraphId nodeBId = serializedGraph.links[i + 2];
+		GraphId portBId = serializedGraph.links[i + 3];
 
-		if (nodeBIdx == std::numeric_limits<int>::max()) {
-			graph.GetNode<Node>(nodeAIdx).GetPort(portAIdx).LinkGraphInput(portBIdx);
+		if (nodeBId == GRAPH_INPUT_NODE_ID) {
+			graph.GetNode<Node>(nodeAId).GetPort(portAId).LinkGraphInput(portBId);
 		}
-		else if (nodeAIdx == std::numeric_limits<int>::max() - 1) {
-			graph.GetNode<Node>(nodeBIdx).GetPort(portBIdx).LinkGraphOutput(portAIdx);
+		else if (nodeAId == GRAPH_OUTPUT_NODE_ID) {
+			graph.GetNode<Node>(nodeBId).GetPort(portBId).LinkGraphOutput(portAId);
 		}
 		else {
-			graph.GetNode<Node>(nodeAIdx).GetPort(portAIdx).Link(graph.GetNode<Node>(nodeBIdx).GetPort(portBIdx));
+			graph.GetNode<Node>(nodeAId).GetPort(portAId).Link(graph.GetNode<Node>(nodeBId).GetPort(portBId));
 		}
 	}
 }
@@ -209,7 +211,7 @@ void Gin::Graph::Serialization::SaveSerializedGraphToFile(SerializedGraph& seria
 	jsonGraph["name"] = serializedGraph.graphName;
 	jsonGraph["data"] = serializedGraph.graphData;
 
-	nlohmann::json jsonNodes{ nlohmann::json::array() };
+	nlohmann::json jsonNodes = nlohmann::json::array();
 	
 	for (size_t i = 0; i < serializedGraph.nodes.size(); ++i) {
 		jsonNodes[i]["path"] = serializedGraph.nodes[i];
@@ -227,13 +229,13 @@ void Gin::Graph::Serialization::SaveSerializedGraphToFile(SerializedGraph& seria
 void Gin::Graph::Serialization::LoadSerializedGraphFromFile(SerializedGraph& serializedGraph, std::string path)
 {
 	std::ifstream f{ path };
-	nlohmann::json jsonGraph{ nlohmann::json::parse(f) };
+	nlohmann::json jsonGraph = nlohmann::json::parse(f);
 	f.close();
 
 	serializedGraph.graphName = jsonGraph["name"];
 	serializedGraph.graphData = jsonGraph["data"];
 
-	nlohmann::json jsonNodes{ jsonGraph["nodes"] };
+	nlohmann::json jsonNodes = jsonGraph["nodes"];
 	
 	serializedGraph.nodes.resize(jsonNodes.size());
 	serializedGraph.nodesData.resize(jsonNodes.size());
@@ -255,7 +257,7 @@ void Gin::Graph::Serialization::LoadSerializedGraphFromJson(SerializedGraph& ser
 	serializedGraph.graphName = json["name"];
 	serializedGraph.graphData = json["data"];
 
-	nlohmann::json jsonNodes{ json["nodes"] };
+	nlohmann::json jsonNodes = json["nodes"];
 
 	serializedGraph.nodes.resize(jsonNodes.size());
 	serializedGraph.nodesData.resize(jsonNodes.size());

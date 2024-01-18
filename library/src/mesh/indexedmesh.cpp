@@ -19,7 +19,7 @@ void Gin::Mesh::IndexedMesh::SetColors(Eigen::Vector4<float>* colors, size_t cou
 	std::memcpy(this->colors.data(), colors, count * sizeof(Eigen::Vector4<float>));
 }
 
-void Gin::Mesh::IndexedMesh::SetIndices(int* indices, size_t count)
+void Gin::Mesh::IndexedMesh::SetIndices(unsigned int* indices, size_t count)
 {
 	this->indices.resize(count);
 	std::memcpy(this->indices.data(), indices, count * sizeof(int));
@@ -80,29 +80,7 @@ std::vector<Eigen::Vector4<float>>& Gin::Mesh::IndexedMesh::GetColors()
 	return colors;
 }
 
-std::vector<Gin::Mesh::IndexedMeshVertexData> Gin::Mesh::IndexedMesh::GetIndexedMeshVertexData()
-{
-	std::vector<IndexedMeshVertexData> vertexData{};
-
-	if (vertices.size() != normals.size() && vertices.size() != colors.size())
-		return vertexData;
-
-	vertexData.resize(vertices.size());
-
-	for (size_t i = 0; i < vertexData.size(); ++i) {
-		IndexedMeshVertexData t{};
-
-		t.position = vertices[i];
-		t.normal = normals[i];
-		t.color = colors[i];
-
-		vertexData[i] = t;
-	}
-
-	return vertexData;
-}
-
-std::vector<int>& Gin::Mesh::IndexedMesh::GetIndices()
+std::vector<unsigned int>& Gin::Mesh::IndexedMesh::GetIndices()
 {
 	return indices;
 }

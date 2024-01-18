@@ -1,6 +1,7 @@
 #pragma once
 
 #include <gin/graph/port.hpp>
+#include <gin/graph/graphdef.hpp>
 #include <any>
 
 namespace Gin::Graph {
@@ -44,13 +45,13 @@ namespace Gin::Graph {
 			this->value = value;
 		}
 
-		std::vector<std::pair<size_t, size_t>>& GetLinks() { return links; };
+		std::vector<std::pair<GraphId, GraphId>>& GetLinks() { return links; };
 
 	private:
 		std::any value{};
 		std::function<bool(std::any&, Port&)> copier{};
 		std::function<void*(std::any&)> caster{};
-		std::vector<std::pair<size_t, size_t>> links{};
+		std::vector<std::pair<GraphId, GraphId>> links{};
 	};
 
 }

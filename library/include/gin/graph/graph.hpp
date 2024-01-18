@@ -4,12 +4,14 @@
 #include <gin/graph/graphport.hpp>
 #include <gin/graph/graphcontext.hpp>
 #include <gin/thread/threadpool.hpp>
+#include <gin/graph/graphdef.hpp>
 
 #include <vector>
 #include <memory>
 #include <any>
 #include <string>
 #include <stdexcept>
+#include <cstddef>
 #include <unordered_map>
 #include <functional>
 #include <condition_variable>
@@ -17,6 +19,7 @@
 #define MAX_ORDER_ITERATION_STOP 1000
 
 namespace Gin::Graph {
+
 	template<typename T>
 	class GraphNodeOperator;
 
@@ -29,17 +32,17 @@ namespace Gin::Graph {
 
 	struct GraphAction {
 		GraphActionType type;
-		size_t nodeAIdx;
-		size_t portAIdx;
-		size_t nodeBIdx;
-		size_t portBIdx;
+        GraphId nodeAId;
+        GraphId portAId;
+        GraphId nodeBId;
+        GraphId portBId;
 	};
 
 	class Graph {
 	public:
 		template<typename T, typename... Args>
 		inline GraphNodeOperator<T> AddNode(Args... args) {
-			size_t c = nodes.size();
+			uint32_t c = nodes.size();
 
 			std::shared_ptr<Node> node{ std::dynamic_pointer_cast<Node, T>(std::make_shared<T>(std::forward(args)...)) };
 
@@ -47,7 +50,7 @@ namespace Gin::Graph {
 
 			adj.emplace_back();
 
-			for (size_t i = 0; i < node->GetInputPortCount() + node->GetOutputPortCount(); ++i)
+			for (uint32_t i = 0; i < node->GetInputPortCount() + node->GetOutputPortCount(); ++i)
 				adj[c].emplace_back();
 
 			return GetNode<T>(c);
@@ -55,12 +58,12 @@ namespace Gin::Graph {
 
 		template<typename T>
 		inline GraphNodeOperator<T> AddNode(std::shared_ptr<T> node) {
-			size_t c = nodes.size();
+            uint32_t c = nodes.size();
 			nodes.push_back(std::dynamic_pointer_cast<Node, T>(node));
 
 			adj.emplace_back();
 
-			for (size_t i = 0; i < node->GetInputPortCount() + node->GetOutputPortCount(); ++i)
+			for (uint32_t i = 0; i < node->GetInputPortCount() + node->GetOutputPortCount(); ++i)
 				adj[c].emplace_back();
 
 			return GetNode<T>(c);
@@ -81,23 +84,23 @@ namespace Gin::Graph {
 		}
 
 		template<typename T>
-		inline void SetInput(size_t idx, T value) {
-			inputs[idx].SetValue<T>(value);
+		inline void SetInput(GraphId id, T value) {
+			inputs[id].SetValue<T>(value);
 		}
 
 		template<typename T>
-		inline void SetOutput(size_t idx, T value) {
-			outputs[idx].SetValue<T>(value);
+		inline void SetOutput(GraphId id, T value) {
+			outputs[id].SetValue<T>(value);
 		}
 
 		template<typename T>
-		inline T GetInput(size_t idx) {
-			return *((T*)inputs[idx].GetProperty());
+		inline T GetInput(GraphId id) {
+			return *((T*)inputs[id].GetProperty());
 		}
 
 		template<typename T>
-		inline T GetOutput(size_t idx) {
-			return *((T*)outputs[idx].GetProperty());
+		inline T GetOutput(GraphId id) {
+			return *((T*)outputs[id].GetProperty());
 		}
 
 		template<typename T>
@@ -148,44 +151,44 @@ namespace Gin::Graph {
 			return GetOutput<T>(std::distance(outputs.begin(), it));
 		}
 
-		inline size_t HasInput(std::string_view name) {
+		inline GraphId HasInput(std::string_view name) {
 			auto it = std::find_if(inputs.begin(), inputs.end(), [&](GraphPort& port) {
 				return name == port.GetName();
 				});
 
 			if (it == std::end(inputs))
-				return std::numeric_limits<size_t>::max();
+				return GRAPH_ID_MAX;
 
 			return it - inputs.begin();
 		}
 
-		inline size_t HasOutput(std::string_view name) {
+		inline GraphId HasOutput(std::string_view name) {
 			auto it = std::find_if(outputs.begin(), outputs.end(), [&](GraphPort& port) {
 				return name == port.GetName();
 				});
 
 			if (it == std::end(outputs))
-				return std::numeric_limits<size_t>::max();
+				return GRAPH_ID_MAX;
 
 			return it - outputs.begin();
 		}
 
 		template<typename T>
-		inline GraphNodeOperator<T> GetNode(size_t nodeIdx) {
-			return GraphNodeOperator<T>{ this, nodeIdx };
+		inline GraphNodeOperator<T> GetNode(GraphId nodeId) {
+			return GraphNodeOperator<T>{ this, nodeId };
 		}
 
-		inline size_t GetNodeCount() { return nodes.size(); };
-		inline size_t GetInputsCount() { return inputs.size(); };
-		inline size_t GetOutputsCount() { return outputs.size(); };
-		inline GraphPort& GetInputPort(size_t idx) { return inputs[idx]; };
-		inline GraphPort& GetOutputPort(size_t idx) { return outputs[idx]; };
+		inline uint32_t GetNodeCount() { return nodes.size(); };
+		inline uint32_t GetInputsCount() { return inputs.size(); };
+		inline uint32_t GetOutputsCount() { return outputs.size(); };
+		inline GraphPort& GetInputPort(GraphId id) { return inputs[id]; };
+		inline GraphPort& GetOutputPort(GraphId id) { return outputs[id]; };
 		inline std::vector<GraphAction>& GetProgram() { return program; };
-		inline std::vector<std::vector<std::vector<std::pair<size_t, size_t>>>>& GetAdj() { return adj; };
+		inline std::vector<std::vector<std::vector<std::pair<GraphId, GraphId>>>>& GetAdj() { return adj; };
 
-		void RemoveNode(size_t nodeIdx);
-		void RemoveInput(size_t idx);
-		void RemoveOutput(size_t idx);
+		void RemoveNode(GraphId nodeId);
+		void RemoveInput(GraphId id);
+		void RemoveOutput(GraphId id);
 
 
 		void Compile();
@@ -194,7 +197,7 @@ namespace Gin::Graph {
 
 	private:
 		std::vector<std::shared_ptr<Node>> nodes{};
-		std::vector<std::vector<std::vector<std::pair<size_t, size_t>>>> adj{};
+		std::vector<std::vector<std::vector<std::pair<GraphId, GraphId>>>> adj{};
 
 		std::vector<GraphPort> inputs{};
 		std::vector<GraphPort> outputs{};
@@ -213,66 +216,66 @@ namespace Gin::Graph {
 	class GraphPortOperator {
 	public:
 		GraphPortOperator() = delete;
-		GraphPortOperator(Graph* graph, size_t nodeIdx, size_t portIdx) : graph{ graph }, nodeIdx{ nodeIdx }, portIdx{ portIdx } {};
+		GraphPortOperator(Graph* graph, GraphId nodeId, GraphId portId) : graph{ graph }, nodeId{ nodeId }, portId{ portId } {};
 
-		inline size_t GetPortIdx() { return portIdx; };
+		inline GraphId GetPortId() { return portId; };
 
 		void Link(GraphPortOperator port);
 		void Unlink(GraphPortOperator port);
 
-		void LinkGraphInput(size_t idx);
-		void LinkGraphOutput(size_t idx);
+		void LinkGraphInput(GraphId id);
+		void LinkGraphOutput(GraphId id);
 		void LinkGraphInput(std::string_view name);
 		void LinkGraphOutput(std::string_view name);
 
-		void UnlinkGraphInput(size_t idx);
-		void UnlinkGraphOutput(size_t idx);
+		void UnlinkGraphInput(GraphId id);
+		void UnlinkGraphOutput(GraphId id);
 		void UnlinkGraphInput(std::string_view name);
 		void UnlinkGraphOutput(std::string_view name);
 
 	private:
 		Graph* graph;
-		size_t nodeIdx;
-		size_t portIdx;
+        GraphId nodeId;
+        GraphId portId;
 	};
 
 	template<typename T>
 	class GraphNodeOperator {
 	public:
 		GraphNodeOperator() = delete;
-		GraphNodeOperator(Graph* graph, size_t nodeIdx) : graph{ graph }, nodeIdx{ nodeIdx } {};
+		GraphNodeOperator(Graph* graph, GraphId nodeId) : graph{ graph }, nodeId{ nodeId } {};
 
-		inline size_t GetNodeIdx() { return nodeIdx; };
+		inline GraphId GetNodeId() { return nodeId; };
 
 		template<typename U>
 		inline GraphPortOperator GetPort(U& property) {
-			auto& node = graph->nodes[nodeIdx];
+			auto& node = graph->nodes[nodeId];
 
-			for (size_t i = 0; i < node->GetInputPortCount(); ++i)
+			for (GraphId i = 0; i < node->GetInputPortCount(); ++i)
 				if (node->GetInputPort(i).GetProperty() == &property)
-					return GraphPortOperator { graph, nodeIdx, i};
+					return GraphPortOperator { graph, nodeId, i};
 
-			for (size_t i = 0; i < node->GetOutputPortCount(); ++i)
+			for (GraphId i = 0; i < node->GetOutputPortCount(); ++i)
 				if (node->GetOutputPort(i).GetProperty() == &property)
-					return GraphPortOperator { graph, nodeIdx, i + node->GetInputPortCount()};
+					return GraphPortOperator { graph, nodeId, i + node->GetInputPortCount()};
 
 			throw std::invalid_argument{ "This property does not have any input/output port." };
 		}
 
-		inline GraphPortOperator GetPort(size_t portIdx) {
-			return GraphPortOperator{ graph, nodeIdx, portIdx };
+		inline GraphPortOperator GetPort(GraphId portId) {
+			return GraphPortOperator{ graph, nodeId, portId };
 		}
 
-		inline GraphPortOperator operator()(size_t portIdx) {
-			return GraphPortOperator{ graph, nodeIdx, portIdx };
+		inline GraphPortOperator operator()(GraphId portId) {
+			return GraphPortOperator{ graph, nodeId, portId };
 		}
 
 		inline T* operator->() {
-			return std::dynamic_pointer_cast<T, Node>(graph->nodes[nodeIdx]).get();
+			return std::dynamic_pointer_cast<T, Node>(graph->nodes[nodeId]).get();
 		}
 	private:
 		Graph* graph;
-		size_t nodeIdx;
+        GraphId nodeId;
 	};
 
 }

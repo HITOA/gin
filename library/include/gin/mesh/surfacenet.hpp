@@ -12,7 +12,7 @@ namespace Gin::Mesh {
 		std::vector<Eigen::Vector3<float>> positions{};
 		std::vector<Eigen::Vector3<float>> normals{};
 		std::vector<Eigen::Vector4<float>> colors{};
-		std::vector<int> indices{};
+		std::vector<unsigned int> indices{};
 
 		std::vector<int> posToVertexIdx{};
 		std::vector<Eigen::Vector3<int>> vertexIdxToPos{};

@@ -1,36 +1,23 @@
-#include <vin.hpp>
-
-#include <module/windowing/windowmodule.hpp>
-#include <module/editor/editormodule.hpp>
-#include <module/forwardrenderer/forwardrenderer.hpp>
-
 #include <module.hpp>
 #include <nfd.h>
+#include "editor.h"
 
-#include "editor.hpp"
+#include "windows/grapheditor.h"
+#include "windows/view.h"
 
-class GinEditor : public Vin::App {
-public:
-	void Build() {
-		Vin::WindowInfo winfo{};
-		winfo.title = "Editor";
+int main() {
+    Initialize();
+    NFD_Init();
 
-		Vin::AssetDatabase::AddAsset<Vin::WindowInfo>(std::move(winfo), VIN_WINDOWINFO_ASSETPATH);
+    Editor editor{};
 
-		AddModule<Vin::WindowModule>();
-		AddModule<Vin::ForwardRendererModule>();
-		AddModule<Vin::EditorModule>();
-		AddModule<GinEditorModule>();
-	}
-};
+    editor.AddEditorWindow(std::make_shared<GraphEditorWindow>());
+    editor.AddEditorWindow(std::make_shared<ViewWindow>());
 
-Vin::App* Vin::CreateApp() {
-	Initialize();
-	NFD_Init();
-	return new GinEditor{};
-}
+    editor.Initialize();
+    editor.Run();
+    editor.Uninitialize();
 
-void Vin::DestroyApp(Vin::App* app) {
-	NFD_Quit();
-	delete app;
+    NFD_Quit();
+    Uninitialize();
 }

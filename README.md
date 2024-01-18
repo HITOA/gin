@@ -1,6 +1,9 @@
 ## The follow library are used :
 - Eigen
 - Nanobench
-- ImNodes
+- imgui-node-editor
 - Nlohmann json
 - FastNoise2
+- imgui
+- glad
+- glfw

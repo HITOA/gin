@@ -75,7 +75,7 @@ namespace Gin::Module::Signed {
 	private:
 		Spatial::Spatial<float> distanceA{};
 		Spatial::Spatial<float> distanceB{};
-		Spatial::Spatial<float> smoothFactor{};
+		Spatial::Spatial<float> smoothFactor{ 2.0 };
 
 		Spatial::Spatial<float> distanceR{};
 		Spatial::Spatial<float> t{};
@@ -95,7 +95,7 @@ namespace Gin::Module::Signed {
 	private:
 		Spatial::Spatial<float> distanceA{};
 		Spatial::Spatial<float> distanceB{};
-		Spatial::Spatial<float> smoothFactor{};
+		Spatial::Spatial<float> smoothFactor{ 2.0 };
 
 		Spatial::Spatial<float> distanceR{};
 		Spatial::Spatial<float> t{};
@@ -115,7 +115,7 @@ namespace Gin::Module::Signed {
 	private:
 		Spatial::Spatial<float> distanceA{};
 		Spatial::Spatial<float> distanceB{};
-		Spatial::Spatial<float> smoothFactor{};
+		Spatial::Spatial<float> smoothFactor{ 2.0 };
 
 		Spatial::Spatial<float> distanceR{};
 		Spatial::Spatial<float> t{};

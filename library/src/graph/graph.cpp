@@ -5,44 +5,44 @@ void Gin::Graph::GraphPortOperator::Link(GraphPortOperator port) {
 	if (port.graph != graph)
 		throw std::invalid_argument{ "Can't link port node because it does not belong to the same graph." };
 
-	std::shared_ptr<Node> nodeA = graph->nodes[nodeIdx];
-	std::shared_ptr<Node> nodeB = graph->nodes[port.nodeIdx];
+	std::shared_ptr<Node> nodeA = graph->nodes[nodeId];
+	std::shared_ptr<Node> nodeB = graph->nodes[port.nodeId];
 
-	if (portIdx >= nodeA->GetInputPortCount() && port.portIdx >= nodeB->GetInputPortCount())
+	if (portId >= nodeA->GetInputPortCount() && port.portId >= nodeB->GetInputPortCount())
 		throw std::invalid_argument{ "Can't link two output port together." };
 
-	if (portIdx < nodeA->GetInputPortCount() && port.portIdx < nodeB->GetInputPortCount())
+	if (portId < nodeA->GetInputPortCount() && port.portId < nodeB->GetInputPortCount())
 		throw std::invalid_argument{ "Can't link two input port together." };
 
-	if (portIdx < nodeA->GetInputPortCount()) {
-		if (graph->adj[nodeIdx][portIdx].size() > 0)
+	if (portId < nodeA->GetInputPortCount()) {
+		if (graph->adj[nodeId][portId].size() > 0)
 			throw std::invalid_argument{ "Input port is already linked to something." };
 
-		//if (nodeA->GetInputPort(portIdx).type != nodeB->GetOutputPort(port.portIdx - nodeB->GetInputPortCount()).type)
+		//if (nodeA->GetInputPort(portId).type != nodeB->GetOutputPort(port.portId - nodeB->GetInputPortCount()).type)
 		//	throw std::invalid_argument{ "Can't link port that are not the same type" };
 
-		//if (!graph->CheckPortTypeCombination(nodeA->GetInputPort(portIdx).type, nodeB->GetOutputPort(port.portIdx - nodeB->GetInputPortCount()).type))
+		//if (!graph->CheckPortTypeCombination(nodeA->GetInputPort(portId).type, nodeB->GetOutputPort(port.portId - nodeB->GetInputPortCount()).type))
 		//	throw std::invalid_argument{ "Can't link port because of type missmatch" };
 
-		if (!nodeA->GetInputPort(portIdx).Match(nodeB->GetOutputPort(port.portIdx - nodeB->GetInputPortCount())))
+		if (!nodeA->GetInputPort(portId).Match(nodeB->GetOutputPort(port.portId - nodeB->GetInputPortCount())))
 			throw std::invalid_argument{ "Can't link port because of type missmatch" };
 	}
 	else {
-		if (graph->adj[port.nodeIdx][port.portIdx].size() > 0)
+		if (graph->adj[port.nodeId][port.portId].size() > 0)
 			throw std::invalid_argument{ "Input port is already linked to something." };
 
-		//if (nodeA->GetOutputPort(portIdx - nodeA->GetInputPortCount()).type != nodeB->GetInputPort(port.portIdx).type)
+		//if (nodeA->GetOutputPort(portId - nodeA->GetInputPortCount()).type != nodeB->GetInputPort(port.portId).type)
 		//	throw std::invalid_argument{ "Can't link port that are not the same type" };
 
-		//if (!graph->CheckPortTypeCombination(nodeA->GetOutputPort(portIdx - nodeA->GetInputPortCount()).type, nodeB->GetInputPort(port.portIdx).type))
+		//if (!graph->CheckPortTypeCombination(nodeA->GetOutputPort(portId - nodeA->GetInputPortCount()).type, nodeB->GetInputPort(port.portId).type))
 		//	throw std::invalid_argument{ "Can't link port because of type missmatch" };
 
-		if (!nodeA->GetOutputPort(portIdx - nodeA->GetInputPortCount()).Match(nodeB->GetInputPort(port.portIdx)))
+		if (!nodeA->GetOutputPort(portId - nodeA->GetInputPortCount()).Match(nodeB->GetInputPort(port.portId)))
 			throw std::invalid_argument{ "Can't link port because of type missmatch" };
 	}
 
-	graph->adj[nodeIdx][portIdx].emplace_back(port.nodeIdx, port.portIdx);
-	graph->adj[port.nodeIdx][port.portIdx].emplace_back(nodeIdx, portIdx);
+	graph->adj[nodeId][portId].emplace_back(port.nodeId, port.portId);
+	graph->adj[port.nodeId][port.portId].emplace_back(nodeId, portId);
 }
 
 void Gin::Graph::GraphPortOperator::Unlink(GraphPortOperator port)
@@ -50,65 +50,65 @@ void Gin::Graph::GraphPortOperator::Unlink(GraphPortOperator port)
 	if (port.graph != graph)
 		throw std::invalid_argument{ "Can't unlink port node because it does not belong to the same graph." };
 
-	auto linkAit = std::find(graph->adj[nodeIdx][portIdx].begin(), graph->adj[nodeIdx][portIdx].end(), std::make_pair(port.nodeIdx, port.portIdx));
-	auto linkBit = std::find(graph->adj[port.nodeIdx][port.portIdx].begin(), graph->adj[port.nodeIdx][port.portIdx].end(), std::make_pair(nodeIdx, portIdx));
+	auto linkAit = std::find(graph->adj[nodeId][portId].begin(), graph->adj[nodeId][portId].end(), std::make_pair(port.nodeId, port.portId));
+	auto linkBit = std::find(graph->adj[port.nodeId][port.portId].begin(), graph->adj[port.nodeId][port.portId].end(), std::make_pair(nodeId, portId));
 
-	if (linkAit == std::end(graph->adj[nodeIdx][portIdx]) || linkBit == std::end(graph->adj[port.nodeIdx][port.portIdx]))
+	if (linkAit == std::end(graph->adj[nodeId][portId]) || linkBit == std::end(graph->adj[port.nodeId][port.portId]))
 		return;
 
-	graph->adj[nodeIdx][portIdx].erase(linkAit);
-	graph->adj[port.nodeIdx][port.portIdx].erase(linkBit);
+	graph->adj[nodeId][portId].erase(linkAit);
+	graph->adj[port.nodeId][port.portId].erase(linkBit);
 }
 
-void  Gin::Graph::GraphPortOperator::LinkGraphInput(size_t idx) {
-	std::shared_ptr<Node> node = graph->nodes[nodeIdx];
+void  Gin::Graph::GraphPortOperator::LinkGraphInput(GraphId id) {
+	std::shared_ptr<Node> node = graph->nodes[nodeId];
 
-	if (portIdx >= node->GetInputPortCount())
+	if (portId >= node->GetInputPortCount())
 		throw std::invalid_argument{ "Can't link output port to graph input" };
 
-	if (graph->inputs.size() <= idx)
+	if (graph->inputs.size() <= id)
 		throw std::invalid_argument{ "Invalid graph input index" };
 
-	//if (node->GetInputPort(portIdx).type != graph->inputs[idx].type)
+	//if (node->GetInputPort(portId).type != graph->inputs[Id].type)
 	//	throw std::invalid_argument{ "Can't link port that are not the same type" };
 
-	//if (!graph->CheckPortTypeCombination(node->GetInputPort(portIdx).type, graph->inputs[idx].type))
+	//if (!graph->CheckPortTypeCombination(node->GetInputPort(portId).type, graph->inputs[Id].type))
 	//	throw std::invalid_argument{ "Can't link port because of type missmatch" };
 
-	if (!node->GetInputPort(portIdx).Match(graph->inputs[idx]))
+	if (!node->GetInputPort(portId).Match(graph->inputs[id]))
 		throw std::invalid_argument{ "Can't link port because of type missmatch" };
 
 
-	if (graph->adj[nodeIdx][portIdx].size() > 0)
+	if (graph->adj[nodeId][portId].size() > 0)
 		throw std::invalid_argument{ "Input port is already linked to something." };
 
-	graph->inputs[idx].GetLinks().emplace_back(nodeIdx, portIdx);
-	graph->adj[nodeIdx][portIdx].emplace_back(std::numeric_limits<size_t>::max(), idx);
+	graph->inputs[id].GetLinks().emplace_back(nodeId, portId);
+	graph->adj[nodeId][portId].emplace_back(GRAPH_INPUT_NODE_ID, id);
 }
 
-void  Gin::Graph::GraphPortOperator::LinkGraphOutput(size_t idx) {
-	std::shared_ptr<Node> node = graph->nodes[nodeIdx];
+void  Gin::Graph::GraphPortOperator::LinkGraphOutput(GraphId id) {
+	std::shared_ptr<Node> node = graph->nodes[nodeId];
 
-	if (portIdx < node->GetInputPortCount())
+	if (portId < node->GetInputPortCount())
 		throw std::invalid_argument{ "Can't link input port to graph output" };
 
-	if (graph->outputs.size() <= idx)
+	if (graph->outputs.size() <= id)
 		throw std::invalid_argument{ "Invalid graph output index" };
 
-	//if (node->GetOutputPort(portIdx - node->GetInputPortCount()).type != graph->outputs[idx].type)
+	//if (node->GetOutputPort(portId - node->GetInputPortCount()).type != graph->outputs[Id].type)
 	//	throw std::invalid_argument{ "Can't link port that are not the same type" };
 
-	//if (!graph->CheckPortTypeCombination(node->GetOutputPort(portIdx - node->GetInputPortCount()).type, graph->outputs[idx].type))
+	//if (!graph->CheckPortTypeCombination(node->GetOutputPort(portId - node->GetInputPortCount()).type, graph->outputs[Id].type))
 	//	throw std::invalid_argument{ "Can't link port because of type missmatch" };
 
-	if (!node->GetOutputPort(portIdx - node->GetInputPortCount()).Match(graph->outputs[idx]))
+	if (!node->GetOutputPort(portId - node->GetInputPortCount()).Match(graph->outputs[id]))
 		throw std::invalid_argument{ "Can't link port because of type missmatch" };
 
-	if (graph->outputs[idx].GetLinks().size() > 0)
+	if (graph->outputs[id].GetLinks().size() > 0)
 		throw std::invalid_argument{ "Graph output is already linked to something." };
 
-	graph->outputs[idx].GetLinks().emplace_back(nodeIdx, portIdx);
-	graph->adj[nodeIdx][portIdx].emplace_back(std::numeric_limits<size_t>::max() - 1, idx);
+	graph->outputs[id].GetLinks().emplace_back(nodeId, portId);
+	graph->adj[nodeId][portId].emplace_back(GRAPH_OUTPUT_NODE_ID, id);
 }
 
 void Gin::Graph::GraphPortOperator::LinkGraphInput(std::string_view name)
@@ -135,34 +135,34 @@ void Gin::Graph::GraphPortOperator::LinkGraphOutput(std::string_view name)
 	LinkGraphOutput(std::distance(graph->outputs.begin(), portIt));
 }
 
-void Gin::Graph::GraphPortOperator::UnlinkGraphInput(size_t idx)
+void Gin::Graph::GraphPortOperator::UnlinkGraphInput(GraphId id)
 {
-	if (graph->adj[nodeIdx][portIdx].size() < 1)
+	if (graph->adj[nodeId][portId].size() < 1)
 		return;
 
-	auto linkGIt = std::find(graph->inputs[idx].GetLinks().begin(), graph->inputs[idx].GetLinks().end(), std::make_pair(nodeIdx, portIdx));
-	auto linkAIt = std::find(graph->adj[nodeIdx][portIdx].begin(), graph->adj[nodeIdx][portIdx].end(), std::make_pair(std::numeric_limits<size_t>::max(), idx));
+	auto linkGIt = std::find(graph->inputs[id].GetLinks().begin(), graph->inputs[id].GetLinks().end(), std::make_pair(nodeId, portId));
+	auto linkAIt = std::find(graph->adj[nodeId][portId].begin(), graph->adj[nodeId][portId].end(), std::make_pair(GRAPH_INPUT_NODE_ID, id));
 
-	if (linkGIt == std::end(graph->inputs[idx].GetLinks()) || linkAIt == std::end(graph->adj[nodeIdx][portIdx]))
+	if (linkGIt == std::end(graph->inputs[id].GetLinks()) || linkAIt == std::end(graph->adj[nodeId][portId]))
 		return;
 
-	graph->inputs[idx].GetLinks().erase(linkGIt);
-	graph->adj[nodeIdx][portIdx].erase(linkAIt);
+	graph->inputs[id].GetLinks().erase(linkGIt);
+	graph->adj[nodeId][portId].erase(linkAIt);
 }
 
-void Gin::Graph::GraphPortOperator::UnlinkGraphOutput(size_t idx)
+void Gin::Graph::GraphPortOperator::UnlinkGraphOutput(GraphId id)
 {
-	if (graph->outputs[idx].GetLinks().size() < 1)
+	if (graph->outputs[id].GetLinks().size() < 1)
 		return;
 
-	auto linkGIt = std::find(graph->outputs[idx].GetLinks().begin(), graph->outputs[idx].GetLinks().end(), std::make_pair(nodeIdx, portIdx));
-	auto linkAIt = std::find(graph->adj[nodeIdx][portIdx].begin(), graph->adj[nodeIdx][portIdx].end(), std::make_pair(std::numeric_limits<size_t>::max() - 1, idx));
+	auto linkGIt = std::find(graph->outputs[id].GetLinks().begin(), graph->outputs[id].GetLinks().end(), std::make_pair(nodeId, portId));
+	auto linkAIt = std::find(graph->adj[nodeId][portId].begin(), graph->adj[nodeId][portId].end(), std::make_pair(GRAPH_OUTPUT_NODE_ID, id));
 
-	if (linkGIt == std::end(graph->outputs[idx].GetLinks()) || linkAIt == std::end(graph->adj[nodeIdx][portIdx]))
+	if (linkGIt == std::end(graph->outputs[id].GetLinks()) || linkAIt == std::end(graph->adj[nodeId][portId]))
 		return;
 
-	graph->outputs[idx].GetLinks().erase(linkGIt);
-	graph->adj[nodeIdx][portIdx].erase(linkAIt);
+	graph->outputs[id].GetLinks().erase(linkGIt);
+	graph->adj[nodeId][portId].erase(linkAIt);
 }
 
 void Gin::Graph::GraphPortOperator::UnlinkGraphInput(std::string_view name)
@@ -189,19 +189,19 @@ void Gin::Graph::GraphPortOperator::UnlinkGraphOutput(std::string_view name)
 	UnlinkGraphOutput(std::distance(graph->outputs.begin(), portIt));
 }
 
-void Gin::Graph::Graph::RemoveNode(size_t nodeIdx) {
-	nodes.erase(nodes.begin() + nodeIdx);
-	adj.erase(adj.begin() + nodeIdx);
+void Gin::Graph::Graph::RemoveNode(GraphId nodeId) {
+	nodes.erase(nodes.begin() + nodeId);
+	adj.erase(adj.begin() + nodeId);
 
 	for (auto& nodeadj : adj) {
 		for (auto& portadj : nodeadj) {
 			for (size_t i = 0; i < portadj.size();) {
-				if (portadj[i].first == nodeIdx) {
+				if (portadj[i].first == nodeId) {
 					portadj.erase(portadj.begin() + i);
 					continue;
 				}
 
-				if (portadj[i].first > nodeIdx && portadj[i].first < std::numeric_limits<size_t>::max() - 1)
+				if (portadj[i].first > nodeId && portadj[i].first < GRAPH_OUTPUT_NODE_ID)
 					portadj[i].first -= 1;
 
 				++i;
@@ -211,12 +211,12 @@ void Gin::Graph::Graph::RemoveNode(size_t nodeIdx) {
 
 	for (auto& input : inputs) {
 		for (size_t i = 0; i < input.GetLinks().size();) {
-			if (input.GetLinks()[i].first == nodeIdx) {
+			if (input.GetLinks()[i].first == nodeId) {
 				input.GetLinks().erase(input.GetLinks().begin() + i);
 				continue;
 			}
 
-			if (input.GetLinks()[i].first > nodeIdx)
+			if (input.GetLinks()[i].first > nodeId)
 				input.GetLinks()[i].first -= 1;
 
 			++i;
@@ -225,12 +225,12 @@ void Gin::Graph::Graph::RemoveNode(size_t nodeIdx) {
 
 	for (auto& output : outputs) {
 		for (size_t i = 0; i < output.GetLinks().size();) {
-			if (output.GetLinks()[i].first == nodeIdx) {
+			if (output.GetLinks()[i].first == nodeId) {
 				output.GetLinks().erase(output.GetLinks().begin() + i);
 				continue;
 			}
 
-			if (output.GetLinks()[i].first > nodeIdx)
+			if (output.GetLinks()[i].first > nodeId)
 				output.GetLinks()[i].first -= 1;
 
 			++i;
@@ -239,18 +239,18 @@ void Gin::Graph::Graph::RemoveNode(size_t nodeIdx) {
 }
 
 
-void Gin::Graph::Graph::RemoveInput(size_t idx) {
-	inputs.erase(inputs.begin() + idx);
+void Gin::Graph::Graph::RemoveInput(GraphId Id) {
+	inputs.erase(inputs.begin() + Id);
 
 	for (auto& nodeadj : adj) {
 		for (auto& portadj : nodeadj) {
 			for (size_t i = 0; i < portadj.size();) {
-				if (portadj[i].first == std::numeric_limits<size_t>::max() && portadj[i].second == idx) {
+				if (portadj[i].first == GRAPH_INPUT_NODE_ID && portadj[i].second == Id) {
 					portadj.erase(portadj.begin() + i);
 					continue;
 				}
 
-				if (portadj[i].first == std::numeric_limits<size_t>::max() && portadj[i].second > idx)
+				if (portadj[i].first == GRAPH_INPUT_NODE_ID && portadj[i].second > Id)
 					portadj[i].second -= 1;
 
 				++i;
@@ -259,18 +259,18 @@ void Gin::Graph::Graph::RemoveInput(size_t idx) {
 	}
 }
 
-void Gin::Graph::Graph::RemoveOutput(size_t idx) {
-	outputs.erase(outputs.begin() + idx);
+void Gin::Graph::Graph::RemoveOutput(GraphId Id) {
+	outputs.erase(outputs.begin() + Id);
 
 	for (auto& nodeadj : adj) {
 		for (auto& portadj : nodeadj) {
 			for (size_t i = 0; i < portadj.size();) {
-				if (portadj[i].first == std::numeric_limits<size_t>::max() - 1 && portadj[i].second == idx) {
+				if (portadj[i].first == GRAPH_OUTPUT_NODE_ID && portadj[i].second == Id) {
 					portadj.erase(portadj.begin() + i);
 					continue;
 				}
 
-				if (portadj[i].first == std::numeric_limits<size_t>::max() - 1 && portadj[i].second > idx)
+				if (portadj[i].first == GRAPH_OUTPUT_NODE_ID && portadj[i].second > Id)
 					portadj[i].second -= 1;
 
 				++i;
@@ -297,13 +297,13 @@ void Gin::Graph::Graph::Compile()
 	size_t count{};
 	do {
 		count = 0;
-		for (size_t nodeIdx = 0; nodeIdx < nodesOrder.size(); ++nodeIdx) {
-			if (nodesOrder[nodeIdx] == order) {
+		for (size_t nodeId = 0; nodeId < nodesOrder.size(); ++nodeId) {
+			if (nodesOrder[nodeId] == order) {
 				++count;
 
-				for (size_t i = 0; i < nodes[nodeIdx]->GetInputPortCount(); ++i) {
-					for (auto& link : adj[nodeIdx][i]) {
-						if (link.first < std::numeric_limits<size_t>::max() - 1)
+				for (size_t i = 0; i < nodes[nodeId]->GetInputPortCount(); ++i) {
+					for (auto& link : adj[nodeId][i]) {
+						if (link.first < GRAPH_OUTPUT_NODE_ID)
 							nodesOrder[link.first] = order + 1;
 					}
 				}
@@ -325,26 +325,26 @@ void Gin::Graph::Graph::Compile()
 		}
 	}
 
-	for (size_t nodeIdx = 0; nodeIdx < nodesOrder.size(); ++nodeIdx) {
+	for (size_t nodeId = 0; nodeId < nodesOrder.size(); ++nodeId) {
 		bool isolatedNode = true;
-		for (size_t i = 0; i < nodes[nodeIdx]->GetInputPortCount(); ++i) {
-			if (adj[nodeIdx][i].size() > 0) {
+		for (size_t i = 0; i < nodes[nodeId]->GetInputPortCount(); ++i) {
+			if (adj[nodeId][i].size() > 0) {
 				isolatedNode = false;
 				break;
 			}
 		}
-		if (isolatedNode && nodesOrder[nodeIdx] > 0)
-			nodesOrder[nodeIdx] = order;
+		if (isolatedNode && nodesOrder[nodeId] > 0)
+			nodesOrder[nodeId] = order;
 	}
 
 	size_t tmp = order;
 
 	while (order > 0) {
-		for (size_t nodeIdx = 0; nodeIdx < nodesOrder.size(); ++nodeIdx) {
-			if (nodesOrder[nodeIdx] == order) {
-				for (size_t i = 0; i < nodes[nodeIdx]->GetOutputPortCount(); ++i) {
-					for (auto& link : adj[nodeIdx][i + nodes[nodeIdx]->GetInputPortCount()]) {
-						if (link.first < std::numeric_limits<size_t>::max() - 1)
+		for (size_t nodeId = 0; nodeId < nodesOrder.size(); ++nodeId) {
+			if (nodesOrder[nodeId] == order) {
+				for (size_t i = 0; i < nodes[nodeId]->GetOutputPortCount(); ++i) {
+					for (auto& link : adj[nodeId][i + nodes[nodeId]->GetInputPortCount()]) {
+						if (link.first < GRAPH_OUTPUT_NODE_ID)
 							if (nodesOrder[link.first] > 0)
 								nodesOrder[link.first] = order - 1;
 					}
@@ -357,27 +357,27 @@ void Gin::Graph::Graph::Compile()
 	order = tmp;
 
 	while (order > 0) {
-		for (size_t nodeIdx = 0; nodeIdx < nodesOrder.size(); ++nodeIdx) {
-			if (nodesOrder[nodeIdx] == order) {
-				for (size_t i = 0; i < nodes[nodeIdx]->GetInputPortCount(); ++i) {
-					for (auto& link : adj[nodeIdx][i]) {
+		for (size_t nodeId = 0; nodeId < nodesOrder.size(); ++nodeId) {
+			if (nodesOrder[nodeId] == order) {
+				for (size_t i = 0; i < nodes[nodeId]->GetInputPortCount(); ++i) {
+					for (auto& link : adj[nodeId][i]) {
 						GraphAction action{};
 						action.type = GraphActionType::COPY;
-						action.nodeAIdx = nodeIdx;
-						action.portAIdx = i;
-						action.nodeBIdx = link.first;
-						action.portBIdx = link.second;
+						action.nodeAId = nodeId;
+						action.portAId = i;
+						action.nodeBId = link.first;
+						action.portBId = link.second;
 						program.push_back(action);
 					}
 				}
 			}
 		}
 
-		for (size_t nodeIdx = 0; nodeIdx < nodesOrder.size(); ++nodeIdx) {
-			if (nodesOrder[nodeIdx] == order) {
+		for (size_t nodeId = 0; nodeId < nodesOrder.size(); ++nodeId) {
+			if (nodesOrder[nodeId] == order) {
 				GraphAction action{};
 				action.type = GraphActionType::EXEC;
-				action.nodeAIdx = nodeIdx;
+				action.nodeAId = nodeId;
 				program.push_back(action);
 			}
 		}
@@ -388,10 +388,10 @@ void Gin::Graph::Graph::Compile()
 		if (outputs[i].GetLinks().size() > 0) {
 			GraphAction action{};
 			action.type = GraphActionType::COPY;
-			action.nodeAIdx = std::numeric_limits<size_t>::max() - 1;
-			action.portAIdx = i;
-			action.nodeBIdx = outputs[i].GetLinks()[0].first;
-			action.portBIdx = outputs[i].GetLinks()[0].second;
+			action.nodeAId = GRAPH_OUTPUT_NODE_ID;
+			action.portAId = i;
+			action.nodeBId = outputs[i].GetLinks()[0].first;
+			action.portBId = outputs[i].GetLinks()[0].second;
 			program.push_back(action);
 		}
 	}
@@ -403,31 +403,31 @@ void Gin::Graph::Graph::Execute(GraphContext ctx)
 {
 	for (auto& action : program) {
 		if (action.type == Gin::Graph::GraphActionType::EXEC)
-			nodes[action.nodeAIdx]->Initialize(ctx);
+			nodes[action.nodeAId]->Initialize(ctx);
 	}
 
 	for (auto action = program.begin(); action != program.end(); ++action) {
 		switch (action->type)
 		{
 		case Gin::Graph::GraphActionType::EXEC:
-			nodes[action->nodeAIdx]->Execute(ctx);
+			nodes[action->nodeAId]->Execute(ctx);
 			break;
 		case Gin::Graph::GraphActionType::COPY:
-			if (action->nodeAIdx == std::numeric_limits<size_t>::max() - 1) {
+			if (action->nodeAId == GRAPH_OUTPUT_NODE_ID) {
 				//Output to graph output
-				Port& src = nodes[action->nodeBIdx]->GetOutputPort(action->portBIdx - nodes[action->nodeBIdx]->GetInputPortCount());
-				GraphPort& dst = outputs[action->portAIdx];
+				Port& src = nodes[action->nodeBId]->GetOutputPort(action->portBId - nodes[action->nodeBId]->GetInputPortCount());
+				GraphPort& dst = outputs[action->portAId];
 				dst.CopyFrom(src);
 			}
-			else if (action->nodeBIdx == std::numeric_limits<size_t>::max()) {
+			else if (action->nodeBId == GRAPH_INPUT_NODE_ID) {
 				//Graph input to input
-				GraphPort& src = inputs[action->portBIdx];
-				Port& dst = nodes[action->nodeAIdx]->GetInputPort(action->portAIdx);
+				GraphPort& src = inputs[action->portBId];
+				Port& dst = nodes[action->nodeAId]->GetInputPort(action->portAId);
 				dst.CopyFrom(src);
 			}
 			else {
-				Port& src = nodes[action->nodeBIdx]->GetOutputPort(action->portBIdx - nodes[action->nodeBIdx]->GetInputPortCount());
-				Port& dst = nodes[action->nodeAIdx]->GetInputPort(action->portAIdx);
+				Port& src = nodes[action->nodeBId]->GetOutputPort(action->portBId - nodes[action->nodeBId]->GetInputPortCount());
+				Port& dst = nodes[action->nodeAId]->GetInputPort(action->portAId);
 				dst.CopyFrom(src);
 			}
 			break;
@@ -444,17 +444,17 @@ void Gin::Graph::Graph::Execute(GraphContext ctx, Thread::ThreadPool& pool)
 {
 	for (auto& action : program) {
 		if (action.type == Gin::Graph::GraphActionType::EXEC)
-			nodes[action.nodeAIdx]->Initialize(ctx);
+			nodes[action.nodeAId]->Initialize(ctx);
 	}
 
-	for (size_t idx = 0; idx < program.size();) {
-		GraphAction& action = program[idx];
+	for (size_t Id = 0; Id < program.size();) {
+		GraphAction& action = program[Id];
 		switch (action.type)
 		{
 		case Gin::Graph::GraphActionType::EXEC:
 			{
-				while (program[idx].type == Gin::Graph::GraphActionType::EXEC) {
-					std::shared_ptr<Node> nodeI = nodes[program[idx].nodeAIdx];
+				while (program[Id].type == Gin::Graph::GraphActionType::EXEC) {
+					std::shared_ptr<Node> nodeI = nodes[program[Id].nodeAId];
 					GraphContext ctxI = ctx;
 					++running;
 					pool.Execute([this, nodeI, ctxI, &pool]() {
@@ -465,7 +465,7 @@ void Gin::Graph::Graph::Execute(GraphContext ctx, Thread::ThreadPool& pool)
 							cv.notify_all();
 						}
 					});
-					++idx;
+					++Id;
 				}
 
 				while (running) {
@@ -478,25 +478,25 @@ void Gin::Graph::Graph::Execute(GraphContext ctx, Thread::ThreadPool& pool)
 				continue;
 			}
 
-			//nodes[action->nodeAIdx]->Initialize(ctx, pool);
-			//nodes[action->nodeAIdx]->Execute(ctx, pool);
+			//nodes[action->nodeAId]->Initialize(ctx, pool);
+			//nodes[action->nodeAId]->Execute(ctx, pool);
 			break;
 		case Gin::Graph::GraphActionType::COPY:
-			if (action.nodeAIdx == std::numeric_limits<size_t>::max() - 1) {
+			if (action.nodeAId == GRAPH_OUTPUT_NODE_ID) {
 				//Output to graph output
-				Port& src = nodes[action.nodeBIdx]->GetOutputPort(action.portBIdx - nodes[action.nodeBIdx]->GetInputPortCount());
-				GraphPort& dst = outputs[action.portAIdx];
+				Port& src = nodes[action.nodeBId]->GetOutputPort(action.portBId - nodes[action.nodeBId]->GetInputPortCount());
+				GraphPort& dst = outputs[action.portAId];
 				dst.CopyFrom(src);
 			}
-			else if (action.nodeBIdx == std::numeric_limits<size_t>::max()) {
+			else if (action.nodeBId == GRAPH_INPUT_NODE_ID) {
 				//Graph input to input
-				GraphPort& src = inputs[action.portBIdx];
-				Port& dst = nodes[action.nodeAIdx]->GetInputPort(action.portAIdx);
+				GraphPort& src = inputs[action.portBId];
+				Port& dst = nodes[action.nodeAId]->GetInputPort(action.portAId);
 				dst.CopyFrom(src);
 			}
 			else {
-				Port& src = nodes[action.nodeBIdx]->GetOutputPort(action.portBIdx - nodes[action.nodeBIdx]->GetInputPortCount());
-				Port& dst = nodes[action.nodeAIdx]->GetInputPort(action.portAIdx);
+				Port& src = nodes[action.nodeBId]->GetOutputPort(action.portBId - nodes[action.nodeBId]->GetInputPortCount());
+				Port& dst = nodes[action.nodeAId]->GetInputPort(action.portAId);
 				dst.CopyFrom(src);
 			}
 			break;
@@ -505,6 +505,6 @@ void Gin::Graph::Graph::Execute(GraphContext ctx, Thread::ThreadPool& pool)
 		default:
 			break;
 		}
-		++idx;
+		++Id;
 	}
 }

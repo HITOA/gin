@@ -12,7 +12,7 @@ namespace Gin::Module {
 		GetNodeRegistry()[path] = [](Graph::Graph& graph, std::string path) {
 			std::shared_ptr<T> node{ std::make_shared<T>() };
 			node->SetPath(path);
-			return graph.AddNode<T>(node).GetNodeIdx();
+			return graph.AddNode<T>(node).GetNodeId();
 		};
 	}
 }
