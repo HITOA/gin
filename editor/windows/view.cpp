@@ -390,7 +390,7 @@ void ViewWindow::UpdateCamera() {
                 cameraOrbitSettings.distance * ImGui::GetIO().DeltaTime;
     }
 
-    cameraOrbitSettings.distance = std::clamp(cameraOrbitSettings.distance, 0.5f, 1000.0f);
+    cameraOrbitSettings.distance = std::clamp(cameraOrbitSettings.distance, 0.5f, 100000.0f);
 
     Eigen::AngleAxisf yr{ cameraOrbitSettings.yAngle, Eigen::Vector3f::UnitY() };
     Eigen::AngleAxisf xr{ cameraOrbitSettings.xAngle, Eigen::Vector3f::UnitX() };
