@@ -28,6 +28,8 @@ public:
     void SetViewportSize(float width, float height);
     void GLViewport();
 
+    void SetNearFarPlane(float zNear, float zFar);
+
     Eigen::Vector3f GetUp();
     Eigen::Vector3f GetFront();
     Eigen::Vector3f GetRight();
@@ -90,7 +92,6 @@ private:
     bool lighting{ true };
     bool wireframe{ false };
 
-    float fov{ 70.0f };
     float zNear{ 0.1f };
     float zFar{ 1000.0f };
 

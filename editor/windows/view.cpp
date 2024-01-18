@@ -63,6 +63,11 @@ void ViewCamera::GLViewport() {
     glViewport(0, 0, width, height);
 }
 
+void ViewCamera::SetNearFarPlane(float zNear, float zFar) {
+    this->zNear = zNear;
+    this->zFar = zFar;
+}
+
 Eigen::Vector3f ViewCamera::GetUp() {
     return rotation * Eigen::Vector3f::UnitY();
 }
@@ -247,6 +252,16 @@ void ViewWindow::Draw(bool *open) {
         }
 
         ImGui::PopItemWidth();
+        ImGui::Spring(1.0f);
+        ImGui::PushItemWidth(125.0f);
+        if (ImGui::BeginCombo("##ViewCameraCombo", "Camera Settings")) {
+
+            ImGui::SliderFloat("Far Plane", &zFar, 100.0f, 10000.0f);
+
+            ImGui::EndCombo();
+        }
+
+        ImGui::PopItemWidth();
 
         ImGui::EndHorizontal();
         ImGui::EndVertical();
@@ -354,6 +369,8 @@ uint32_t ViewWindow::CreateShader(std::string_view vsPath, std::string_view fsPa
 }
 
 void ViewWindow::UpdateCamera() {
+    camera.SetNearFarPlane(zNear, zFar);
+
     if (ImGui::IsWindowHovered()) {
         if (ImGui::IsKeyPressed(ImGuiKey_F)) {
             cameraOrbitSettings.orbitPoint = Eigen::Vector3f::Zero();
