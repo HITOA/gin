@@ -512,6 +512,9 @@ void GraphEditorWindow::DrawMeshBuilderToolTab() {
 
     ImGui::PopItemWidth();
 
+    ImGui::Checkbox("Recalculate Normals", &recalculateNormal);
+    ImGui::Separator();
+
     if (ImGui::Button("Build")) {
         BuildVolume(ctx);
     }
@@ -911,7 +914,7 @@ void GraphEditorWindow::BuildVolume(Gin::Graph::GraphContext &context) {
 
     try {
         entry.graph->Compile();
-        entry.graph->Execute(context);
+        entry.graph->Execute(context, threadPool);
     } catch (std::exception& e) {
         printf("Error while building volume : %s", e.what());
         return;
@@ -960,7 +963,9 @@ void GraphEditorWindow::BuildVolume(Gin::Graph::GraphContext &context) {
         }
     }
 
-    indexedMesh.RecalculateNormals();
+    if (recalculateNormal)
+        indexedMesh.RecalculateNormals();
+
     std::shared_ptr<ViewWindow> view = editor->GetEditorWindow<ViewWindow>();
     if (view) {
         view->GetCurrentScene().Clear();

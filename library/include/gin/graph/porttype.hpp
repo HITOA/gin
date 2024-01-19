@@ -248,7 +248,6 @@ namespace Gin::Graph {
 	}
 
 	//Spatial Vector3
-	//Spatial Vector2
 	template<>
 	inline PortType GetPortType<Spatial::Spatial<Eigen::Vector3<int>>>() {
 		return (PortType)((int)PortType::Vector3 + (int)PortType::Spatial);

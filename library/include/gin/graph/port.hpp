@@ -4,8 +4,6 @@
 #include <gin/graph/porttype.hpp>
 #include <Eigen/Core>
 
-#define PORT_NAME_MAX_SIZE 32
-
 namespace Gin::Graph {
 
 	class Port {

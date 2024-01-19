@@ -28,10 +28,10 @@ void ViewScene::AddMesh(Gin::Mesh::IndexedMesh& mesh, const std::string &meshNam
     glEnableVertexAttribArray(1);
 
     //Color
-    //glBindBuffer(GL_ARRAY_BUFFER, meshData.VBOs[2]);
-    //glBufferData(GL_ARRAY_BUFFER, mesh.GetColors().size() * sizeof(float) * 4, mesh.GetColors().data(), GL_STATIC_DRAW);
-    //glVertexAttribPointer(2, mesh.GetColors().size(), GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
-    //glEnableVertexAttribArray(1);
+    glBindBuffer(GL_ARRAY_BUFFER, meshData.VBOs[2]);
+    glBufferData(GL_ARRAY_BUFFER, mesh.GetColors().size() * sizeof(float) * 4, mesh.GetColors().data(), GL_STATIC_DRAW);
+    glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(2);
 
     //EBO
     glGenBuffers(1, &meshData.EBO);
@@ -262,6 +262,18 @@ void ViewWindow::Draw(bool *open) {
         }
 
         ImGui::PopItemWidth();
+
+        ImVec2 size = ImGui::CalcTextSize("Tric Count : XXXXXXXXX") + ImGui::GetStyle().FramePadding * 2;
+
+        ImGui::Spring(1.0f, ImGui::GetWindowContentRegionWidth() - ImGui::GetCursorPosX() - size.x);
+
+        uint32_t triCount{ 0 };
+        for (auto& mesh : scene.meshes)
+            triCount += mesh.count / 3;
+
+        pos = ImGui::GetCursorScreenPos();
+        drawList->AddRectFilled(pos, pos + size, ImColor{ ImGui::GetStyle().Colors[ImGuiCol_FrameBg] });
+        ImGui::Text("Tri Count : %u", triCount);
 
         ImGui::EndHorizontal();
         ImGui::EndVertical();

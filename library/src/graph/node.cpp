@@ -46,6 +46,22 @@ void Gin::Graph::Node::Initialize(GraphContext ctx, Thread::ThreadPool& pool)
     }
 }
 
+void Gin::Graph::Node::Clear() {
+    for (auto& output : outputs) {
+        if ((int)(output->GetType().type) & (int)PortType::Spatial) {
+            Spatial::BaseSpatial* spatial = (Spatial::BaseSpatial*)output->GetProperty();
+            spatial->Resize(1, 1, 1);
+        }
+    }
+
+    for (auto& input : inputs) {
+        if ((int)(input->GetType().type) & (int)PortType::Spatial) {
+            Spatial::BaseSpatial* spatial = (Spatial::BaseSpatial*)input->GetProperty();
+            spatial->Resize(1, 1, 1);
+        }
+    }
+}
+
 void Gin::Graph::Node::Execute(GraphContext ctx, Thread::ThreadPool& pool)
 {
     Execute(ctx);

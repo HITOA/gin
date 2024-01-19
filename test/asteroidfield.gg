@@ -1,0 +1,571 @@
+{
+    "data": {
+        "editor": {
+            "inputs": {
+                "position": [
+                    -1687.0,
+                    -462.0
+                ]
+            },
+            "outputs": {
+                "position": [
+                    1128.0,
+                    -558.0
+                ]
+            }
+        },
+        "inputs": [
+            {
+                "name": "_Seed",
+                "type": 0
+            }
+        ],
+        "outputs": [
+            {
+                "name": "_Volume",
+                "type": 11
+            },
+            {
+                "name": "_Color",
+                "type": 19
+            }
+        ]
+    },
+    "links": [
+        0,
+        0,
+        4,
+        2,
+        0,
+        1,
+        22,
+        5,
+        2,
+        0,
+        1,
+        0,
+        3,
+        0,
+        2,
+        4,
+        3,
+        2,
+        4294967295,
+        0,
+        4,
+        0,
+        10,
+        2,
+        5,
+        0,
+        6,
+        3,
+        6,
+        0,
+        3,
+        3,
+        7,
+        0,
+        11,
+        0,
+        8,
+        0,
+        7,
+        4,
+        8,
+        2,
+        4294967295,
+        0,
+        9,
+        0,
+        8,
+        3,
+        10,
+        0,
+        5,
+        2,
+        10,
+        1,
+        9,
+        2,
+        12,
+        0,
+        13,
+        0,
+        12,
+        1,
+        14,
+        5,
+        15,
+        0,
+        23,
+        1,
+        16,
+        0,
+        24,
+        1,
+        17,
+        0,
+        25,
+        1,
+        18,
+        0,
+        15,
+        3,
+        18,
+        1,
+        21,
+        1,
+        19,
+        0,
+        16,
+        3,
+        19,
+        1,
+        21,
+        2,
+        20,
+        0,
+        17,
+        3,
+        20,
+        1,
+        21,
+        3,
+        21,
+        0,
+        12,
+        2,
+        22,
+        0,
+        18,
+        2,
+        22,
+        1,
+        19,
+        2,
+        22,
+        2,
+        20,
+        2,
+        23,
+        0,
+        12,
+        3,
+        24,
+        0,
+        23,
+        1,
+        25,
+        0,
+        24,
+        1,
+        4294967294,
+        0,
+        0,
+        2,
+        4294967294,
+        1,
+        26,
+        6
+    ],
+    "name": "Asteroid Field",
+    "nodes": [
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        756.0,
+                        -591.0
+                    ]
+                },
+                "node": {
+                    "Radius": 26.185359954833984
+                }
+            },
+            "path": "Signed/3D/Primitives/Sphere"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        -1744.0,
+                        -909.0
+                    ]
+                },
+                "node": {}
+            },
+            "path": "FastNoise2/Generator/OpenSimplex2"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        -1449.0,
+                        -944.0
+                    ]
+                },
+                "node": {
+                    "Gain": 0.5,
+                    "Lacunarity": 2.0,
+                    "Octaves": 8
+                }
+            },
+            "path": "FastNoise2/Fractal/Fractal Ridged"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        -1080.0,
+                        -918.0
+                    ]
+                },
+                "node": {
+                    "Frequency": 0.009999999776482582,
+                    "Seed": 0
+                }
+            },
+            "path": "FastNoise2/Sampler3D"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        -24.0,
+                        -811.0
+                    ]
+                },
+                "node": {
+                    "A": -13.8146390914917,
+                    "B": 40.0
+                }
+            },
+            "path": "Math/Operation/AddSpatial"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        -503.0,
+                        -875.0
+                    ]
+                },
+                "node": {
+                    "A": 0.1909063160419464,
+                    "B": 5.0
+                }
+            },
+            "path": "Math/Operation/MultiplySpatial"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        -776.0,
+                        -879.0
+                    ]
+                },
+                "node": {
+                    "A": -0.08048344403505325,
+                    "Max": 1.0,
+                    "Min": -0.5
+                }
+            },
+            "path": "Math/Function/SmoothStep"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        -1448.0,
+                        -717.0
+                    ]
+                },
+                "node": {
+                    "Gain": 0.30000001192092896,
+                    "Lacunarity": 2.0,
+                    "Octaves": 4
+                }
+            },
+            "path": "FastNoise2/Fractal/FractalFBm"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        -1112.0,
+                        -699.0
+                    ]
+                },
+                "node": {
+                    "Frequency": 0.009999999776482582,
+                    "Seed": 0
+                }
+            },
+            "path": "FastNoise2/Sampler3D"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        -703.0,
+                        -643.0
+                    ]
+                },
+                "node": {
+                    "A": -0.738458514213562,
+                    "B": 20.0
+                }
+            },
+            "path": "Math/Operation/MultiplySpatial"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        -279.0,
+                        -751.0
+                    ]
+                },
+                "node": {
+                    "A": 0.9545315504074097,
+                    "B": -14.769170761108398
+                }
+            },
+            "path": "Math/Operation/AddSpatial"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        -1620.0,
+                        -684.0
+                    ]
+                },
+                "node": {}
+            },
+            "path": "FastNoise2/Generator/Simplex"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        -1140.0,
+                        -480.0
+                    ]
+                },
+                "node": {}
+            },
+            "path": "Math/Transform/Domain Repeat"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        -1383.0,
+                        -480.0
+                    ]
+                },
+                "node": {}
+            },
+            "path": "Base/Position"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        -1514.0,
+                        -362.0
+                    ]
+                },
+                "node": {
+                    "W": 0.0,
+                    "X": 100.0,
+                    "Y": 100.0,
+                    "Z": 100.0
+                }
+            },
+            "path": "Base/Utils/Combine"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        -334.0,
+                        -489.0
+                    ]
+                },
+                "node": {
+                    "Hash": -42719541,
+                    "Max": 70.0,
+                    "Min": -70.0
+                }
+            },
+            "path": "Math/Hash/Uniform Distribution"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        -337.0,
+                        -361.0
+                    ]
+                },
+                "node": {
+                    "Hash": -101433033,
+                    "Max": 70.0,
+                    "Min": -70.0
+                }
+            },
+            "path": "Math/Hash/Uniform Distribution"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        -344.0,
+                        -226.0
+                    ]
+                },
+                "node": {
+                    "Hash": 92813129,
+                    "Max": 70.0,
+                    "Min": -70.0
+                }
+            },
+            "path": "Math/Hash/Uniform Distribution"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        136.0,
+                        -312.0
+                    ]
+                },
+                "node": {
+                    "A": -67.21500396728516,
+                    "B": 0.0
+                }
+            },
+            "path": "Math/Operation/AddSpatial"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        133.0,
+                        -214.0
+                    ]
+                },
+                "node": {
+                    "A": -63.3873176574707,
+                    "B": -100.0
+                }
+            },
+            "path": "Math/Operation/AddSpatial"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        136.0,
+                        -95.0
+                    ]
+                },
+                "node": {
+                    "A": -63.94927215576172,
+                    "B": -100.0
+                }
+            },
+            "path": "Math/Operation/AddSpatial"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        -344.0,
+                        7.0
+                    ]
+                },
+                "node": {}
+            },
+            "path": "Base/Utils/Split3Spatial"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        450.0,
+                        -222.0
+                    ]
+                },
+                "node": {
+                    "W": 0.0,
+                    "X": -67.21500396728516,
+                    "Y": -163.38731384277344,
+                    "Z": -163.94927978515625
+                }
+            },
+            "path": "Base/Utils/CombineSpatial"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        -837.0,
+                        -446.0
+                    ]
+                },
+                "node": {}
+            },
+            "path": "Math/Hash/Hash Vector3"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        -675.0,
+                        -333.0
+                    ]
+                },
+                "node": {
+                    "In": -42719541.0
+                }
+            },
+            "path": "Math/Hash/Hash Number"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        -574.0,
+                        -174.0
+                    ]
+                },
+                "node": {
+                    "In": -101433033.0
+                }
+            },
+            "path": "Math/Hash/Hash Number"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        779.0,
+                        -447.0
+                    ]
+                },
+                "node": {
+                    "W": 0.0,
+                    "X": 0.6,
+                    "Y": 0.25,
+                    "Z": 0.2
+                }
+            },
+            "path": "Base/Utils/CombineSpatial"
+        }
+    ]
+}

@@ -5,8 +5,9 @@ layout (location = 1) out vec3 gNormal;
 layout (location = 2) out vec3 gMetallicRoughness;
 
 in vec3 normal;
+in vec4 color;
 
 void main() {
     gNormal = normal;
-    gColor = vec3(0.97, 0.97, 0.97);
+    gColor = color.rgb;
 }

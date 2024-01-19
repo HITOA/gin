@@ -76,4 +76,5 @@ private:
 
     Gin::Thread::ThreadPool threadPool{};
     MeshBuilderType meshBuilderType{ MeshBuilderType::SurfaceNet };
+    bool recalculateNormal{ true };
 };

@@ -507,4 +507,9 @@ void Gin::Graph::Graph::Execute(GraphContext ctx, Thread::ThreadPool& pool)
 		}
 		++Id;
 	}
+
+    for (auto& action : program) {
+        if (action.type == Gin::Graph::GraphActionType::EXEC)
+            nodes[action.nodeAId]->Clear();
+    }
 }
