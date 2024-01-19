@@ -388,7 +388,7 @@ void ViewWindow::UpdateCamera() {
             cameraOrbitSettings.orbitPoint = Eigen::Vector3f::Zero();
         }
         if (ImGui::IsKeyDown(ImGuiKey_MouseMiddle)) {
-            ImVec2 mouseDelta = ImGui::GetIO().MouseDelta * ImGui::GetIO().DeltaTime;
+            ImVec2 mouseDelta = ImGui::GetIO().MouseDelta;
             if (ImGui::IsKeyDown(ImGuiKey_LeftShift)) {
                 float moveSpeed = cameraOrbitSettings.moveSpeed * cameraOrbitSettings.distance;
                 cameraOrbitSettings.orbitPoint -= camera.GetRight() * mouseDelta.x * moveSpeed;
@@ -399,7 +399,7 @@ void ViewWindow::UpdateCamera() {
             }
         }
         cameraOrbitSettings.distance -= ImGui::GetIO().MouseWheel * cameraOrbitSettings.zoomSpeed *
-                cameraOrbitSettings.distance * ImGui::GetIO().DeltaTime;
+                cameraOrbitSettings.distance;
     }
 
     cameraOrbitSettings.distance = std::clamp(cameraOrbitSettings.distance, 0.5f, 100000.0f);

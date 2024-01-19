@@ -104,8 +104,8 @@ private:
         float xAngle{};
         float yAngle{};
 
-        float zoomSpeed{ 5.0f };
-        float orbitSpeed{ 0.5f };
-        float moveSpeed{ 0.15f };
+        float zoomSpeed{ 0.1f };
+        float orbitSpeed{ 0.01f };
+        float moveSpeed{ 0.0015f };
     } cameraOrbitSettings;
 };
