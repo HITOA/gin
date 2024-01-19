@@ -38,12 +38,12 @@ void Gin::Graph::Node::Initialize(GraphContext ctx, Thread::ThreadPool& pool)
         }
     }
 
-    for (auto& input : inputs) {
+    /*for (auto& input : inputs) {
         if ((int)(input->GetType().type) & (int)PortType::Spatial) {
             Spatial::BaseSpatial* spatial = (Spatial::BaseSpatial*)input->GetProperty();
             spatial->Resize(size.x(), size.y(), size.z());
         }
-    }
+    }*/
 }
 
 void Gin::Graph::Node::Clear() {

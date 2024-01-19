@@ -17,8 +17,6 @@ set(SOURCES_CXX_FILES
         imgui_tables.cpp
         imgui_widgets.cpp
         imgui_demo.cpp
-        backends/imgui_impl_glfw.cpp
-        backends/imgui_impl_opengl3.cpp
         misc/cpp/imgui_stdlib.cpp
 )
 

@@ -37,6 +37,8 @@ namespace Gin::Spatial {
 
 			T v = data[0];
 
+            printf("Spatial Allocation Size : %u\n", width * height * depth * sizeof(T));
+
 			data = std::shared_ptr<T[]>(new T[width * height * depth]);
 			std::fill(&data[0], &data[width * height * depth], v);
 		}
