@@ -6,6 +6,7 @@ void ProfilerWindow::Initialize() {
 
 void ProfilerWindow::Draw(bool *open) {
     if (ImGui::Begin("Profiler", open)) {
+        ImGui::Text("Time : %f s", time);
         ImGui::PlotHistogram("Memory Usage", memoryUsage.data(), memoryUsage.size(), 0, "Memory Usage (MB)", 0, maxMemoryAllocated, ImGui::GetContentRegionAvail());
     }
     ImGui::End();
@@ -22,6 +23,7 @@ void ProfilerWindow::UpdateSession() {
     uint64_t currTickPosition{ 0 };
     uint64_t tickPerPoint{ session->events[session->events.size() - 1].tickOffset / 100 };
     float currMemoryAllocated{ 0 };
+    maxMemoryAllocated = 0;
 
     memoryUsage.clear();
 
@@ -42,6 +44,9 @@ void ProfilerWindow::UpdateSession() {
         if (currMemoryAllocated > maxMemoryAllocated)
             maxMemoryAllocated = currMemoryAllocated;
     }
+
+    std::chrono::duration<float> sd = session->endTime - session->startTime;
+    time = sd.count();
 
     memoryUsage.emplace_back(currMemoryAllocated);
 }

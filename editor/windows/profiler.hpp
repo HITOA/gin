@@ -15,4 +15,5 @@ private:
     std::shared_ptr<Gin::Profiler::Session> session{ nullptr };
     std::vector<float> memoryUsage{};
     float maxMemoryAllocated{ 0 };
+    double time{ 0.0 };
 };

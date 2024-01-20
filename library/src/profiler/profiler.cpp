@@ -14,9 +14,11 @@ void Gin::Profiler::Start(std::string_view sessionName) {
 }
 
 void Gin::Profiler::Stop() {
-    if (running)
+    if (running) {
+        session->endTime = std::chrono::system_clock::now();
+        allocation.clear();
         running = false;
-    allocation.clear();
+    }
 }
 
 void Gin::Profiler::RecordAllocation(uint64_t size, void* ptr) {

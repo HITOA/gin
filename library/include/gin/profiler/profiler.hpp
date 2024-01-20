@@ -23,6 +23,7 @@ namespace Gin::Profiler {
 
         std::string name{};
         std::chrono::time_point<std::chrono::system_clock> startTime{};
+        std::chrono::time_point<std::chrono::system_clock> endTime{};
         std::vector<Event> events{};
     };
 
