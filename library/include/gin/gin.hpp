@@ -6,7 +6,6 @@
 
 #include <gin/math/bounds.hpp>
 #include <gin/math/interpolation.hpp>
-#include <gin/math/interpolation.hpp>
 
 #include <gin/spatial/spatial.hpp>
 

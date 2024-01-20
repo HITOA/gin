@@ -1,4 +1,4 @@
-#include "editor.h"
+#include "editor.hpp"
 #include <stdexcept>
 
 #define GLAD_GL_IMPLEMENTATION

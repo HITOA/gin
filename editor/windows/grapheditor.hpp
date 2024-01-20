@@ -2,7 +2,7 @@
 
 #define IMGUI_DEFINE_MATH_OPERATORS
 
-#include "../editor.h"
+#include "../editor.hpp"
 #include <imgui.h>
 #include <imgui_node_editor.h>
 #include <gin/graph/graph.hpp>
@@ -10,8 +10,8 @@
 #include <string>
 #include <vector>
 #include <memory>
-#include "../stringfmt.h"
-#include "../nodebuilder.h"
+#include "../stringfmt.hpp"
+#include "../nodebuilder.hpp"
 
 struct GraphEntry {
     std::string path{ "" };

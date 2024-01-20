@@ -1,7 +1,7 @@
 #pragma once
 
 #define IMGUI_DEFINE_MATH_OPERATORS
-#include "../editor.h"
+#include "../editor.hpp"
 #include <gin/mesh/indexedmesh.hpp>
 #include <Eigen/Geometry>
 

@@ -1,4 +1,4 @@
-#include "nodebuilder.h"
+#include "nodebuilder.hpp"
 
 void NodeBuilder::Begin(ax::NodeEditor::NodeId id) {
     ax::NodeEditor::PushStyleVar(ax::NodeEditor::StyleVar_NodePadding, ImVec4(8, 4, 8, 8));

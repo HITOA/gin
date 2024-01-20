@@ -1,4 +1,4 @@
-#include "grapheditor.h"
+#include "grapheditor.hpp"
 #include <misc/cpp/imgui_stdlib.h>
 #include <nfd.h>
 #include <gin/module/registry.hpp>
@@ -7,7 +7,8 @@
 #include <gin/mesh/indexedmesh.hpp>
 #include <gin/mesh/marchingcube.hpp>
 #include <gin/mesh/surfacenet.hpp>
-#include "view.h"
+#include "view.hpp"
+#include "profiler.hpp"
 
 GraphEditorWindow::~GraphEditorWindow() noexcept {
     ax::NodeEditor::DestroyEditor(context);
@@ -912,6 +913,8 @@ void GraphEditorWindow::BuildVolume(Gin::Graph::GraphContext &context) {
         return;
     }
 
+    Gin::Profiler::Start("Graph Execution");
+
     try {
         entry.graph->Compile();
         entry.graph->Execute(context, threadPool);
@@ -919,6 +922,8 @@ void GraphEditorWindow::BuildVolume(Gin::Graph::GraphContext &context) {
         printf("Error while building volume : %s", e.what());
         return;
     }
+
+    Gin::Profiler::Stop();
 
     Gin::Spatial::Spatial<float> volume = *(Gin::Spatial::Spatial<float>*)volumePort.GetProperty();
     Gin::Spatial::Sampler<float> volumeSampler{ volume };
@@ -971,6 +976,9 @@ void GraphEditorWindow::BuildVolume(Gin::Graph::GraphContext &context) {
         view->GetCurrentScene().Clear();
         view->GetCurrentScene().AddMesh(indexedMesh, "Graph Build Mesh");
     }
-    else
-        printf("Couldn't add mesh to the view scene.");
+
+    std::shared_ptr<ProfilerWindow> profiler = editor->GetEditorWindow<ProfilerWindow>();
+    if (profiler) {
+        profiler->UpdateSession();
+    }
 }

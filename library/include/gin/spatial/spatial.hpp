@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <gin/profiler/profiler.hpp>
 
 namespace Gin::Spatial {
 
@@ -17,10 +18,12 @@ namespace Gin::Spatial {
 		Spatial() : size{ 1, 0, 0 } {
 			data = std::shared_ptr<T[]>(new T[1]);
 			data[0] = T{};
+            Profiler::RecordAllocation(1 * sizeof(T), data.get());
 		}
 		Spatial(T v) : size{ 1, 0, 0 } {
 			data = std::shared_ptr<T[]>(new T[1]);
 			data[0] = v;
+            Profiler::RecordAllocation(1 * sizeof(T), data.get());
 		}
 
 		inline size_t GetWidth() { return size[0]; }
@@ -31,15 +34,16 @@ namespace Gin::Spatial {
 			if (size[0] == width && size[1] == height && size[2] == depth)
 				return;
 
+            Profiler::RecordDeallocation(data.get());
+
 			size[0] = width;
 			size[1] = height;
 			size[2] = depth;
 
 			T v = data[0];
 
-            printf("Spatial Allocation Size : %u\n", width * height * depth * sizeof(T));
-
 			data = std::shared_ptr<T[]>(new T[width * height * depth]);
+            Profiler::RecordAllocation(width * height * depth * sizeof(T), data.get());
 			std::fill(&data[0], &data[width * height * depth], v);
 		}
 
