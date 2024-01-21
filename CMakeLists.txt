@@ -74,6 +74,7 @@ if(GIN_BUILD_EDITOR)
 endif()
 
 if(GIN_BUILD_BENCH)
-    add_executable(gin_bench ${gin_bench_src})
+    add_executable(gin_bench ${gin_bench_src}
+            library/include/gin/container/sampler.hpp)
     target_link_libraries(gin_bench gin_library nanobench)
 endif ()
