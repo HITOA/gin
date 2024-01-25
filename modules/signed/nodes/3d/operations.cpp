@@ -1,6 +1,7 @@
 #include <signed/nodes/3d/operations.hpp>
 #include <gin/math/math.hpp>
 
+/*
 Gin::Module::Signed::OPUnion::OPUnion()
 {
 	AddInputPort("A", distanceA);
@@ -188,4 +189,4 @@ void Gin::Module::Signed::OPSmoothIntersection::Execute(Graph::GraphContext ctx,
 std::string Gin::Module::Signed::OPSmoothIntersection::GetName()
 {
 	return "OPSmoothIntersection";
-}
+}*/

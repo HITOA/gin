@@ -10,7 +10,7 @@
 
 void InitializeMathModule()
 {
-	Gin::Module::AddNodesToRegistry<Gin::Module::Math::Multiply<float>>("Math/Operation/Multiply");
+	/*Gin::Module::AddNodesToRegistry<Gin::Module::Math::Multiply<float>>("Math/Operation/Multiply");
 	Gin::Module::AddNodesToRegistry<Gin::Module::Math::Add<float>>("Math/Operation/Add");
 	Gin::Module::AddNodesToRegistry<Gin::Module::Math::Substract<float>>("Math/Operation/Substract");
 	Gin::Module::AddNodesToRegistry<Gin::Module::Math::Divide<float>>("Math/Operation/Divide");
@@ -36,7 +36,7 @@ void InitializeMathModule()
 	Gin::Module::AddNodesToRegistry<Gin::Module::Math::Lerp>("Math/Function/Lerp");
 	Gin::Module::AddNodesToRegistry<Gin::Module::Math::InvLerp>("Math/Function/InvLerp");
 	Gin::Module::AddNodesToRegistry<Gin::Module::Math::SmoothStep>("Math/Function/SmoothStep");
-	Gin::Module::AddNodesToRegistry<Gin::Module::Math::Remap>("Math/Function/Remap");
+	Gin::Module::AddNodesToRegistry<Gin::Module::Math::Remap>("Math/Function/Remap");*/
 }
 
 void UninitializeMathModule()

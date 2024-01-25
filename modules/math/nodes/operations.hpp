@@ -3,7 +3,7 @@
 #include <gin/graph/node.hpp>
 
 namespace Gin::Module::Math {
-
+/*
 	template<typename T>
 	class Multiply : public Graph::Node {
 	public:
@@ -294,5 +294,5 @@ namespace Gin::Module::Math {
 		Spatial::Spatial<T> p{};
 
 		Spatial::Spatial<T> r{};
-	};
+	};*/
 }

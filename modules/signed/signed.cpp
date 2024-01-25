@@ -8,7 +8,7 @@ void InitializeSignedModule()
 {
 
 	Gin::Module::AddNodesToRegistry<Gin::Module::Signed::SDSphere>("Signed/3D/Primitives/Sphere");
-	Gin::Module::AddNodesToRegistry<Gin::Module::Signed::SDBox>("Signed/3D/Primitives/Box");
+	/*Gin::Module::AddNodesToRegistry<Gin::Module::Signed::SDBox>("Signed/3D/Primitives/Box");
 	Gin::Module::AddNodesToRegistry<Gin::Module::Signed::SDGround>("Signed/3D/Primitives/Ground");
 	Gin::Module::AddNodesToRegistry<Gin::Module::Signed::SDPlane>("Signed/3D/Primitives/Plane");
 	Gin::Module::AddNodesToRegistry<Gin::Module::Signed::SDTorus>("Signed/3D/Primitives/Torus");
@@ -20,7 +20,7 @@ void InitializeSignedModule()
 
 	Gin::Module::AddNodesToRegistry<Gin::Module::Signed::OPSmoothUnion>("Signed/3D/Operations/SmoothUnion");
 	Gin::Module::AddNodesToRegistry<Gin::Module::Signed::OPSmoothSubstraction>("Signed/3D/Operations/SmoothSubstraction");
-	Gin::Module::AddNodesToRegistry<Gin::Module::Signed::OPSmoothIntersection>("Signed/3D/Operations/SmoothIntersection");
+	Gin::Module::AddNodesToRegistry<Gin::Module::Signed::OPSmoothIntersection>("Signed/3D/Operations/SmoothIntersection");*/
 }
 
 void UninitializeSignedModule()

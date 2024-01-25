@@ -3,7 +3,6 @@
 #include <gin/graph/port.hpp>
 #include <gin/graph/nodeport.hpp>
 #include <gin/graph/graphcontext.hpp>
-#include <gin/spatial/spatial.hpp>
 #include <gin/math/math.hpp>
 #include <gin/thread/threadpool.hpp>
 #include <gin/graph/serialization/json.hpp>
@@ -46,64 +45,9 @@ namespace Gin::Graph {
 			return AddOutputPort(CreateNodePort(name, property));
 		}
 
-		template<typename F>
-		inline void SpatialOperation(F&& f) {
-			Eigen::Vector3<double> t{ ctx.bounds.extent * 2.0 / ctx.scale };
-			Eigen::Vector3<int> size = Math::Ceil<double, int, 3>(t);
-
-			size_t idx = 0;
-			for (size_t z = 0; z < size.z(); ++z) {
-				for (size_t y = 0; y < size.y(); ++y) {
-					for (size_t x = 0; x < size.x(); ++x) {
-						f(idx, x, y, z);
-						++idx;
-					}
-				}
-			}
-		}
-
-		template<typename F>
-		inline void SpatialOperation(Thread::ThreadPool& pool, F&& f) {
-			Eigen::Vector3<double> t{ ctx.bounds.extent * 2.0 / ctx.scale };
-			Eigen::Vector3<int> size = Math::Ceil<double, int, 3>(t);
-
-			unsigned int running{ 0 };
-			std::mutex mutex{};
-			std::condition_variable cv{};
-
-			size_t threadCount = pool.GetThreadCount();
-
-			for (size_t i = 0; i < threadCount; ++i) {
-				++running;
-				pool.Execute([&running, &cv, &mutex, threadCount, size, i, f] {
-					for (size_t z = i * size.z() / threadCount; z < (i + 1) * size.z() / threadCount; ++z) {
-						size_t idx = z * size.x() * size.y();
-						for (size_t y = 0; y < size.y(); ++y) {
-							for (size_t x = 0; x < size.x(); ++x) {
-								f(idx, x, y, z);
-								++idx;
-							}
-						}
-					}
-					{
-						std::unique_lock<std::mutex> lock{ mutex };
-						--running;
-						cv.notify_all();
-					}
-				});
-			}
-
-			while (running) {
-				std::unique_lock<std::mutex> lock{ mutex };
-				cv.wait(lock, [&] {
-					return running <= 0;
-					});
-			}
-		}
 	private:
 		std::vector<std::shared_ptr<Port>> inputs{};
 		std::vector<std::shared_ptr<Port>> outputs{};
-		GraphContext ctx{};
 		std::string path{};
 	};
 }

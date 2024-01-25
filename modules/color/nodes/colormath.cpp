@@ -1,6 +1,7 @@
 #include "colormath.hpp"
 #include <gin/math/interpolation.hpp>
 
+/*
 Gin::Module::Color::Blend::Blend()
 {
 	AddInputPort("A", a);
@@ -27,4 +28,4 @@ void Gin::Module::Color::Blend::Execute(Graph::GraphContext ctx, Thread::ThreadP
 std::string Gin::Module::Color::Blend::GetName()
 {
 	return "Blend";
-}
+}*/

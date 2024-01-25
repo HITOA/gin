@@ -5,6 +5,12 @@ project(gin)
 set(CMAKE_CXX_STANDARD 17)
 set(EXTERNAL_PATH ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty)
 
+if (MSVC)
+    add_compile_options(/arch:AVX)
+else()
+    add_compile_options(-mavx)
+endif()
+
 option(GIN_BUILD_BENCH "Build gin benchmark" ON)
 option(GIN_BUILD_EDITOR "Build gin editor" ON)
 option(GIN_BUILD_EDITOR_WITH_WAYLAND "Build gin editor using wayland" OFF)
@@ -17,7 +23,7 @@ else()
     set(GLFW_BUILD_X11 ON)
 endif()
 
-
+add_subdirectory(${EXTERNAL_PATH}/xsimd)
 add_subdirectory(${EXTERNAL_PATH}/eigen)
 add_subdirectory(${EXTERNAL_PATH}/nanobench)
 add_subdirectory(${EXTERNAL_PATH}/nativefiledialog-extended-1.1.0)
@@ -65,7 +71,7 @@ file(WRITE ${CMAKE_CURRENT_SOURCE_DIR}/modules/module.hpp ${module_file_src})
 add_library(gin_library STATIC ${gin_library_src} ${gin_modules_src} ${CMAKE_CURRENT_SOURCE_DIR}/modules/module.hpp)
 
 target_include_directories(gin_library PUBLIC library/include modules)
-target_link_libraries(gin_library Eigen3::Eigen FastNoise)
+target_link_libraries(gin_library xsimd Eigen3::Eigen FastNoise)
 
 if(GIN_BUILD_EDITOR)
     add_executable(gin_editor ${gin_editor_src})
@@ -75,6 +81,10 @@ endif()
 
 if(GIN_BUILD_BENCH)
     add_executable(gin_bench ${gin_bench_src}
-            library/include/gin/container/sampler.hpp)
+            library/include/gin/field/sampler.hpp
+            library/include/gin/math/type.hpp
+            library/include/gin/field/field.hpp
+            library/include/gin/field/constantfield.hpp
+    )
     target_link_libraries(gin_bench gin_library nanobench)
 endif ()

@@ -1,18 +1,18 @@
 #pragma once
 
-#include <Eigen/Core>
-#include <gin/spatial/spatial.hpp>
 #include <typeinfo>
+#include <gin/math/type.hpp>
+#include <gin/field/sampler.hpp>
 
 namespace Gin::Graph {
 
 	enum class PortType {
 		Object = 1,
-		Number = 2,
+		Scalar = 2,
 		Vector2 = 4,
 		Vector3 = 8,
-		Color = 16,
-		Spatial = 32
+		Vector4 = 16,
+		Field = 32
 	};
 
 	template<typename T>
@@ -32,44 +32,57 @@ namespace Gin::Graph {
 
 	//Number
 	template<>
-	inline PortType GetPortType<int>() {
-		return PortType::Number;
+	inline PortType GetPortType<Field::Sampler<Math::Scalar>>() {
+		return (PortType)((int)PortType::Scalar + (int)PortType::Field);
 	}
 	template<>
-	inline PortType GetPortType<float>() {
-		return PortType::Number;
+	inline PortType GetPortType<Field::Sampler<Math::Vector2>>() {
+        return (PortType)((int)PortType::Vector2 + (int)PortType::Field);
 	}
 	template<>
-	inline PortType GetPortType<double>() {
-		return PortType::Number;
+	inline PortType GetPortType<Field::Sampler<Math::Vector3>>() {
+        return (PortType)((int)PortType::Vector3 + (int)PortType::Field);
 	}
+    template<>
+    inline PortType GetPortType<Field::Sampler<Math::Vector4>>() {
+        return (PortType)((int)PortType::Vector4 + (int)PortType::Field);
+    }
 
 	template<>
-	inline const char* GetPortTypeShortName<int>() {
+	inline const char* GetPortTypeShortName<Field::Sampler<Math::Scalar>>() {
 		return "Num";
 	}
 	template<>
-	inline const char* GetPortTypeShortName<float>() {
-		return "Num";
+	inline const char* GetPortTypeShortName<Field::Sampler<Math::Vector2>>() {
+		return "Vec2";
 	}
 	template<>
-	inline const char* GetPortTypeShortName<double>() {
-		return "Num";
+	inline const char* GetPortTypeShortName<Field::Sampler<Math::Vector3>>() {
+		return "Vec3";
 	}
+    template<>
+    inline const char* GetPortTypeShortName<Field::Sampler<Math::Vector4>>() {
+        return "Vec4";
+    }
 
 	template<>
-	inline const char* GetPortTypeFullName<int>() {
-		return "Int";
-	}
-	template<>
-	inline const char* GetPortTypeFullName<float>() {
+	inline const char* GetPortTypeFullName<Field::Sampler<Math::Scalar>>() {
 		return "Float";
 	}
 	template<>
-	inline const char* GetPortTypeFullName<double>() {
-		return "Double";
+	inline const char* GetPortTypeFullName<Field::Sampler<Math::Vector2>>() {
+		return "Vector2";
 	}
+	template<>
+	inline const char* GetPortTypeFullName<Field::Sampler<Math::Vector3>>() {
+		return "Vector3";
+	}
+    template<>
+    inline const char* GetPortTypeFullName<Field::Sampler<Math::Vector4>>() {
+        return "Vector4";
+    }
 
+    /*
 	//Vector 2
 	template<>
 	inline PortType GetPortType<Eigen::Vector2<int>>() {
@@ -165,10 +178,10 @@ namespace Gin::Graph {
 	template<>
 	inline const char* GetPortTypeFullName<Eigen::Vector4<float>>() {
 		return "Color";
-	}
+	}*/
 
 	//Spatial Number
-	template<>
+	/*template<>
 	inline PortType GetPortType<Spatial::Spatial<int>>() {
 		return (PortType)((int)PortType::Number + (int)PortType::Spatial);
 	}
@@ -302,7 +315,7 @@ namespace Gin::Graph {
 	template<>
 	inline const char* GetPortTypeFullName<Spatial::Spatial<Eigen::Vector4<float>>>() {
 		return "Spatial<Color>";
-	}
+	}*/
 
 	//TypeInfo
 

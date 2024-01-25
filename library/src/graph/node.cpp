@@ -1,53 +1,15 @@
 #include <gin/graph/node.hpp>
 #include <gin/math/math.hpp>
-#include <gin/spatial/spatial.hpp>
 
-void Gin::Graph::Node::Initialize(GraphContext ctx)
-{
-    this->ctx = ctx;
-
-    Eigen::Vector3<double> t{ ctx.bounds.extent * 2.0 / ctx.scale };
-    Eigen::Vector3<int> size = Math::Ceil<double, int, 3>(t);
-
-    for (auto& output : outputs) {
-        if ((int)(output->GetType().type) & (int)PortType::Spatial) {
-            Spatial::BaseSpatial* spatial = (Spatial::BaseSpatial*)output->GetProperty();
-            spatial->Resize(size.x(), size.y(), size.z());
-        }
-    }
-
-    for (auto& input : inputs) {
-        if ((int)(input->GetType().type) & (int)PortType::Spatial) {
-            Spatial::BaseSpatial* spatial = (Spatial::BaseSpatial*)input->GetProperty();
-            spatial->Resize(size.x(), size.y(), size.z());
-        }
-    }
-}
+void Gin::Graph::Node::Initialize(GraphContext ctx) {}
 
 void Gin::Graph::Node::Initialize(GraphContext ctx, Thread::ThreadPool& pool)
 {
-    this->ctx = ctx;
-
-    Eigen::Vector3<double> t{ ctx.bounds.extent * 2.0 / ctx.scale };
-    Eigen::Vector3<int> size = Math::Ceil<double, int, 3>(t);
-
-    for (auto& output : outputs) {
-        if ((int)(output->GetType().type) & (int)PortType::Spatial) {
-            Spatial::BaseSpatial* spatial = (Spatial::BaseSpatial*)output->GetProperty();
-            spatial->Resize(size.x(), size.y(), size.z());
-        }
-    }
-
-    /*for (auto& input : inputs) {
-        if ((int)(input->GetType().type) & (int)PortType::Spatial) {
-            Spatial::BaseSpatial* spatial = (Spatial::BaseSpatial*)input->GetProperty();
-            spatial->Resize(size.x(), size.y(), size.z());
-        }
-    }*/
+    Initialize(ctx);
 }
 
 void Gin::Graph::Node::Clear() {
-    for (auto& output : outputs) {
+    /*for (auto& output : outputs) {
         if ((int)(output->GetType().type) & (int)PortType::Spatial) {
             Spatial::BaseSpatial* spatial = (Spatial::BaseSpatial*)output->GetProperty();
             spatial->Resize(1, 1, 1);
@@ -59,7 +21,7 @@ void Gin::Graph::Node::Clear() {
             Spatial::BaseSpatial* spatial = (Spatial::BaseSpatial*)input->GetProperty();
             spatial->Resize(1, 1, 1);
         }
-    }
+    }*/
 }
 
 void Gin::Graph::Node::Execute(GraphContext ctx, Thread::ThreadPool& pool)
@@ -87,7 +49,7 @@ nlohmann::json Gin::Graph::Node::Serialize()
         }
 
         //Spatial Number
-        if (input->GetType() == GetPortTypeInfo<Spatial::Spatial<int>>()) {
+        /*if (input->GetType() == GetPortTypeInfo<Spatial::Spatial<int>>()) {
             data[input->GetName()] = (*(Spatial::Spatial<int>*)input->GetProperty())[0];
             continue;
         }
@@ -98,7 +60,7 @@ nlohmann::json Gin::Graph::Node::Serialize()
         if (input->GetType() == GetPortTypeInfo<Spatial::Spatial<double>>()) {
             data[input->GetName()] = (*(Spatial::Spatial<double>*)input->GetProperty())[0];
             continue;
-        }
+        }*/
     }
 
     return data;
@@ -123,7 +85,7 @@ void Gin::Graph::Node::Deserialize(nlohmann::json data)
             }
 
             //Spatial Number
-            if (input->GetType() == GetPortTypeInfo<Spatial::Spatial<int>>()) {
+            /*if (input->GetType() == GetPortTypeInfo<Spatial::Spatial<int>>()) {
                 (*(Spatial::Spatial<int>*)input->GetProperty())[0] = data[input->GetName()];
                 continue;
             }
@@ -134,7 +96,7 @@ void Gin::Graph::Node::Deserialize(nlohmann::json data)
             if (input->GetType() == GetPortTypeInfo<Spatial::Spatial<double>>()) {
                 (*(Spatial::Spatial<double>*)input->GetProperty())[0] = data[input->GetName()];
                 continue;
-            }
+            }*/
         }
     }
 }

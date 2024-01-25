@@ -281,9 +281,9 @@ int triangleConnectionTable[256][16] =
         {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1}
 };
 
-void Gin::Mesh::MarchingCubeMeshBuilder::Build(Mesh& mesh, Spatial::Sampler<float>& volume, Spatial::Sampler<Eigen::Vector4<float>>& colors)
+void Gin::Mesh::MarchingCubeMeshBuilder::Build(MeshBuildData& data)
 {
-    Eigen::Vector3<double> offsets[8] = {
+    /*Eigen::Vector3<double> offsets[8] = {
            {0.0, 0.0, 0.0},
            {volume.GetScale(), 0.0, 0.0},
            {volume.GetScale(), 0.0, volume.GetScale()},
@@ -350,5 +350,5 @@ void Gin::Mesh::MarchingCubeMeshBuilder::Build(Mesh& mesh, Spatial::Sampler<floa
     }
 
     mesh.SetVertices(vertices.data(), vertices.size());
-    mesh.SetNormals(normals.data(), normals.size());
+    mesh.SetNormals(normals.data(), normals.size());*/
 }

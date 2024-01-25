@@ -1,6 +1,7 @@
 #pragma once
 
 #include <gin/graph/port.hpp>
+#include <memory>
 #include <Eigen/Core>
 
 namespace Gin::Graph {
@@ -27,13 +28,13 @@ namespace Gin::Graph {
 
 	//Number
 
-	template<>
+	/*template<>
 	class NodePort<int> : public Port {
 	public:
 		NodePort(const std::string& name, int& property) : Port(GetPortTypeInfo<int>(), name), property{ &property } {};
 
 		virtual bool Match(Port& port) final {
-			return port.GetType().type == PortType::Number;
+			return port.GetType().type == PortType::Scalar;
 		}
 		virtual bool CopyFrom(Port& port) final {
 			if (!Match(port))
@@ -67,7 +68,7 @@ namespace Gin::Graph {
 		NodePort(const std::string& name, float& property) : Port(GetPortTypeInfo<float>(), name), property{ &property } {};
 
 		virtual bool Match(Port& port) final {
-			return port.GetType().type == PortType::Number;
+			return port.GetType().type == PortType::Scalar;
 		}
 		virtual bool CopyFrom(Port& port) final {
 			if (!Match(port))
@@ -101,7 +102,7 @@ namespace Gin::Graph {
 		NodePort(const std::string& name, double& property) : Port(GetPortTypeInfo<double>(), name), property{ &property } {};
 
 		virtual bool Match(Port& port) final {
-			return port.GetType().type == PortType::Number;
+			return port.GetType().type == PortType::Scalar;
 		}
 		virtual bool CopyFrom(Port& port) final {
 			if (!Match(port))
@@ -127,7 +128,7 @@ namespace Gin::Graph {
 		virtual void* GetProperty() final { return property; };
 	public:
 		double* property{ nullptr };
-	};
+	};*
 
 	//Vector2
 
@@ -353,10 +354,10 @@ namespace Gin::Graph {
 		virtual void* GetProperty() final { return property; };
 	public:
 		Eigen::Vector3<double>* property{ nullptr };
-	};
+	};*/
 
 	//Spatial Number
-
+    /*
 	template<>
 	class NodePort<Spatial::Spatial<int>> : public Port {
 	public:
@@ -701,7 +702,7 @@ namespace Gin::Graph {
 		virtual void* GetProperty() final { return property; };
 	public:
 		Spatial::Spatial<Eigen::Vector3<double>>* property{ nullptr };
-	};
+	};*/
 
 	template<typename T>
 	inline std::shared_ptr<Port> CreateNodePort(const std::string& name, T& property) {

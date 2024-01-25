@@ -7,9 +7,9 @@
 
 void InitializeTerrainModule()
 {
-	Gin::Module::AddNodesToRegistry<Gin::Module::Terrain::Overhang>("Terrain/Features/Overhang");
+	//Gin::Module::AddNodesToRegistry<Gin::Module::Terrain::Overhang>("Terrain/Features/Overhang");
 
-	Gin::Module::AddNodesToRegistry<Gin::Module::Terrain::TerrainMix>("Terrain/Operation/Terrain Mix");
+	//Gin::Module::AddNodesToRegistry<Gin::Module::Terrain::TerrainMix>("Terrain/Operation/Terrain Mix");
 }
 
 void UninitializeTerrainModule()

@@ -3,7 +3,7 @@
 #include <gin/gin.hpp>
 
 namespace Gin::Module::Base {
-
+/*
 	template<typename T>
 	class Combine : public Graph::Node {
 	public:
@@ -174,6 +174,6 @@ namespace Gin::Module::Base {
 		Spatial::Spatial<T> x{};
 		Spatial::Spatial<T> y{};
 		Spatial::Spatial<T> z{};
-	};
+	};*/
 
 }

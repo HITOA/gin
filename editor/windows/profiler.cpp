@@ -19,6 +19,9 @@ std::string_view ProfilerWindow::GetName() {
 void ProfilerWindow::UpdateSession() {
     session = Gin::Profiler::GetLastSession();
 
+    if (session->events.size() < 1)
+        return;
+
     float memoryF{ 1e-6 };
     uint64_t currTickPosition{ 0 };
     uint64_t tickPerPoint{ session->events[session->events.size() - 1].tickOffset / 100 };

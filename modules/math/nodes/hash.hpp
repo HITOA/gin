@@ -3,7 +3,7 @@
 #include <gin/graph/node.hpp>
 
 namespace Gin::Module::Math {
-
+/*
 	class HashNumber : public Graph::Node {
 	public:
 		HashNumber();
@@ -65,6 +65,6 @@ namespace Gin::Module::Math {
 		double max{};
 
 		Spatial::Spatial<double> out{};
-	};
+	};*/
 
 }

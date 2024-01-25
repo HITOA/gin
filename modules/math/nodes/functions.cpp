@@ -1,7 +1,7 @@
 #include "functions.hpp"
 #include <gin/math/interpolation.hpp>
 #include <gin/math/math.hpp>
-
+/*
 Gin::Module::Math::Lerp::Lerp()
 {
 	AddInputPort("A", a);
@@ -117,3 +117,4 @@ std::string Gin::Module::Math::Remap::GetName()
 {
 	return "Remap";
 }
+*/

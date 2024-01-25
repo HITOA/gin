@@ -5,7 +5,7 @@
 
 void InitializeColorModule()
 {
-	Gin::Module::AddNodesToRegistry<Gin::Module::Color::Blend>("Color/Blend");
+	//Gin::Module::AddNodesToRegistry<Gin::Module::Color::Blend>("Color/Blend");
 }
 
 void UninitializeColorModule()

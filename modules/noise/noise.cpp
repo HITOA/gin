@@ -19,7 +19,7 @@ void InitializeNoiseModule()
 	Gin::Module::AddNodesToRegistry<Gin::Module::Noise::DomainWarp>("FastNoise2/Warp/Domain Warp");
 
 	Gin::Module::AddNodesToRegistry<Gin::Module::Noise::Sampler3D>("FastNoise2/Sampler3D");
-	Gin::Module::AddNodesToRegistry<Gin::Module::Noise::Sampler2D>("FastNoise2/Sampler2D");
+	//Gin::Module::AddNodesToRegistry<Gin::Module::Noise::Sampler2D>("FastNoise2/Sampler2D");
 }
 
 void UninitializeNoiseModule()

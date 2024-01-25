@@ -3,10 +3,10 @@
 #include <nfd.h>
 #include <gin/module/registry.hpp>
 #include <iostream>
-#include <gin/spatial/sampler.hpp>
 #include <gin/mesh/indexedmesh.hpp>
 #include <gin/mesh/marchingcube.hpp>
 #include <gin/mesh/surfacenet.hpp>
+#include <gin/field/sampler.hpp>
 #include "view.hpp"
 #include "profiler.hpp"
 
@@ -231,36 +231,16 @@ void GraphEditorWindow::DrawGraphPortTypeList(size_t idx, Gin::Graph::GraphPort 
         ImGui::TextUnformatted("Type : ");
         ImGui::SameLine();
         if (ImGui::BeginCombo((name + "_Type").c_str(), port.GetType().fullName)) {
-            if (ImGui::Selectable("Int"))
-                SetGraphPortType<int>(idx, input);
             if (ImGui::Selectable("Float"))
-                SetGraphPortType<float>(idx, input);
-            if (ImGui::Selectable("Double"))
-                SetGraphPortType<double>(idx, input);
+                SetGraphPortType<Gin::Field::Sampler<Gin::Math::Scalar>>(idx, input);
+            if (ImGui::Selectable("Vector2"))
+                SetGraphPortType<Gin::Field::Sampler<Gin::Math::Vector2>>(idx, input);
+            if (ImGui::Selectable("Vector3"))
+                SetGraphPortType<Gin::Field::Sampler<Gin::Math::Vector3>>(idx, input);
+            if (ImGui::Selectable("Vector4"))
+                SetGraphPortType<Gin::Field::Sampler<Gin::Math::Vector4>>(idx, input);
 
-            ImGui::Separator();
-
-            if (ImGui::Selectable("Vec2<Int>"))
-                SetGraphPortType<Eigen::Vector2<int>>(idx, input);
-            if (ImGui::Selectable("Vec2<Float>"))
-                SetGraphPortType<Eigen::Vector2<float>>(idx, input);
-            if (ImGui::Selectable("Vec2<Double>"))
-                SetGraphPortType<Eigen::Vector2<double>>(idx, input);
-
-            ImGui::Separator();
-
-            if (ImGui::Selectable("Vec3<Int>"))
-                SetGraphPortType<Eigen::Vector3<int>>(idx, input);
-            if (ImGui::Selectable("Vec3<Float>"))
-                SetGraphPortType<Eigen::Vector3<float>>(idx, input);
-            if (ImGui::Selectable("Vec3<Double>"))
-                SetGraphPortType<Eigen::Vector3<double>>(idx, input);
-
-            ImGui::Separator();
-
-            if (ImGui::Selectable("Color"))
-                SetGraphPortType<Eigen::Vector4<float>>(idx, input);
-
+            /*
             if (!input) {
                 ImGui::Separator();
 
@@ -293,7 +273,7 @@ void GraphEditorWindow::DrawGraphPortTypeList(size_t idx, Gin::Graph::GraphPort 
 
                 if (ImGui::Selectable("Spatial<Color>"))
                     SetGraphPortType<Gin::Spatial::Spatial<Eigen::Vector4<float>>>(idx, input);
-            }
+            }*/
 
             ImGui::EndCombo();
         }
@@ -397,7 +377,7 @@ void GraphEditorWindow::DrawGraphPortToolTab() {
         DrawGraphPortTypeList(i, entry.graph->GetInputPort(i), true);
 
     if (ImGui::Button("Add Input")) {
-        entry.graph->AddInput<int>("New Int (" + std::to_string(entry.graph->GetInputsCount()) + ")");
+        entry.graph->AddInput<Gin::Field::Sampler<Gin::Math::Scalar>>("New Input (" + std::to_string(entry.graph->GetInputsCount()) + ")");
     }
     ImGui::Separator();
 
@@ -407,7 +387,7 @@ void GraphEditorWindow::DrawGraphPortToolTab() {
         DrawGraphPortTypeList(i, entry.graph->GetOutputPort(i), false);
 
     if (ImGui::Button("Add Outputs")) {
-        entry.graph->AddOutput<int>("New Int (" + std::to_string(entry.graph->GetOutputsCount()) + ")");
+        entry.graph->AddOutput<Gin::Field::Sampler<Gin::Math::Scalar>>("New Output (" + std::to_string(entry.graph->GetOutputsCount()) + ")");
     }
     ImGui::Separator();
 }
@@ -495,19 +475,19 @@ void GraphEditorWindow::DrawMeshBuilderToolTab() {
 
     ImGui::PushItemWidth(75);
 
-    ImGui::InputDouble("##Origin_X", &ctx.bounds.origin.x());
+    ImGui::InputFloat("##Origin_X", &ctx.bounds.origin.x);
     ImGui::SameLine();
-    ImGui::InputDouble("##Origin_Y", &ctx.bounds.origin.y());
+    ImGui::InputFloat("##Origin_Y", &ctx.bounds.origin.y);
     ImGui::SameLine();
-    ImGui::InputDouble("##Origin_Z", &ctx.bounds.origin.z());
+    ImGui::InputFloat("##Origin_Z", &ctx.bounds.origin.z);
     ImGui::SameLine();
     ImGui::TextUnformatted("Origin");
 
-    ImGui::InputDouble("##Extent_X", &ctx.bounds.extent.x());
+    ImGui::InputFloat("##Extent_X", &ctx.bounds.extent.x);
     ImGui::SameLine();
-    ImGui::InputDouble("##Extent_Y", &ctx.bounds.extent.y());
+    ImGui::InputFloat("##Extent_Y", &ctx.bounds.extent.y);
     ImGui::SameLine();
-    ImGui::InputDouble("##Extent_Z", &ctx.bounds.extent.z());
+    ImGui::InputFloat("##Extent_Z", &ctx.bounds.extent.z);
     ImGui::SameLine();
     ImGui::TextUnformatted("Extent");
 
@@ -525,7 +505,7 @@ ImColor GetColorByType(Gin::Graph::PortType type) {
     if ((int)type & (int)Gin::Graph::PortType::Object) {
         return ImColor(70, 204, 65, 255);
     }
-    if ((int)type & (int)Gin::Graph::PortType::Number) {
+    if ((int)type & (int)Gin::Graph::PortType::Scalar) {
         return ImColor(204, 65, 65, 255);
     }
     if ((int)type & (int)Gin::Graph::PortType::Vector2) {
@@ -574,7 +554,7 @@ void GraphEditorWindow::DrawPin(Gin::Graph::Port &port, Gin::Graph::GraphId id, 
     }
 
     std::string name = port.GetName() + "(" + port.GetType().shortName + ")";
-    if ((int)port.GetType().type & (int)Gin::Graph::PortType::Spatial) {
+    if ((int)port.GetType().type & (int)Gin::Graph::PortType::Field) {
         ImGui::TextUnformatted(name.c_str());
     }
     else {
@@ -601,7 +581,7 @@ void GraphEditorWindow::DrawPin(Gin::Graph::Port &port, Gin::Graph::GraphId id, 
             ImGui::PopItemWidth();
         }
 
-        if (port.GetType() == Gin::Graph::GetPortTypeInfo<Gin::Spatial::Spatial<int>>()) {
+        /*if (port.GetType() == Gin::Graph::GetPortTypeInfo<Gin::Spatial::Spatial<int>>()) {
             ImGui::PushItemWidth(50);
             static int i{ 0 };
             Gin::Spatial::Spatial<int>& spatial = *(Gin::Spatial::Spatial<int>*)port.GetProperty();
@@ -627,7 +607,7 @@ void GraphEditorWindow::DrawPin(Gin::Graph::Port &port, Gin::Graph::GraphId id, 
             ImGui::InputDouble("##Input", &d);
             std::fill(&spatial[0], &spatial[spatial.GetWidth() * spatial.GetHeight() * spatial.GetDepth() + 1], d);
             ImGui::PopItemWidth();
-        }
+        }*/
     }
 
     if (!input) {
@@ -908,7 +888,7 @@ void GraphEditorWindow::BuildVolume(Gin::Graph::GraphContext &context) {
 
     Gin::Graph::GraphPort& volumePort = entry.graph->GetOutputPort(volumeIdx);
 
-    if (volumePort.GetType().type != (Gin::Graph::PortType)((int)Gin::Graph::PortType::Number + (int)Gin::Graph::PortType::Spatial)) {
+    if (volumePort.GetType().type != (Gin::Graph::PortType)((int)Gin::Graph::PortType::Scalar + (int)Gin::Graph::PortType::Field)) {
         printf("Can't build volume : a Spatial<Float> _Volume output is required.");
         return;
     }
@@ -925,10 +905,73 @@ void GraphEditorWindow::BuildVolume(Gin::Graph::GraphContext &context) {
 
     Gin::Profiler::Stop();
 
-    Gin::Spatial::Spatial<float> volume = *(Gin::Spatial::Spatial<float>*)volumePort.GetProperty();
-    Gin::Spatial::Sampler<float> volumeSampler{ volume };
+    Gin::Mesh::IndexedMesh indexedMesh{};
 
-    Gin::Spatial::Spatial<Eigen::Vector4<float>> colors{ Eigen::Vector4<float>{1.0f, 1.0f, 1.0f, 1.0f} };
+    Gin::Math::Vector3 size{ context.bounds.extent * 2.0 / context.scale };
+    size.x = std::ceil(size.x);
+    size.y = std::ceil(size.y);
+    size.z = std::ceil(size.z);
+
+    Gin::Field::Sampler<float>* volumeSampler = (Gin::Field::Sampler<float>*)volumePort.GetProperty();
+
+    Gin::Field::ScalarField<float> volume{ (uint32_t)size.x, (uint32_t)size.y, (uint32_t)size.z };
+    Gin::Field::VectorizedVector4Field color{ (uint32_t)size.x, (uint32_t)size.y, (uint32_t)size.z };
+
+    size_t idx{ 0 };
+    for (size_t z = 0; z < size.z; ++z) {
+        for (size_t y = 0; y < size.y; ++y) {
+            for (size_t x = 0; x < size.x; ++x) {
+                volume[idx] = volumeSampler->GetScalar(x, y, z);
+                if (x % xsimd::simd_type<Gin::Math::Scalar>::size == 0) {
+                    Gin::Field::VectorizedVector4Field::VectorVector4& vv3 =
+                            color.GetVectorVector4(idx / xsimd::simd_type<Gin::Math::Scalar>::size);
+                    xsimd::batch<Gin::Math::Scalar> v{ 1.0f };
+                    xsimd::store_aligned(vv3.x, v );
+                    xsimd::store_aligned(vv3.y, v );
+                    xsimd::store_aligned(vv3.z, v );
+                    xsimd::store_aligned(vv3.w, v );
+
+                }
+                ++idx;
+            }
+        }
+    }
+
+    Gin::Mesh::MeshBuildData buildData{};
+    buildData.mesh = &indexedMesh;
+    buildData.scale = context.scale;
+    buildData.bounds = context.bounds;
+    buildData.volume = &volume;
+    buildData.color = &color;
+
+    switch (meshBuilderType) {
+        case MeshBuilderType::MarchingCube:
+        {
+            Gin::Mesh::MarchingCubeMeshBuilder builder{};
+            builder.Build(buildData);
+            indexedMesh.BuildIndex();
+            break;
+        }
+        case MeshBuilderType::SurfaceNet: {
+            Gin::Mesh::SurfaceNetMeshBuilder builder{};
+            builder.Build(buildData);
+            break;
+        }
+    }
+
+    if (recalculateNormal)
+        indexedMesh.RecalculateNormals();
+
+    std::shared_ptr<ViewWindow> view = editor->GetEditorWindow<ViewWindow>();
+    if (view) {
+        view->GetCurrentScene().Clear();
+        view->GetCurrentScene().AddMesh(indexedMesh, "Graph Build Mesh");
+    }
+
+    //Gin::Spatial::Spatial<float> volume = *(Gin::Spatial::Spatial<float>*)volumePort.GetProperty();
+    //Gin::Spatial::Sampler<float> volumeSampler{ volume };
+
+    /*Gin::Spatial::Spatial<Eigen::Vector4<float>> colors{ Eigen::Vector4<float>{1.0f, 1.0f, 1.0f, 1.0f} };
 
     size_t colorsIdx = entry.graph->HasOutput("_Color");
     if (colorsIdx != GRAPH_ID_MAX) {
@@ -975,7 +1018,7 @@ void GraphEditorWindow::BuildVolume(Gin::Graph::GraphContext &context) {
     if (view) {
         view->GetCurrentScene().Clear();
         view->GetCurrentScene().AddMesh(indexedMesh, "Graph Build Mesh");
-    }
+    }*/
 
     std::shared_ptr<ProfilerWindow> profiler = editor->GetEditorWindow<ProfilerWindow>();
     if (profiler) {

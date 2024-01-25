@@ -1,6 +1,6 @@
 #include "hash.hpp"
 
-
+/*
 Gin::Module::Math::HashNumber::HashNumber()
 {
 	AddInputPort("In", in);
@@ -126,4 +126,4 @@ void Gin::Module::Math::NormalDistribution::Execute(Graph::GraphContext ctx)
 std::string Gin::Module::Math::NormalDistribution::GetName()
 {
 	return "Normal Distribution";
-}
+}*/

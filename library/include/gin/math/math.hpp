@@ -1,9 +1,30 @@
 #pragma once
 
-#include <Eigen/Core>
+#include <gin/math/type.hpp>
 
 namespace Gin::Math {
 
+    inline Vector3 Cross(const Vector3& rhs, const Vector3& lhs) {
+        return Vector3{
+            rhs.y * lhs.z - rhs.z * lhs.y,
+            -(rhs.x * lhs.z - rhs.z * lhs.x),
+            rhs.x * lhs.y - rhs.y * lhs.x
+        };
+    }
+
+    inline float Dot(const Vector3& rhs, const Vector3& lhs) {
+        return rhs.x * lhs.x + rhs.y * lhs.y + rhs.z * lhs.z;
+    }
+
+    inline float Length(const Vector3& rhs) {
+        return std::sqrt(Dot(rhs, rhs));
+    }
+
+    inline Vector3 Normalize(Vector3 rhs) {
+        return rhs / Length(rhs);
+    }
+
+    /*
 	template<typename T, typename U, size_t Dim>
 	inline Eigen::Vector<U, Dim> Ceil(Eigen::Vector<T, Dim>& vec) {
 		Eigen::Vector<U, Dim> r{};
@@ -55,5 +76,5 @@ namespace Gin::Math {
 		float m = h * h * h * 0.5f;
 		float s = m * k * (1.0f / 3.0f);
 		return a > b ? Eigen::Vector2<float>{ a - s, m } : Eigen::Vector2<float>{ b - s, 1.0f - m };
-	}
+	}*/
 }

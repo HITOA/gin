@@ -1,6 +1,7 @@
 #pragma once
 
 #include <gin/graph/node.hpp>
+#include <gin/field/sampler.hpp>
 
 namespace Gin::Module::Signed {
 
@@ -11,21 +12,27 @@ namespace Gin::Module::Signed {
 	public:
 		SDSphere();
 
+        virtual void Initialize(Graph::GraphContext ctx) final;
 		virtual void Execute(Graph::GraphContext ctx) final;
-		virtual void Execute(Graph::GraphContext ctx, Thread::ThreadPool& pool) final;
 		virtual std::string GetName() final;
 
 	private:
-		Spatial::Spatial<float> radius{ 1.0f };
-		Spatial::Spatial<Eigen::Vector3<double>> position{};
+        Field::Sampler<Math::Scalar> radius{ 1.0f };
+        Field::Sampler<Math::Vector3> position{};
 
-		Spatial::Spatial<float> distance{};
+        Field::Sampler<Math::Scalar> distance{};
+
+		//Spatial::Spatial<float> radius{ 1.0f };
+		//Spatial::Spatial<Eigen::Vector3<double>> position{};
+
+		//Spatial::Spatial<float> distance{};
 	};
+
 
 	/**
 	 * Signed Distance Function For A Sphere.
 	 */
-	class SDBox : public Graph::Node {
+	/*class SDBox : public Graph::Node {
 	public:
 		SDBox();
 
@@ -38,12 +45,12 @@ namespace Gin::Module::Signed {
 		Spatial::Spatial<Eigen::Vector3<double>> position{};
 
 		Spatial::Spatial<float> distance{};
-	};
+	};*/
 
 	/**
 	 * Signed Distance Function For A Plane Pointing Up.
 	 */
-	class SDGround : public Graph::Node {
+	/*class SDGround : public Graph::Node {
 	public:
 		SDGround();
 
@@ -57,12 +64,12 @@ namespace Gin::Module::Signed {
 
 		Spatial::Spatial<float> distance{};
 
-	};
+	};*/
 
 	/**
 	 * Signed Distance Function For A Plane In Any Direction.
 	 */
-	class SDPlane : public Graph::Node {
+	/*class SDPlane : public Graph::Node {
 	public:
 		SDPlane();
 
@@ -76,12 +83,12 @@ namespace Gin::Module::Signed {
 		Spatial::Spatial<Eigen::Vector3<double>> position{};
 
 		Spatial::Spatial<float> distance{};
-	};
+	};*/
 
 	/**
 	 * Signed Distance Function For A Torus.
 	 */
-	class SDTorus : public Graph::Node {
+	/*class SDTorus : public Graph::Node {
 	public:
 		SDTorus();
 
@@ -95,5 +102,5 @@ namespace Gin::Module::Signed {
 		Spatial::Spatial<Eigen::Vector3<double>> position{};
 
 		Spatial::Spatial<float> distance{};
-	};
+	};*/
 }

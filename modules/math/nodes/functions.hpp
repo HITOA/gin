@@ -3,7 +3,7 @@
 #include <gin/graph/node.hpp>
 
 namespace Gin::Module::Math {
-
+/*
 	class Lerp : public Graph::Node {
 	public:
 		Lerp();
@@ -72,5 +72,5 @@ namespace Gin::Module::Math {
 		Spatial::Spatial<float> maxB{};
 
 		Spatial::Spatial<float> r{};
-	};
+	};*/
 }

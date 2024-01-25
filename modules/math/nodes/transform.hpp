@@ -1,7 +1,7 @@
 #pragma once
 
 #include <gin/graph/node.hpp>
-
+/*
 namespace Gin::Module::Math {
 
 	class Translate : public Graph::Node {
@@ -87,4 +87,4 @@ namespace Gin::Module::Math {
 		Spatial::Spatial<Eigen::Vector3<double>> domainPosition{};
 	};
 
-}
+}*/
