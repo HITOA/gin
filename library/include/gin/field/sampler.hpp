@@ -10,11 +10,19 @@
 
 namespace Gin::Field {
 
+    struct Dynamic {};
+
     template<typename T>
     class Sampler {
     public:
-        Sampler() : field{ std::make_shared<ConstantField<T>>() } {}
-        Sampler(T v) : field{ std::make_shared<ConstantField<T>>(v) } {};
+        Sampler() {
+            SetField(std::make_shared<ConstantField<T>>());
+        };
+        Sampler(T v) {
+            SetField(std::make_shared<ConstantField<T>>(v));
+        };
+        template<typename U>
+        Sampler(const Sampler<U>& s) : field{ s.field }, typeIndex{ s.typeIndex } {};
 
         template<typename U>
         inline void SetField(std::shared_ptr<U> f) {
@@ -32,6 +40,10 @@ namespace Gin::Field {
         template<typename U>
         inline bool IsFieldOfType() {
             return typeIndex == typeid(U);
+        }
+
+        inline uint32_t GetComponentCount() {
+            return field->GetComponentCount();
         }
 
         inline Math::Scalar GetScalar(uint32_t x, uint32_t y, uint32_t z) {
@@ -70,8 +82,6 @@ namespace Gin::Field {
         std::type_index typeIndex{ typeid(void) };
     };
 
-    class DynamicSampler {
-
-    };
+    typedef Sampler<Dynamic> DynamicSampler;
 
 }

@@ -14,8 +14,8 @@ namespace Gin::Mesh {
         Mesh* mesh{ nullptr };
         Math::Scalar scale{ 1.0f };
         Math::Bounds bounds{};
-        Field::ScalarField<Math::Scalar>* volume{ nullptr };
-        Field::VectorizedVector4Field* color{ nullptr };
+        Field::Sampler<float> volume{};
+        Field::Sampler<Math::Vector4> color{ Math::Vector4{ 1.0f, 1.0f, 1.0f, 1.0f } };
     };
 
 	class MeshBuilder {

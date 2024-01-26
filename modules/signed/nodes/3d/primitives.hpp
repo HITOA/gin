@@ -21,31 +21,26 @@ namespace Gin::Module::Signed {
         Field::Sampler<Math::Vector3> position{};
 
         Field::Sampler<Math::Scalar> distance{};
-
-		//Spatial::Spatial<float> radius{ 1.0f };
-		//Spatial::Spatial<Eigen::Vector3<double>> position{};
-
-		//Spatial::Spatial<float> distance{};
 	};
 
 
 	/**
 	 * Signed Distance Function For A Sphere.
 	 */
-	/*class SDBox : public Graph::Node {
+	class SDBox : public Graph::Node {
 	public:
 		SDBox();
 
+        virtual void Initialize(Graph::GraphContext ctx) final;
 		virtual void Execute(Graph::GraphContext ctx) final;
-		virtual void Execute(Graph::GraphContext ctx, Thread::ThreadPool& pool) final;
 		virtual std::string GetName() final;
 
 	private:
-		Spatial::Spatial<Eigen::Vector3<double>> size{ Eigen::Vector3<double>{ 1.0f, 1.0f, 1.0f } };
-		Spatial::Spatial<Eigen::Vector3<double>> position{};
+        Field::Sampler<Math::Vector3> bsize{ Math::Vector3{ 1.0f, 1.0f, 1.0f } };
+        Field::Sampler<Math::Vector3> position{};
 
-		Spatial::Spatial<float> distance{};
-	};*/
+        Field::Sampler<float> distance{};
+	};
 
 	/**
 	 * Signed Distance Function For A Plane Pointing Up.

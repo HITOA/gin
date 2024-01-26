@@ -36,8 +36,9 @@ namespace Gin::Field {
         ScalarField() = delete;
         ScalarField(uint32_t width, uint32_t height, uint32_t depth) :
                 width{ width }, height{ height }, depth{ depth } {
-            data = (T*)xsimd::aligned_malloc(width * height * depth * sizeof(T), xsimd::default_arch::alignment());
-            Profiler::RecordAllocation(width * height * depth * sizeof(T), data);
+            vecWidth = width + width % xsimd::simd_type<Math::Scalar>::size;
+            data = (T*)xsimd::aligned_malloc(vecWidth * height * depth * sizeof(T), xsimd::default_arch::alignment());
+            Profiler::RecordAllocation(vecWidth * height * depth * sizeof(T), data);
         }
         ~ScalarField() final {
             if (data) {
@@ -47,23 +48,23 @@ namespace Gin::Field {
         }
 
         Math::Scalar GetScalar(uint32_t x, uint32_t y, uint32_t z) final {
-            return (Math::Scalar)data[x + y * width + z * width * height];
+            return (Math::Scalar)data[x + y * vecWidth + z * vecWidth * height];
         }
 
         Math::Vector2 GetVector2(uint32_t x, uint32_t y, uint32_t z) final {
-            return Math::Vector2{ (Math::Scalar)data[x + y * width + z * width * height] };
+            return Math::Vector2{ (Math::Scalar)data[x + y * vecWidth + z * vecWidth * height] };
         }
 
         Math::Vector3 GetVector3(uint32_t x, uint32_t y, uint32_t z) final {
-            return Math::Vector3{ (Math::Scalar)data[x + y * width + z * width * height] };
+            return Math::Vector3{ (Math::Scalar)data[x + y * vecWidth + z * vecWidth * height] };
         }
 
         Math::Vector4 GetVector4(uint32_t x, uint32_t y, uint32_t z) final {
-            return Math::Vector4{ (Math::Scalar)data[x + y * width + z * width * height] };
+            return Math::Vector4{ (Math::Scalar)data[x + y * vecWidth + z * vecWidth * height] };
         }
 
         xsimd::batch<Math::Scalar> GetScalarBatch(uint32_t x, uint32_t y, uint32_t z) final {
-            xsimd::batch<Math::Scalar> r = xsimd::load_aligned((Math::Scalar*)&data[x + y * width + z * width * height]);
+            xsimd::batch<Math::Scalar> r = xsimd::load_aligned((Math::Scalar*)&data[x + y * vecWidth + z * vecWidth * height]);
             return r;
         };
 
@@ -105,6 +106,7 @@ namespace Gin::Field {
 
     private:
         uint32_t width{}, height{}, depth{};
+        uint32_t vecWidth{};
         T* data{ nullptr };
     };
 
@@ -121,7 +123,7 @@ namespace Gin::Field {
             vecWidth = width + width % xsimd::simd_type<Math::Scalar>::size;
             data = (Math::Vector2*)xsimd::aligned_malloc(vecWidth * height * depth * sizeof(Math::Vector2),
                                                          xsimd::default_arch::alignment());
-            Profiler::RecordAllocation(width * height * depth * sizeof(Math::Vector2), data);
+            Profiler::RecordAllocation(vecWidth * height * depth * sizeof(Math::Vector2), data);
         }
         ~VectorizedVector2Field() final {
             if (data) {
@@ -236,7 +238,7 @@ namespace Gin::Field {
             vecWidth = width + width % xsimd::simd_type<Math::Scalar>::size;
             data = (Math::Vector3*)xsimd::aligned_malloc(vecWidth * height * depth * sizeof(Math::Vector3),
                                                          xsimd::default_arch::alignment());
-            Profiler::RecordAllocation(width * height * depth * sizeof(Math::Vector3), data);
+            Profiler::RecordAllocation(vecWidth * height * depth * sizeof(Math::Vector3), data);
         }
         ~VectorizedVector3Field() final {
             if (data) {
@@ -353,7 +355,7 @@ namespace Gin::Field {
             vecWidth = width + width % xsimd::simd_type<Math::Scalar>::size;
             data = (Math::Vector4*)xsimd::aligned_malloc(vecWidth * height * depth * sizeof(Math::Vector4),
                                                          xsimd::default_arch::alignment());
-            Profiler::RecordAllocation(width * height * depth * sizeof(Math::Vector4), data);
+            Profiler::RecordAllocation(vecWidth * height * depth * sizeof(Math::Vector4), data);
         }
         ~VectorizedVector4Field() final {
             if (data) {

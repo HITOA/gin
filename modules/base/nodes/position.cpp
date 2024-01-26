@@ -9,20 +9,13 @@ Gin::Module::Base::Position::Position()
 }
 
 void Gin::Module::Base::Position::Initialize(Graph::GraphContext ctx) {
-    Math::Vector3 size{ ctx.bounds.extent * 2.0 / ctx.scale };
-    size.x = std::ceil(size.x);
-    size.y = std::ceil(size.y);
-    size.z = std::ceil(size.z);
-
+    Math::Vector3 size{ Math::Ceil(ctx.bounds.extent * 2.0 / ctx.scale) };
     position.SetField(std::make_shared<Field::VectorizedVector3Field>(size.x, size.y, size.z));
 }
 
 void Gin::Module::Base::Position::Execute(Graph::GraphContext ctx)
 {
-    Math::Vector3 size{ ctx.bounds.extent * 2.0 / ctx.scale };
-    size.x = std::ceil(size.x);
-    size.y = std::ceil(size.y);
-    size.z = std::ceil(size.z);
+    Math::Vector3 size{ Math::Ceil(ctx.bounds.extent * 2.0 / ctx.scale) };
 
     std::shared_ptr<Field::VectorizedVector3Field> f = position.GetField<Field::VectorizedVector3Field>();
 

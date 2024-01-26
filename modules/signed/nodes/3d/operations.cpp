@@ -1,7 +1,7 @@
 #include <signed/nodes/3d/operations.hpp>
 #include <gin/math/math.hpp>
 
-/*
+
 Gin::Module::Signed::OPUnion::OPUnion()
 {
 	AddInputPort("A", distanceA);
@@ -11,27 +11,42 @@ Gin::Module::Signed::OPUnion::OPUnion()
 	AddOutputPort("T", t);
 }
 
-void Gin::Module::Signed::OPUnion::Execute(Graph::GraphContext ctx)
-{
-	SpatialOperation([&](size_t idx, size_t x, size_t y, size_t z) {
-		distanceR[idx] = Math::Min<float>(distanceA[idx], distanceB[idx]);
-		t[idx] = distanceA[idx] < distanceB[idx] ? 0.0f : 1.0f;
-	});
+void Gin::Module::Signed::OPUnion::Initialize(Graph::GraphContext ctx) {
+    Math::Vector3 size{ Math::Ceil(ctx.bounds.extent * 2.0 / ctx.scale) };
+    distanceR.SetField(std::make_shared<Field::ScalarField<float>>(size.x, size.y, size.z));
+    t.SetField(std::make_shared<Field::ScalarField<float>>(size.x, size.y, size.z));
 }
 
-void Gin::Module::Signed::OPUnion::Execute(Graph::GraphContext ctx, Thread::ThreadPool& pool)
+void Gin::Module::Signed::OPUnion::Execute(Graph::GraphContext ctx)
 {
-	SpatialOperation(pool, [&](size_t idx, size_t x, size_t y, size_t z) {
-		distanceR[idx] = Math::Min<float>(distanceA[idx], distanceB[idx]);
-		t[idx] = distanceA[idx] < distanceB[idx] ? 0.0f : 1.0f;
-	});
+    Math::Vector3 size{ Math::Ceil(ctx.bounds.extent * 2.0 / ctx.scale) };
+
+    std::shared_ptr<Field::ScalarField<float>> fR = distanceR.GetField<Field::ScalarField<float>>();
+    std::shared_ptr<Field::ScalarField<float>> fT = t.GetField<Field::ScalarField<float>>();
+
+    constexpr size_t simdSize = xsimd::simd_type<Math::Scalar>::size;
+    size_t idx = 0;
+
+    for (size_t z = 0; z < size.z; ++z) {
+        for (size_t y = 0; y < size.y; ++y) {
+            for (size_t x = 0; x < size.x; x += simdSize) {
+                xsimd::batch<float> dA = distanceA.GetScalarBatch(x, y, z);
+                xsimd::batch<float> dB = distanceB.GetScalarBatch(x, y, z);
+
+                xsimd::store_aligned(&(*fR)[idx], xsimd::min(dA, dB));
+                xsimd::store_aligned(&(*fT)[idx], xsimd::incr_if(xsimd::batch<float>{ 0.0f }, dA > dB));
+
+                idx += simdSize;
+            }
+        }
+    }
 }
 
 std::string Gin::Module::Signed::OPUnion::GetName()
 {
 	return "OPUnion";
 }
-
+/*
 Gin::Module::Signed::OPSubstraction::OPSubstraction()
 {
 	AddInputPort("A", distanceA);

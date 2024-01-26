@@ -1,95 +1,28 @@
 #include "gin/graph/serialization/graphserdes.hpp"
 #include <fstream>
 #include "gin/module/registry.hpp"
+#include <gin/field/sampler.hpp>
 
 size_t GetTypeHashCodeFromId(uint32_t id) {
     switch (id) {
-        case 0: return typeid(int).hash_code();
-        case 1: return typeid(float).hash_code();
-        case 2: return typeid(double).hash_code();
-        case 3: return typeid(Eigen::Vector2<int>).hash_code();
-        case 4: return typeid(Eigen::Vector2<float>).hash_code();
-        case 5: return typeid(Eigen::Vector2<double>).hash_code();
-        case 6: return typeid(Eigen::Vector3<int>).hash_code();
-        case 7: return typeid(Eigen::Vector3<float>).hash_code();
-        case 8: return typeid(Eigen::Vector3<double>).hash_code();
-        case 9: return typeid(Eigen::Vector4<float>).hash_code();
-        /*case 10: return typeid(Gin::Spatial::Spatial<int>).hash_code();
-        case 11: return typeid(Gin::Spatial::Spatial<float>).hash_code();
-        case 12: return typeid(Gin::Spatial::Spatial<double>).hash_code();
-        case 13: return typeid(Gin::Spatial::Spatial<Eigen::Vector2<int>>).hash_code();
-        case 14: return typeid(Gin::Spatial::Spatial<Eigen::Vector2<float>>).hash_code();
-        case 15: return typeid(Gin::Spatial::Spatial<Eigen::Vector2<double>>).hash_code();
-        case 16: return typeid(Gin::Spatial::Spatial<Eigen::Vector3<int>>).hash_code();
-        case 17: return typeid(Gin::Spatial::Spatial<Eigen::Vector3<float>>).hash_code();
-        case 18: return typeid(Gin::Spatial::Spatial<Eigen::Vector3<double>>).hash_code();
-        case 19: return typeid(Gin::Spatial::Spatial<Eigen::Vector4<float>>).hash_code();*/
+        case 0: return typeid(Gin::Field::Sampler<float>).hash_code();
+        case 1: return typeid(Gin::Field::Sampler<Gin::Math::Vector2>).hash_code();
+        case 2: return typeid(Gin::Field::Sampler<Gin::Math::Vector3>).hash_code();
+        case 3: return typeid(Gin::Field::Sampler<Gin::Math::Vector4>).hash_code();
         default : return typeid(void).hash_code();
     }
 }
 
 uint32_t GetTypeIdFromHashCode(size_t typeHashCode) {
-    if (typeHashCode == typeid(int).hash_code())
+    if (typeHashCode == typeid(Gin::Field::Sampler<float>).hash_code())
         return 0;
-    if (typeHashCode == typeid(float).hash_code())
+    if (typeHashCode == typeid(Gin::Field::Sampler<Gin::Math::Vector2>).hash_code())
         return 1;
-    if (typeHashCode == typeid(double).hash_code())
+    if (typeHashCode == typeid(Gin::Field::Sampler<Gin::Math::Vector3>).hash_code())
         return 2;
-
-    //Vec2
-
-    if (typeHashCode == typeid(Eigen::Vector2<int>).hash_code())
+    if (typeHashCode == typeid(Gin::Field::Sampler<Gin::Math::Vector4>).hash_code())
         return 3;
-    if (typeHashCode == typeid(Eigen::Vector2<float>).hash_code())
-        return 4;
-    if (typeHashCode == typeid(Eigen::Vector2<double>).hash_code())
-        return 5;
-
-    //Vec3
-
-    if (typeHashCode == typeid(Eigen::Vector3<int>).hash_code())
-        return 6;
-    if (typeHashCode == typeid(Eigen::Vector3<float>).hash_code())
-        return 7;
-    if (typeHashCode == typeid(Eigen::Vector3<double>).hash_code())
-        return 8;
-
-    //Color
-
-    if (typeHashCode == typeid(Eigen::Vector4<float>).hash_code())
-        return 9;
-
-    //Spatial Number
-
-    /*if (typeHashCode == typeid(Gin::Spatial::Spatial<int>).hash_code())
-        return 10;
-    if (typeHashCode == typeid(Gin::Spatial::Spatial<float>).hash_code())
-        return 11;
-    if (typeHashCode == typeid(Gin::Spatial::Spatial<double>).hash_code())
-        return 12;
-
-    //Spatial Vec2
-
-    if (typeHashCode == typeid(Gin::Spatial::Spatial<Eigen::Vector2<int>>).hash_code())
-        return 13;
-    if (typeHashCode == typeid(Gin::Spatial::Spatial<Eigen::Vector2<float>>).hash_code())
-        return 14;
-    if (typeHashCode == typeid(Gin::Spatial::Spatial<Eigen::Vector2<double>>).hash_code())
-        return 15;
-
-    //Spatial Vec3
-
-    if (typeHashCode == typeid(Gin::Spatial::Spatial<Eigen::Vector3<int>>).hash_code())
-        return 16;
-    if (typeHashCode == typeid(Gin::Spatial::Spatial<Eigen::Vector3<float>>).hash_code())
-        return 17;
-    if (typeHashCode == typeid(Gin::Spatial::Spatial<Eigen::Vector3<double>>).hash_code())
-        return 18;
-
-    //Spatial Color
-
-    if (typeHashCode == typeid(Gin::Spatial::Spatial<Eigen::Vector4<float>>).hash_code())
-        return 19;*/
+    return 0;
 }
 
 nlohmann::json SerializeGraphPort(Gin::Graph::GraphPort& port) {
@@ -108,43 +41,19 @@ void DeserializeGraphInputPort(nlohmann::json& serializedPort, Gin::Graph::Graph
 
     switch (typeId) {
         case 0: {
-            graph.AddInput<int>(serializedPort["name"]);
+            graph.AddInput<Gin::Field::Sampler<float>>(serializedPort["name"]);
             break;
         };
         case 1: {
-            graph.AddInput<float>(serializedPort["name"]);
+            graph.AddInput<Gin::Field::Sampler<Gin::Math::Vector2>>(serializedPort["name"]);
             break;
         };
         case 2: {
-            graph.AddInput<double>(serializedPort["name"]);
+            graph.AddInput<Gin::Field::Sampler<Gin::Math::Vector3>>(serializedPort["name"]);
             break;
         };
         case 3: {
-            graph.AddInput<Eigen::Vector2<int>>(serializedPort["name"]);
-            break;
-        };
-        case 4: {
-            graph.AddInput<Eigen::Vector2<float>>(serializedPort["name"]);
-            break;
-        };
-        case 5: {
-            graph.AddInput<Eigen::Vector2<double>>(serializedPort["name"]);
-            break;
-        };
-        case 6: {
-            graph.AddInput<Eigen::Vector3<int>>(serializedPort["name"]);
-            break;
-        };
-        case 7: {
-            graph.AddInput<Eigen::Vector3<float>>(serializedPort["name"]);
-            break;
-        };
-        case 8: {
-            graph.AddInput<Eigen::Vector3<double>>(serializedPort["name"]);
-            break;
-        };
-        case 9: {
-            graph.AddInput<Eigen::Vector4<float>>(serializedPort["name"]);
+            graph.AddInput<Gin::Field::Sampler<Gin::Math::Vector4>>(serializedPort["name"]);
             break;
         };
     }
@@ -157,85 +66,21 @@ void DeserializeGraphOutputPort(nlohmann::json& serializedPort, Gin::Graph::Grap
 
     switch (typeId) {
         case 0: {
-            graph.AddOutput<int>(serializedPort["name"]);
+            graph.AddOutput<Gin::Field::Sampler<float>>(serializedPort["name"]);
             break;
         };
         case 1: {
-            graph.AddOutput<float>(serializedPort["name"]);
+            graph.AddOutput<Gin::Field::Sampler<Gin::Math::Vector2>>(serializedPort["name"]);
             break;
         };
         case 2: {
-            graph.AddOutput<double>(serializedPort["name"]);
+            graph.AddOutput<Gin::Field::Sampler<Gin::Math::Vector3>>(serializedPort["name"]);
             break;
         };
         case 3: {
-            graph.AddOutput<Eigen::Vector2<int>>(serializedPort["name"]);
+            graph.AddOutput<Gin::Field::Sampler<Gin::Math::Vector4>>(serializedPort["name"]);
             break;
         };
-        case 4: {
-            graph.AddOutput<Eigen::Vector2<float>>(serializedPort["name"]);
-            break;
-        };
-        case 5: {
-            graph.AddOutput<Eigen::Vector2<double>>(serializedPort["name"]);
-            break;
-        };
-        case 6: {
-            graph.AddOutput<Eigen::Vector3<int>>(serializedPort["name"]);
-            break;
-        };
-        case 7: {
-            graph.AddOutput<Eigen::Vector3<float>>(serializedPort["name"]);
-            break;
-        };
-        case 8: {
-            graph.AddOutput<Eigen::Vector3<double>>(serializedPort["name"]);
-            break;
-        };
-        case 9: {
-            graph.AddOutput<Eigen::Vector4<float>>(serializedPort["name"]);
-            break;
-        };
-        /*case 10: {
-            graph.AddOutput<Gin::Spatial::Spatial<int>>(serializedPort["name"]);
-            break;
-        };
-        case 11: {
-            graph.AddOutput<Gin::Spatial::Spatial<float>>(serializedPort["name"]);
-            break;
-        };
-        case 12: {
-            graph.AddOutput<Gin::Spatial::Spatial<double>>(serializedPort["name"]);
-            break;
-        };
-        case 13: {
-            graph.AddOutput<Gin::Spatial::Spatial<Eigen::Vector2<int>>>(serializedPort["name"]);
-            break;
-        };
-        case 14: {
-            graph.AddOutput<Gin::Spatial::Spatial<Eigen::Vector2<float>>>(serializedPort["name"]);
-            break;
-        };
-        case 15: {
-            graph.AddOutput<Gin::Spatial::Spatial<Eigen::Vector2<double>>>(serializedPort["name"]);
-            break;
-        };
-        case 16: {
-            graph.AddOutput<Gin::Spatial::Spatial<Eigen::Vector3<int>>>(serializedPort["name"]);
-            break;
-        };
-        case 17: {
-            graph.AddOutput<Gin::Spatial::Spatial<Eigen::Vector3<float>>>(serializedPort["name"]);
-            break;
-        };
-        case 18: {
-            graph.AddOutput<Gin::Spatial::Spatial<Eigen::Vector3<double>>>(serializedPort["name"]);
-            break;
-        };
-        case 19: {
-            graph.AddOutput<Gin::Spatial::Spatial<Eigen::Vector4<float>>>(serializedPort["name"]);
-            break;
-        };*/
     }
 }
 

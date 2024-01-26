@@ -1,5 +1,6 @@
 #include <gin/graph/node.hpp>
 #include <gin/math/math.hpp>
+#include <gin/field/sampler.hpp>
 
 void Gin::Graph::Node::Initialize(GraphContext ctx) {}
 
@@ -48,19 +49,12 @@ nlohmann::json Gin::Graph::Node::Serialize()
             continue;
         }
 
-        //Spatial Number
-        /*if (input->GetType() == GetPortTypeInfo<Spatial::Spatial<int>>()) {
-            data[input->GetName()] = (*(Spatial::Spatial<int>*)input->GetProperty())[0];
-            continue;
+        //Constant Field
+        if (input->GetType() == GetPortTypeInfo<Field::Sampler<float>>()) {
+            Field::Sampler<float>* f = (Field::Sampler<float>*)input->GetProperty();
+            if (f->IsFieldOfType<Field::ConstantField<float>>())
+                data[input->GetName()] = f->GetScalar(0, 0, 0);
         }
-        if (input->GetType() == GetPortTypeInfo<Spatial::Spatial<float>>()) {
-            data[input->GetName()] = (*(Spatial::Spatial<float>*)input->GetProperty())[0];
-            continue;
-        }
-        if (input->GetType() == GetPortTypeInfo<Spatial::Spatial<double>>()) {
-            data[input->GetName()] = (*(Spatial::Spatial<double>*)input->GetProperty())[0];
-            continue;
-        }*/
     }
 
     return data;
@@ -84,19 +78,12 @@ void Gin::Graph::Node::Deserialize(nlohmann::json data)
                 continue;
             }
 
-            //Spatial Number
-            /*if (input->GetType() == GetPortTypeInfo<Spatial::Spatial<int>>()) {
-                (*(Spatial::Spatial<int>*)input->GetProperty())[0] = data[input->GetName()];
-                continue;
+            //Constant Field
+            if (input->GetType() == GetPortTypeInfo<Field::Sampler<float>>()) {
+                Field::Sampler<float>* f = (Field::Sampler<float>*)input->GetProperty();
+                if (f->IsFieldOfType<Field::ConstantField<float>>())
+                    f->GetField<Field::ConstantField<float>>()->Get() = data[input->GetName()];
             }
-            if (input->GetType() == GetPortTypeInfo<Spatial::Spatial<float>>()) {
-                (*(Spatial::Spatial<float>*)input->GetProperty())[0] = data[input->GetName()];
-                continue;
-            }
-            if (input->GetType() == GetPortTypeInfo<Spatial::Spatial<double>>()) {
-                (*(Spatial::Spatial<double>*)input->GetProperty())[0] = data[input->GetName()];
-                continue;
-            }*/
         }
     }
 }

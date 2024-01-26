@@ -2,7 +2,7 @@
 
 #include <gin/graph/port.hpp>
 #include <memory>
-#include <Eigen/Core>
+#include <gin/field/sampler.hpp>
 
 namespace Gin::Graph {
 
@@ -25,6 +25,28 @@ namespace Gin::Graph {
 	public:
 		T* property{ nullptr };
 	};
+
+    template<typename U>
+    class NodePort<Field::Sampler<U>> : public Port {
+    public:
+        NodePort(const std::string& name, Field::Sampler<U>& property) :
+            Port(GetPortTypeInfo<Field::Sampler<U>>(), name), property{ &property } {};
+
+        virtual bool Match(Port& port) final {
+            return (int)port.GetType().type & (int)PortType::Field;
+        }
+        virtual bool CopyFrom(Port& port) final {
+            if (!Match(port))
+                return false;
+
+            *property = *((Field::Sampler<U>*)port.GetProperty());
+
+            return true;
+        }
+        virtual void* GetProperty() final { return property; };
+    public:
+        Field::Sampler<U>* property{ nullptr };
+    };
 
 	//Number
 
