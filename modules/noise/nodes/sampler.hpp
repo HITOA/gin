@@ -25,11 +25,12 @@ namespace Gin::Module::Noise {
         Field::Sampler<float> output{};
 
 	};
-    /*
+
 	class Sampler2D : public Graph::Node {
 	public:
 		Sampler2D();
 
+        virtual void Initialize(Graph::GraphContext ctx) final;
 		virtual void Execute(Graph::GraphContext ctx) final;
 
 		virtual std::string GetName() final;
@@ -39,8 +40,8 @@ namespace Gin::Module::Noise {
 		float frequency{ 0.5 };
 		int seed{ 1234 };
 
-		Spatial::Spatial<float> output{};
-	};*/
+		Field::Sampler<float> output{};
+	};
 
 }
 

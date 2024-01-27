@@ -99,6 +99,7 @@ namespace Gin::Field {
         uint32_t GetWidth() { return width; };
         uint32_t GetHeight() { return height; };
         uint32_t GetDepth() { return depth; };
+        uint32_t GetVecWidth() { return vecWidth; };
 
         inline T& operator[](size_t idx) {
             return data[idx];

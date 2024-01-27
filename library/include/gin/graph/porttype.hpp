@@ -31,7 +31,27 @@ namespace Gin::Graph {
 		return "Object";
 	}
 
-	//Number
+    template<>
+    inline PortType GetPortType<int>() {
+        return PortType::Scalar;
+    }
+    template<>
+    inline PortType GetPortType<Math::Scalar>() {
+        return PortType::Scalar;
+    }
+    template<>
+    inline PortType GetPortType<Math::Vector2>() {
+        return PortType::Vector2;
+    }
+    template<>
+    inline PortType GetPortType<Math::Vector3>() {
+        return PortType::Vector3;
+    }
+    template<>
+    inline PortType GetPortType<Math::Vector4>() {
+        return PortType::Vector4;
+    }
+
 	template<>
 	inline PortType GetPortType<Field::Sampler<Math::Scalar>>() {
 		return (PortType)((int)PortType::Scalar + (int)PortType::Field);
@@ -47,6 +67,31 @@ namespace Gin::Graph {
     template<>
     inline PortType GetPortType<Field::Sampler<Math::Vector4>>() {
         return (PortType)((int)PortType::Vector4 + (int)PortType::Field);
+    }
+    template<>
+    inline PortType GetPortType<Field::DynamicSampler>() {
+        return PortType::Dynamic;
+    }
+
+    template<>
+    inline const char* GetPortTypeShortName<int>() {
+        return "Num";
+    }
+    template<>
+    inline const char* GetPortTypeShortName<Math::Scalar>() {
+        return "Num";
+    }
+    template<>
+    inline const char* GetPortTypeShortName<Math::Vector2>() {
+        return "Vec2";
+    }
+    template<>
+    inline const char* GetPortTypeShortName<Math::Vector3>() {
+        return "Vec3";
+    }
+    template<>
+    inline const char* GetPortTypeShortName<Math::Vector4>() {
+        return "Vec4";
     }
 
 	template<>
@@ -65,6 +110,31 @@ namespace Gin::Graph {
     inline const char* GetPortTypeShortName<Field::Sampler<Math::Vector4>>() {
         return "Vec4";
     }
+    template<>
+    inline const char* GetPortTypeShortName<Field::DynamicSampler>() {
+        return "Auto";
+    }
+
+    template<>
+    inline const char* GetPortTypeFullName<int>() {
+        return "Float";
+    }
+    template<>
+    inline const char* GetPortTypeFullName<Math::Scalar>() {
+        return "Float";
+    }
+    template<>
+    inline const char* GetPortTypeFullName<Math::Vector2>() {
+        return "Vector2";
+    }
+    template<>
+    inline const char* GetPortTypeFullName<Math::Vector3>() {
+        return "Vector3";
+    }
+    template<>
+    inline const char* GetPortTypeFullName<Math::Vector4>() {
+        return "Vector4";
+    }
 
 	template<>
 	inline const char* GetPortTypeFullName<Field::Sampler<Math::Scalar>>() {
@@ -81,6 +151,10 @@ namespace Gin::Graph {
     template<>
     inline const char* GetPortTypeFullName<Field::Sampler<Math::Vector4>>() {
         return "Vector4";
+    }
+    template<>
+    inline const char* GetPortTypeFullName<Field::DynamicSampler>() {
+        return "Auto";
     }
 
     /*

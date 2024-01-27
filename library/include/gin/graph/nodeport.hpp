@@ -33,7 +33,7 @@ namespace Gin::Graph {
             Port(GetPortTypeInfo<Field::Sampler<U>>(), name), property{ &property } {};
 
         virtual bool Match(Port& port) final {
-            return (int)port.GetType().type & (int)PortType::Field;
+            return ((int)port.GetType().type & (int)PortType::Field) || (port.GetType().type == PortType::Dynamic);
         }
         virtual bool CopyFrom(Port& port) final {
             if (!Match(port))

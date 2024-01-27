@@ -479,6 +479,9 @@ ImColor GetColorByType(Gin::Graph::PortType type) {
     if ((int)type & (int)Gin::Graph::PortType::Vector3) {
         return ImColor(204, 192, 65, 255);
     }
+    if ((int)type & (int)Gin::Graph::PortType::Dynamic) {
+        return ImColor(204, 204, 204, 255);
+    }
 
     return ImColor(65, 128, 204, 255);
 }
@@ -519,7 +522,7 @@ void GraphEditorWindow::DrawPin(Gin::Graph::Port &port, Gin::Graph::GraphId id, 
     }
 
     std::string name = port.GetName() + "(" + port.GetType().shortName + ")";
-    if ((int)port.GetType().type & (int)Gin::Graph::PortType::Field) {
+    if (((int)port.GetType().type & (int)Gin::Graph::PortType::Field) || port.GetType().type == Gin::Graph::PortType::Dynamic) {
         ImGui::TextUnformatted(name.c_str());
     }
     else {
@@ -548,6 +551,14 @@ void GraphEditorWindow::DrawPin(Gin::Graph::Port &port, Gin::Graph::GraphId id, 
 
         if (port.GetType() == Gin::Graph::GetPortTypeInfo<Gin::Field::Sampler<float>>()) {
             Gin::Field::Sampler<float>* f = (Gin::Field::Sampler<float>*)port.GetProperty();
+            if (auto cf = f->GetField<Gin::Field::ConstantField<float>>()) {
+                ImGui::PushItemWidth(50);
+                ImGui::InputFloat("##Input", &cf->Get());
+                ImGui::PopItemWidth();
+            }
+        }
+        if (port.GetType() == Gin::Graph::GetPortTypeInfo<Gin::Field::DynamicSampler>()) {
+            Gin::Field::DynamicSampler* f = (Gin::Field::DynamicSampler*)port.GetProperty();
             if (auto cf = f->GetField<Gin::Field::ConstantField<float>>()) {
                 ImGui::PushItemWidth(50);
                 ImGui::InputFloat("##Input", &cf->Get());
@@ -829,14 +840,14 @@ void GraphEditorWindow::BuildVolume(Gin::Graph::GraphContext &context) {
     size_t volumeIdx = entry.graph->HasOutput("_Volume");
 
     if (volumeIdx == GRAPH_ID_MAX) {
-        printf("Can't build volume : a Spatial<Float> _Volume output is required.");
+        printf("Can't build volume : a Float _Volume output is required.");
         return;
     }
 
     Gin::Graph::GraphPort& volumePort = entry.graph->GetOutputPort(volumeIdx);
 
     if (volumePort.GetType().type != (Gin::Graph::PortType)((int)Gin::Graph::PortType::Scalar + (int)Gin::Graph::PortType::Field)) {
-        printf("Can't build volume : a Spatial<Float> _Volume output is required.");
+        printf("Can't build volume : a Float _Volume output is required.");
         return;
     }
 
