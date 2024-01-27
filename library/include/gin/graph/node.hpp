@@ -18,6 +18,7 @@ namespace Gin::Graph {
 		virtual void Initialize(GraphContext ctx);
 		virtual void Initialize(GraphContext ctx, Thread::ThreadPool& pool);
         virtual void Clear();
+        virtual void Update();
 		virtual void Execute(GraphContext ctx) = 0;
 		virtual void Execute(GraphContext ctx, Thread::ThreadPool& pool);
 		virtual std::string GetName() = 0;

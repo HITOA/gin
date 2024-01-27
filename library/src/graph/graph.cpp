@@ -43,6 +43,9 @@ void Gin::Graph::GraphPortOperator::Link(GraphPortOperator port) {
 
 	graph->adj[nodeId][portId].emplace_back(port.nodeId, port.portId);
 	graph->adj[port.nodeId][port.portId].emplace_back(nodeId, portId);
+
+    nodeA->Update();
+    nodeB->Update();
 }
 
 void Gin::Graph::GraphPortOperator::Unlink(GraphPortOperator port)
@@ -84,6 +87,8 @@ void  Gin::Graph::GraphPortOperator::LinkGraphInput(GraphId id) {
 
 	graph->inputs[id].GetLinks().emplace_back(nodeId, portId);
 	graph->adj[nodeId][portId].emplace_back(GRAPH_INPUT_NODE_ID, id);
+
+    node->Update();
 }
 
 void  Gin::Graph::GraphPortOperator::LinkGraphOutput(GraphId id) {
@@ -109,6 +114,8 @@ void  Gin::Graph::GraphPortOperator::LinkGraphOutput(GraphId id) {
 
 	graph->outputs[id].GetLinks().emplace_back(nodeId, portId);
 	graph->adj[nodeId][portId].emplace_back(GRAPH_OUTPUT_NODE_ID, id);
+
+    node->Update();
 }
 
 void Gin::Graph::GraphPortOperator::LinkGraphInput(std::string_view name)
@@ -282,7 +289,7 @@ void Gin::Graph::Graph::RemoveOutput(GraphId Id) {
 void Gin::Graph::Graph::Compile()
 {
 	program.clear();
-;
+
 	std::vector<size_t> nodesOrder{};
 	nodesOrder.resize(nodes.size());
 

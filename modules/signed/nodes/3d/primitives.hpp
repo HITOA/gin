@@ -45,21 +45,21 @@ namespace Gin::Module::Signed {
 	/**
 	 * Signed Distance Function For A Plane Pointing Up.
 	 */
-	/*class SDGround : public Graph::Node {
+	class SDGround : public Graph::Node {
 	public:
 		SDGround();
 
+        virtual void Initialize(Graph::GraphContext ctx) final;
 		virtual void Execute(Graph::GraphContext ctx) final;
-		virtual void Execute(Graph::GraphContext ctx, Thread::ThreadPool& pool) final;
 		virtual std::string GetName() final;
 
 	private:
-		Spatial::Spatial<float> height{ 0.0f };
-		Spatial::Spatial<Eigen::Vector3<double>> position{};
+        Field::Sampler<float> height{ 0.0f };
+        Field::Sampler<Math::Vector3> position{};
 
-		Spatial::Spatial<float> distance{};
+        Field::Sampler<float> distance{};
 
-	};*/
+	};
 
 	/**
 	 * Signed Distance Function For A Plane In Any Direction.

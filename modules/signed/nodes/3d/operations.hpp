@@ -27,80 +27,80 @@ namespace Gin::Module::Signed {
 	/**
 	 * Substraction Operation For 2 Signed Distance.
 	 */
-	/*class OPSubstraction : public Graph::Node {
+	class OPSubstraction : public Graph::Node {
 	public:
 		OPSubstraction();
 
+        virtual void Initialize(Graph::GraphContext ctx) final;
 		virtual void Execute(Graph::GraphContext ctx) final;
-		virtual void Execute(Graph::GraphContext ctx, Thread::ThreadPool& pool) final;
 		virtual std::string GetName() final;
 
 	private:
-		Spatial::Spatial<float> distanceA{};
-		Spatial::Spatial<float> distanceB{};
+        Field::Sampler<float> distanceA{};
+        Field::Sampler<float> distanceB{};
 
-		Spatial::Spatial<float> distanceR{};
-		Spatial::Spatial<float> t{};
-	};*/
+        Field::Sampler<float> distanceR{};
+        Field::Sampler<float> t{};
+	};
 
 	/**
 	 * Interstection Operation For 2 Signed Distance.
 	 */
-	/*class OPIntersection : public Graph::Node {
+	class OPIntersection : public Graph::Node {
 	public:
 		OPIntersection();
 
+        virtual void Initialize(Graph::GraphContext ctx) final;
 		virtual void Execute(Graph::GraphContext ctx) final;
-		virtual void Execute(Graph::GraphContext ctx, Thread::ThreadPool& pool) final;
 		virtual std::string GetName() final;
 
 	private:
-		Spatial::Spatial<float> distanceA{};
-		Spatial::Spatial<float> distanceB{};
+        Field::Sampler<float> distanceA{};
+        Field::Sampler<float> distanceB{};
 
-		Spatial::Spatial<float> distanceR{};
-		Spatial::Spatial<float> t{};
-	};*/
+        Field::Sampler<float> distanceR{};
+        Field::Sampler<float> t{};
+	};
 
 	/**
 	 * Smooth Union Operation For 2 Signed Distance.
 	 */
-	/*class OPSmoothUnion : public Graph::Node {
+	class OPSmoothUnion : public Graph::Node {
 	public:
 		OPSmoothUnion();
 
+        virtual void Initialize(Graph::GraphContext ctx) final;
 		virtual void Execute(Graph::GraphContext ctx) final;
-		virtual void Execute(Graph::GraphContext ctx, Thread::ThreadPool& pool) final;
 		virtual std::string GetName() final;
 
 	private:
-		Spatial::Spatial<float> distanceA{};
-		Spatial::Spatial<float> distanceB{};
-		Spatial::Spatial<float> smoothFactor{ 2.0 };
+        Field::Sampler<float> distanceA{};
+        Field::Sampler<float> distanceB{};
+        Field::Sampler<float> smoothFactor{ 2.0f };
 
-		Spatial::Spatial<float> distanceR{};
-		Spatial::Spatial<float> t{};
-	};*/
+        Field::Sampler<float> distanceR{};
+        Field::Sampler<float> t{};
+	};
 
 	/**
 	 * Smooth Substraction Operation For 2 Signed Distance.
 	 */
-	/*class OPSmoothSubstraction : public Graph::Node {
+	class OPSmoothSubstraction : public Graph::Node {
 	public:
 		OPSmoothSubstraction();
 
+        virtual void Initialize(Graph::GraphContext ctx) final;
 		virtual void Execute(Graph::GraphContext ctx) final;
-		virtual void Execute(Graph::GraphContext ctx, Thread::ThreadPool& pool) final;
 		virtual std::string GetName() final;
 
 	private:
-		Spatial::Spatial<float> distanceA{};
-		Spatial::Spatial<float> distanceB{};
-		Spatial::Spatial<float> smoothFactor{ 2.0 };
+        Field::Sampler<float> distanceA{};
+        Field::Sampler<float> distanceB{};
+        Field::Sampler<float> smoothFactor{ 2.0f };
 
-		Spatial::Spatial<float> distanceR{};
-		Spatial::Spatial<float> t{};
-	};*/
+        Field::Sampler<float> distanceR{};
+        Field::Sampler<float> t{};
+	};
 
 	/**
 	 * Smooth Interstection Operation For 2 Signed Distance.

@@ -9,21 +9,22 @@ void InitializeSignedModule()
 
 	Gin::Module::AddNodesToRegistry<Gin::Module::Signed::SDSphere>("Signed/3D/Primitives/Sphere");
 	Gin::Module::AddNodesToRegistry<Gin::Module::Signed::SDBox>("Signed/3D/Primitives/Box");
+    Gin::Module::AddNodesToRegistry<Gin::Module::Signed::SDGround>("Signed/3D/Primitives/Ground");
 
     //Operations
     Gin::Module::AddNodesToRegistry<Gin::Module::Signed::OPUnion>("Signed/3D/Operations/Union");
+    Gin::Module::AddNodesToRegistry<Gin::Module::Signed::OPSubstraction>("Signed/3D/Operations/Substraction");
+    Gin::Module::AddNodesToRegistry<Gin::Module::Signed::OPIntersection>("Signed/3D/Operations/Intersection");
 
-	/*Gin::Module::AddNodesToRegistry<Gin::Module::Signed::SDGround>("Signed/3D/Primitives/Ground");
-	Gin::Module::AddNodesToRegistry<Gin::Module::Signed::SDPlane>("Signed/3D/Primitives/Plane");
-	Gin::Module::AddNodesToRegistry<Gin::Module::Signed::SDTorus>("Signed/3D/Primitives/Torus");
+    Gin::Module::AddNodesToRegistry<Gin::Module::Signed::OPSmoothUnion>("Signed/3D/Operations/SmoothUnion");
+    Gin::Module::AddNodesToRegistry<Gin::Module::Signed::OPSmoothSubstraction>("Signed/3D/Operations/SmoothSubstraction");
+/*
+    Gin::Module::AddNodesToRegistry<Gin::Module::Signed::SDPlane>("Signed/3D/Primitives/Plane");
+    Gin::Module::AddNodesToRegistry<Gin::Module::Signed::SDTorus>("Signed/3D/Primitives/Torus");
 
-	//Operations
-	Gin::Module::AddNodesToRegistry<Gin::Module::Signed::OPSubstraction>("Signed/3D/Operations/Substraction");
-	Gin::Module::AddNodesToRegistry<Gin::Module::Signed::OPIntersection>("Signed/3D/Operations/Intersection");
+    //Operations
 
-	Gin::Module::AddNodesToRegistry<Gin::Module::Signed::OPSmoothUnion>("Signed/3D/Operations/SmoothUnion");
-	Gin::Module::AddNodesToRegistry<Gin::Module::Signed::OPSmoothSubstraction>("Signed/3D/Operations/SmoothSubstraction");
-	Gin::Module::AddNodesToRegistry<Gin::Module::Signed::OPSmoothIntersection>("Signed/3D/Operations/SmoothIntersection");*/
+    Gin::Module::AddNodesToRegistry<Gin::Module::Signed::OPSmoothIntersection>("Signed/3D/Operations/SmoothIntersection");*/
 }
 
 void UninitializeSignedModule()

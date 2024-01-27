@@ -12,7 +12,8 @@ namespace Gin::Graph {
 		Vector2 = 4,
 		Vector3 = 8,
 		Vector4 = 16,
-		Field = 32
+		Field = 32,
+        Dynamic = 64
 	};
 
 	template<typename T>

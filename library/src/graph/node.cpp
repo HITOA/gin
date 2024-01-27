@@ -25,6 +25,8 @@ void Gin::Graph::Node::Clear() {
     }*/
 }
 
+void Gin::Graph::Node::Update() {}
+
 void Gin::Graph::Node::Execute(GraphContext ctx, Thread::ThreadPool& pool)
 {
     Execute(ctx);
