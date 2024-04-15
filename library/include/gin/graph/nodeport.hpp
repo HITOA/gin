@@ -22,6 +22,9 @@ namespace Gin::Graph {
 			return true;
 		}
 		virtual void* GetProperty() final { return property; };
+        virtual void Clear() final {
+            *property = T{};
+        }
 	public:
 		T* property{ nullptr };
 	};
@@ -44,6 +47,10 @@ namespace Gin::Graph {
             return true;
         }
         virtual void* GetProperty() final { return property; };
+        virtual void Clear() final {
+            if (property)
+                property->Clear();
+        }
     public:
         Field::Sampler<U>* property{ nullptr };
     };

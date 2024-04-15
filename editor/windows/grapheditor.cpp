@@ -397,6 +397,9 @@ void GraphEditorWindow::DrawGraphProgramToolTab() {
                 text = StringFormat("Move (%u)->(%u) to (%u)->(%u)\n",
                                     action->nodeBId, action->portBId, action->nodeAId, action->portAId);
                 break;
+            case Gin::Graph::GraphActionType::FREE:
+                text = StringFormat("Free (%u)\n", action->nodeAId);
+                break;
             default:
                 text = "Unknown Action";
                 break;
@@ -596,7 +599,10 @@ void GraphEditorWindow::DrawGraphPortNode() {
 }
 
 void GraphEditorWindow::DrawNode(Gin::Graph::GraphNodeOperator<Gin::Graph::Node>& node) {
-    if (focusedAction && focusedAction->type == Gin::Graph::GraphActionType::EXEC && focusedAction->nodeAId == node.GetNodeId()) {
+    if (focusedAction &&
+        (focusedAction->type == Gin::Graph::GraphActionType::EXEC ||
+        focusedAction->type == Gin::Graph::GraphActionType::FREE) &&
+        focusedAction->nodeAId == node.GetNodeId()) {
         ax::NodeEditor::PushStyleColor(ax::NodeEditor::StyleColor_NodeBorder, ImVec4(1.0f, 0.5f, 0.05f, 1.0f));
         ax::NodeEditor::PushStyleColor(ax::NodeEditor::StyleColor_HovNodeBorder, ImVec4(1.0f, 0.5f, 0.05f, 1.0f));
         ax::NodeEditor::PushStyleColor(ax::NodeEditor::StyleColor_SelNodeBorder, ImVec4(1.0f, 0.5f, 0.05f, 1.0f));
@@ -639,7 +645,10 @@ void GraphEditorWindow::DrawNode(Gin::Graph::GraphNodeOperator<Gin::Graph::Node>
 
     ax::NodeEditor::PopStyleVar();
 
-    if (focusedAction && focusedAction->type == Gin::Graph::GraphActionType::EXEC && focusedAction->nodeAId == node.GetNodeId()) {
+    if (focusedAction &&
+        (focusedAction->type == Gin::Graph::GraphActionType::EXEC ||
+        focusedAction->type == Gin::Graph::GraphActionType::FREE) &&
+        focusedAction->nodeAId == node.GetNodeId()) {
         ax::NodeEditor::PopStyleColor(3);
     }
 }

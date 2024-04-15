@@ -43,6 +43,7 @@ namespace Gin::Graph {
 		virtual void* GetProperty() final {
 			return caster(value);
 		};
+        virtual void Clear() final {}
 
 		template<typename T>
 		void SetValue(T value) {

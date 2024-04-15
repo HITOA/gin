@@ -27,7 +27,8 @@ namespace Gin::Graph {
 		NONE,
 		COPY,
 		MOVE,
-		EXEC
+		EXEC,
+        FREE
 	};
 
 	struct GraphAction {

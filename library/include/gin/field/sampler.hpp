@@ -7,6 +7,7 @@
 #include <gin/math/type.hpp>
 #include <gin/field/constantfield.hpp>
 #include <typeindex>
+#include <iostream>
 
 namespace Gin::Field {
 
@@ -35,6 +36,10 @@ namespace Gin::Field {
             if (typeIndex == typeid(U))
                 return std::dynamic_pointer_cast<U>(field);
             return nullptr;
+        }
+
+        inline void Clear() {
+            field = nullptr;
         }
 
         template<typename U>
@@ -102,6 +107,10 @@ namespace Gin::Field {
             if (typeIndex == typeid(U))
                 return std::dynamic_pointer_cast<U>(field);
             return nullptr;
+        }
+
+        inline void Clear() {
+            field = nullptr;
         }
 
         template<typename U>
