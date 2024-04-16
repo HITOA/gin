@@ -2,7 +2,6 @@
 
 #include <string>
 #include <gin/graph/porttype.hpp>
-#include <Eigen/Core>
 
 namespace Gin::Graph {
 

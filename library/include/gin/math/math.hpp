@@ -1,6 +1,7 @@
 #pragma once
 
 #include <gin/math/type.hpp>
+#include <cmath>
 
 namespace Gin::Math {
 

@@ -57,6 +57,13 @@ nlohmann::json Gin::Graph::Node::Serialize()
             if (f->IsFieldOfType<Field::ConstantField<float>>())
                 data[input->GetName()] = f->GetScalar(0, 0, 0);
         }
+
+        //Dynamic Field
+        if (input->GetType() == GetPortTypeInfo<Field::DynamicSampler>()) {
+            Field::DynamicSampler* f = (Field::DynamicSampler*)input->GetProperty();
+            if (f->IsFieldOfType<Field::ConstantField<float>>())
+                data[input->GetName()] = f->GetScalar(0, 0, 0);
+        }
     }
 
     return data;
@@ -83,6 +90,12 @@ void Gin::Graph::Node::Deserialize(nlohmann::json data)
             //Constant Field
             if (input->GetType() == GetPortTypeInfo<Field::Sampler<float>>()) {
                 Field::Sampler<float>* f = (Field::Sampler<float>*)input->GetProperty();
+                if (f->IsFieldOfType<Field::ConstantField<float>>())
+                    f->GetField<Field::ConstantField<float>>()->Get() = data[input->GetName()];
+            }
+
+            if (input->GetType() == GetPortTypeInfo<Field::DynamicSampler>()) {
+                Field::DynamicSampler* f = (Field::DynamicSampler*)input->GetProperty();
                 if (f->IsFieldOfType<Field::ConstantField<float>>())
                     f->GetField<Field::ConstantField<float>>()->Get() = data[input->GetName()];
             }

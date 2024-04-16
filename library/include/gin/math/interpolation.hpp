@@ -4,7 +4,7 @@ namespace Gin::Math {
 
 	template<typename T>
 	inline T Linear(const T& v0, const T& v1, float t) {
-		return (1.0f - t) * v0 + t * v1;
+		return v0 * (1.0f - t) + v1 * t;
 	}
 
 	template<typename T>

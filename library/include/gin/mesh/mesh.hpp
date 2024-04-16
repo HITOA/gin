@@ -1,6 +1,5 @@
 #pragma once
 
-#include <Eigen/Core>
 #include <gin/math/type.hpp>
 #include <vector>
 #include <unordered_map>

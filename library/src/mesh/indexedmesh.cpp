@@ -1,23 +1,23 @@
 #include <gin/mesh/indexedmesh.hpp>
 #include <gin/math/math.hpp>
-#include <Eigen/Dense>
+#include <cstring>
 
 void Gin::Mesh::IndexedMesh::SetVertices(Math::Vector3* vertices, size_t count)
 {
 	this->vertices.resize(count);
-	std::memcpy(this->vertices.data(), vertices, count * sizeof(Eigen::Vector3<float>));
+	std::memcpy(this->vertices.data(), vertices, count * sizeof(Math::Vector3));
 }
 
 void Gin::Mesh::IndexedMesh::SetNormals(Math::Vector3* normals, size_t count)
 {
 	this->normals.resize(count);
-	std::memcpy(this->normals.data(), normals, count * sizeof(Eigen::Vector3<float>));
+	std::memcpy(this->normals.data(), normals, count * sizeof(Math::Vector3));
 }
 
 void Gin::Mesh::IndexedMesh::SetColors(Math::Vector4* colors, size_t count)
 {
 	this->colors.resize(count);
-	std::memcpy(this->colors.data(), colors, count * sizeof(Eigen::Vector4<float>));
+	std::memcpy(this->colors.data(), colors, count * sizeof(Math::Vector4));
 }
 
 void Gin::Mesh::IndexedMesh::SetIndices(unsigned int* indices, size_t count)

@@ -71,11 +71,11 @@ file(WRITE ${CMAKE_CURRENT_SOURCE_DIR}/modules/module.hpp ${module_file_src})
 add_library(gin_library STATIC ${gin_library_src} ${gin_modules_src} ${CMAKE_CURRENT_SOURCE_DIR}/modules/module.hpp)
 
 target_include_directories(gin_library PUBLIC library/include modules)
-target_link_libraries(gin_library xsimd Eigen3::Eigen FastNoise)
+target_link_libraries(gin_library xsimd FastNoise)
 
 if(GIN_BUILD_EDITOR)
     add_executable(gin_editor ${gin_editor_src})
-    target_link_libraries(gin_editor gin_library nfd glfw imgui imgui_node_editor)
+    target_link_libraries(gin_editor gin_library Eigen3::Eigen nfd glfw imgui imgui_node_editor)
     target_include_directories(gin_editor PRIVATE ${EXTERNAL_PATH}/glad/include)
 endif()
 

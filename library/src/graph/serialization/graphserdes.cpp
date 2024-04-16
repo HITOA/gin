@@ -9,6 +9,7 @@ size_t GetTypeHashCodeFromId(uint32_t id) {
         case 1: return typeid(Gin::Field::Sampler<Gin::Math::Vector2>).hash_code();
         case 2: return typeid(Gin::Field::Sampler<Gin::Math::Vector3>).hash_code();
         case 3: return typeid(Gin::Field::Sampler<Gin::Math::Vector4>).hash_code();
+        case 4: return typeid(Gin::Field::DynamicSampler).hash_code();
         default : return typeid(void).hash_code();
     }
 }
@@ -22,6 +23,8 @@ uint32_t GetTypeIdFromHashCode(size_t typeHashCode) {
         return 2;
     if (typeHashCode == typeid(Gin::Field::Sampler<Gin::Math::Vector4>).hash_code())
         return 3;
+    if (typeHashCode == typeid(Gin::Field::DynamicSampler).hash_code())
+        return 4;
     return 0;
 }
 

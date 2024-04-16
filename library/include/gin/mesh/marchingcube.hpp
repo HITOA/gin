@@ -1,15 +1,11 @@
 #pragma once
 
-#include <Eigen/Core>
-#include <gin/math/bounds.hpp>
+
 #include <gin/mesh/meshbuilder.hpp>
 
 namespace Gin::Mesh {
 
-	struct CubeData {
-		Eigen::Vector3<double> position[8];
-		float distance[8];
-	};
+
 
 	class MarchingCubeMeshBuilder : public MeshBuilder {
 	public:

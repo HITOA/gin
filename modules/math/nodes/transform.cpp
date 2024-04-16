@@ -1,6 +1,5 @@
 #include "transform.hpp"
 
-#include <Eigen/Dense>
 /*
 Gin::Module::Math::Translate::Translate()
 {

@@ -172,7 +172,7 @@ namespace Gin::Math {
             rhs -= lhs;
             return rhs;
         }
-        friend inline BaseVector3<T> operator*(BaseVector3<T> rhs, const BaseVector3<T>& lhs) {
+        friend inline BaseVector3<T> operator*(float rhs, const BaseVector3<T>& lhs) {
             rhs *= lhs;
             return rhs;
         }

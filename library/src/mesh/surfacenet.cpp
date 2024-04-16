@@ -1,6 +1,7 @@
 #include <gin/mesh/surfacenet.hpp>
 
 #include <gin/math/interpolation.hpp>
+#include <gin/math/math.hpp>
 
 void Gin::Mesh::SurfaceNetMeshBuilder::Build(MeshBuildData& data)
 {
@@ -45,16 +46,16 @@ void Gin::Mesh::SurfaceNetMeshBuilder::Build(MeshBuildData& data)
                 if (sum % 8 != 0) {
                     meshingData.posToVertexIdx[idx] = meshingData.positions.size();
 
-                    Eigen::Vector3<float> p000{ (float)x, (float)y, (float)z };
-                    Eigen::Vector3<float> p100{ (float)x + 1.0f, (float)y, (float)z };
-                    Eigen::Vector3<float> p010{ (float)x, (float)y + 1.0f , (float)z };
-                    Eigen::Vector3<float> p110{ (float)x + 1.0f, (float)y + 1.0f, (float)z };
-                    Eigen::Vector3<float> p001{ (float)x, (float)y, (float)z + 1.0f };
-                    Eigen::Vector3<float> p101{ (float)x + 1.0f, (float)y, (float)z + 1.0f };
-                    Eigen::Vector3<float> p011{ (float)x, (float)y + 1.0f, (float)z + 1.0f };
-                    Eigen::Vector3<float> p111{ (float)x + 1.0f, (float)y + 1.0f, (float)z + 1.0f };
+                    Math::Vector3 p000{ (float)x, (float)y, (float)z };
+                    Math::Vector3 p100{ (float)x + 1.0f, (float)y, (float)z };
+                    Math::Vector3 p010{ (float)x, (float)y + 1.0f , (float)z };
+                    Math::Vector3 p110{ (float)x + 1.0f, (float)y + 1.0f, (float)z };
+                    Math::Vector3 p001{ (float)x, (float)y, (float)z + 1.0f };
+                    Math::Vector3 p101{ (float)x + 1.0f, (float)y, (float)z + 1.0f };
+                    Math::Vector3 p011{ (float)x, (float)y + 1.0f, (float)z + 1.0f };
+                    Math::Vector3 p111{ (float)x + 1.0f, (float)y + 1.0f, (float)z + 1.0f };
 
-                    Eigen::Vector3<float> p{ 0.0f, 0.0f, 0.0f };
+                    Math::Vector3 p{ 0.0f, 0.0f, 0.0f };
                     size_t c = 0;
 
                     if ((v000 >= 0) ^ (v100 >= 0)) {
@@ -123,9 +124,9 @@ void Gin::Mesh::SurfaceNetMeshBuilder::Build(MeshBuildData& data)
 
                     p = p / c;
 
-                    meshingData.positions.push_back(Math::Vector3{ p.x(), p.y(), p.z() } * data.scale - data.bounds.extent);
-                    auto& n = Eigen::Vector3<float>{ v100 - v000, v010 - v000, v001 - v000 }.normalized();
-                    meshingData.normals.push_back(Math::Vector3(n.x(), n.y(), n.z()));
+                    meshingData.positions.push_back(Math::Vector3{ p.x, p.y, p.z } * data.scale - data.bounds.extent);
+                    Math::Vector3 n = Math::Normalize(Math::Vector3{ v100 - v000, v010 - v000, v001 - v000 });
+                    meshingData.normals.push_back(Math::Vector3(n.x, n.y, n.z));
                     meshingData.colors.push_back(data.color.GetVector4(x, y, z));
                     meshingData.vertexIdxToPos.push_back(Math::Vector3Int{ (int)x, (int)y, (int)z });
                 }
