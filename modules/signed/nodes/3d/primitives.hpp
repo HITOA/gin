@@ -2,6 +2,7 @@
 
 #include <gin/graph/node.hpp>
 #include <gin/field/sampler.hpp>
+#include <gin/sdf/primitive.hpp>
 
 namespace Gin::Module::Signed {
 
@@ -18,9 +19,16 @@ namespace Gin::Module::Signed {
 
 	private:
         Field::Sampler<Math::Scalar> radius{ 1.0f };
-        Field::Sampler<Math::Vector3> position{};
 
-        Field::Sampler<Math::Scalar> distance{};
+        std::shared_ptr<SDF::Primitive> primitive{};
+
+        class SpherePrimitive : public SDF::Primitive {
+        public:
+            virtual Field::Sampler<float> Compute(Field::Sampler<Math::Vector3> position) final;
+
+        public:
+            Field::Sampler<Math::Scalar> radius{ 1.0f };
+        };
 	};
 
 
@@ -37,9 +45,16 @@ namespace Gin::Module::Signed {
 
 	private:
         Field::Sampler<Math::Vector3> bsize{ Math::Vector3{ 1.0f, 1.0f, 1.0f } };
-        Field::Sampler<Math::Vector3> position{};
 
-        Field::Sampler<float> distance{};
+        std::shared_ptr<SDF::Primitive> primitive{};
+
+        class BoxPrimitive : public SDF::Primitive {
+        public:
+            virtual Field::Sampler<float> Compute(Field::Sampler<Math::Vector3> position) final;
+
+        public:
+            Field::Sampler<Math::Vector3> bsize{ Math::Vector3{ 1.0f } };
+        };
 	};
 
 	/**
@@ -55,9 +70,16 @@ namespace Gin::Module::Signed {
 
 	private:
         Field::Sampler<float> height{ 0.0f };
-        Field::Sampler<Math::Vector3> position{};
 
-        Field::Sampler<float> distance{};
+        std::shared_ptr<SDF::Primitive> primitive{};
+
+        class GroundPrimitive : public SDF::Primitive {
+        public:
+            virtual Field::Sampler<float> Compute(Field::Sampler<Math::Vector3> position) final;
+
+        public:
+            Field::Sampler<float> height{ 0.0f };
+        };
 
 	};
 

@@ -3,21 +3,39 @@
 Gin::Module::Signed::SDSphere::SDSphere()
 {
 	AddInputPort("Radius", radius);
-	AddInputPort("Position", position);
 
-	AddOutputPort("Signed Distance", distance);
+	AddOutputPort("Out", primitive);
 }
 
 void Gin::Module::Signed::SDSphere::Initialize(Graph::GraphContext ctx) {
-    Math::Vector3 size{ Math::Ceil(ctx.bounds.extent * 2.0 / ctx.scale) };
-    distance.SetField(std::make_shared<Field::ScalarField<float>>(size.x, size.y, size.z));
 }
 
 void Gin::Module::Signed::SDSphere::Execute(Graph::GraphContext ctx)
 {
-    Math::Vector3 size{ Math::Ceil(ctx.bounds.extent * 2.0 / ctx.scale) };
+    std::shared_ptr<SpherePrimitive> sp = std::make_shared<SpherePrimitive>();;
+    sp->radius = radius;
+    primitive = sp;
+}
 
-    std::shared_ptr<Field::ScalarField<float>> d = distance.GetField<Field::ScalarField<float>>();
+std::string Gin::Module::Signed::SDSphere::GetName()
+{
+	return "SDSphere";
+}
+
+Gin::Field::Sampler<float> Gin::Module::Signed::SDSphere::SpherePrimitive::Compute(Field::Sampler<Math::Vector3> position) {
+
+    Math::Vector3 size{ 1.0f };
+
+    if (position.IsFieldOfType<Field::VectorizedVector3Field>()) {
+        std::shared_ptr<Field::VectorizedVector3Field> p = position.GetField<Field::VectorizedVector3Field>();
+        size.x = p->GetWidth();
+        size.y = p->GetHeight();
+        size.z = p->GetDepth();
+    }
+
+    std::shared_ptr<Field::ScalarField<float>> d = std::make_shared<Field::ScalarField<float>>(size.x, size.y, size.z);
+    Field::Sampler<float> s{};
+    s.SetField(d);
 
     constexpr size_t simdSize = xsimd::simd_type<Math::Scalar>::size;
     size_t idx = 0;
@@ -37,31 +55,45 @@ void Gin::Module::Signed::SDSphere::Execute(Graph::GraphContext ctx)
             }
         }
     }
-}
 
-std::string Gin::Module::Signed::SDSphere::GetName()
-{
-	return "SDSphere";
+    return s;
 }
 
 Gin::Module::Signed::SDBox::SDBox()
 {
 	AddInputPort("Size", bsize);
-	AddInputPort("Position", position);
 
-	AddOutputPort("Signed Distance", distance);
+    AddOutputPort("Out", primitive);
 }
 
 void Gin::Module::Signed::SDBox::Initialize(Graph::GraphContext ctx) {
-    Math::Vector3 size{ Math::Ceil(ctx.bounds.extent * 2.0 / ctx.scale) };
-    distance.SetField(std::make_shared<Field::ScalarField<float>>(size.x, size.y, size.z));
 }
 
 void Gin::Module::Signed::SDBox::Execute(Graph::GraphContext ctx)
 {
-    Math::Vector3 size{ Math::Ceil(ctx.bounds.extent * 2.0 / ctx.scale) };
+    std::shared_ptr<BoxPrimitive> bp = std::make_shared<BoxPrimitive>();;
+    bp->bsize = bsize;
+    primitive = bp;
+}
 
-    std::shared_ptr<Field::ScalarField<float>> d = distance.GetField<Field::ScalarField<float>>();
+std::string Gin::Module::Signed::SDBox::GetName()
+{
+	return "SDBox";
+}
+
+Gin::Field::Sampler<float> Gin::Module::Signed::SDBox::BoxPrimitive::Compute(Field::Sampler<Math::Vector3> position) {
+    Math::Vector3 size{ 1.0f };
+
+    if (position.IsFieldOfType<Field::VectorizedVector3Field>()) {
+        std::shared_ptr<Field::VectorizedVector3Field> p = position.GetField<Field::VectorizedVector3Field>();
+        size.x = p->GetWidth();
+        size.y = p->GetHeight();
+        size.z = p->GetDepth();
+    }
+
+    std::shared_ptr<Field::ScalarField<float>> d = std::make_shared<Field::ScalarField<float>>(size.x, size.y, size.z);
+    Field::Sampler<float> s{};
+    s.SetField(d);
 
     constexpr size_t simdSize = xsimd::simd_type<Math::Scalar>::size;
     size_t idx = 0;
@@ -87,32 +119,45 @@ void Gin::Module::Signed::SDBox::Execute(Graph::GraphContext ctx)
             }
         }
     }
-}
 
-std::string Gin::Module::Signed::SDBox::GetName()
-{
-	return "SDBox";
+    return s;
 }
-
 
 Gin::Module::Signed::SDGround::SDGround()
 {
 	AddInputPort("Height", height);
-	AddInputPort("Position", position);
 
-	AddOutputPort("Signed Distance", distance);
+    AddOutputPort("Out", primitive);
 }
 
 void Gin::Module::Signed::SDGround::Initialize(Graph::GraphContext ctx) {
-    Math::Vector3 size{ Math::Ceil(ctx.bounds.extent * 2.0 / ctx.scale) };
-    distance.SetField(std::make_shared<Field::ScalarField<float>>(size.x, size.y, size.z));
 }
 
 void Gin::Module::Signed::SDGround::Execute(Graph::GraphContext ctx)
 {
-    Math::Vector3 size{ Math::Ceil(ctx.bounds.extent * 2.0 / ctx.scale) };
+    std::shared_ptr<GroundPrimitive> gp = std::make_shared<GroundPrimitive>();;
+    gp->height = height;
+    primitive = gp;
+}
 
-    std::shared_ptr<Field::ScalarField<float>> d = distance.GetField<Field::ScalarField<float>>();
+std::string Gin::Module::Signed::SDGround::GetName()
+{
+	return "SDGround";
+}
+
+Gin::Field::Sampler<float> Gin::Module::Signed::SDGround::GroundPrimitive::Compute(Field::Sampler<Math::Vector3> position) {
+    Math::Vector3 size{ 1.0f };
+
+    if (position.IsFieldOfType<Field::VectorizedVector3Field>()) {
+        std::shared_ptr<Field::VectorizedVector3Field> p = position.GetField<Field::VectorizedVector3Field>();
+        size.x = p->GetWidth();
+        size.y = p->GetHeight();
+        size.z = p->GetDepth();
+    }
+
+    std::shared_ptr<Field::ScalarField<float>> d = std::make_shared<Field::ScalarField<float>>(size.x, size.y, size.z);
+    Field::Sampler<float> s{};
+    s.SetField(d);
 
     constexpr size_t simdSize = xsimd::simd_type<Math::Scalar>::size;
     size_t idx = 0;
@@ -129,12 +174,10 @@ void Gin::Module::Signed::SDGround::Execute(Graph::GraphContext ctx)
             }
         }
     }
+
+    return s;
 }
 
-std::string Gin::Module::Signed::SDGround::GetName()
-{
-	return "SDGround";
-}
 /*
 Gin::Module::Signed::SDPlane::SDPlane()
 {

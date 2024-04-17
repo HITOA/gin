@@ -3,9 +3,11 @@
 #include <gin/module/registry.hpp>
 #include <signed/nodes/3d/primitives.hpp>
 #include <signed/nodes/3d/operations.hpp>
+#include <signed/nodes/3d/sampler.hpp>
 
 void InitializeSignedModule()
 {
+    Gin::Module::AddNodesToRegistry<Gin::Module::Signed::SDSampler>("Signed/3D/Primitives/Sampler");
 
 	Gin::Module::AddNodesToRegistry<Gin::Module::Signed::SDSphere>("Signed/3D/Primitives/Sphere");
 	Gin::Module::AddNodesToRegistry<Gin::Module::Signed::SDBox>("Signed/3D/Primitives/Box");
