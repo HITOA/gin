@@ -1,10 +1,12 @@
 #include <gin/profiler/profiler.hpp>
 #include <unordered_map>
+#include <mutex>
 
 std::shared_ptr<Gin::Profiler::Session> session{};
 bool running{ false };
 uint64_t lastOffset{ 0 };
 std::unordered_map<void*, uint64_t> allocation{};
+std::mutex mutex{};
 
 void Gin::Profiler::Start(std::string_view sessionName) {
     session = std::make_shared<Gin::Profiler::Session>();
@@ -25,6 +27,8 @@ void Gin::Profiler::RecordAllocation(uint64_t size, void* ptr) {
     if (!running)
         return;
 
+    std::unique_lock<std::mutex> lock{ mutex };
+
     allocation[ptr] = size;
 
     Session::Event event{};
@@ -38,6 +42,8 @@ void Gin::Profiler::RecordAllocation(uint64_t size, void* ptr) {
 void Gin::Profiler::RecordDeallocation(void* ptr) {
     if (!running)
         return;
+
+    std::unique_lock<std::mutex> lock{ mutex };
 
     if (allocation.count(ptr) <= 0)
         return;
