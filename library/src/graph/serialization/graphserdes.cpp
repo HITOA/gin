@@ -28,11 +28,27 @@ uint32_t GetTypeIdFromHashCode(size_t typeHashCode) {
     return 0;
 }
 
-nlohmann::json SerializeGraphPort(Gin::Graph::GraphPort& port) {
+nlohmann::json SerializeGraphPort(Gin::Graph::GraphPort& port, bool input = false) {
 	nlohmann::json serializedPort = nlohmann::json::object();
 
-	serializedPort["type"] = GetTypeIdFromHashCode(port.GetType().info.get().hash_code());
+    uint32_t pt = GetTypeIdFromHashCode(port.GetType().info.get().hash_code());;
+	serializedPort["type"] = pt;
 	serializedPort["name"] = port.GetName();
+
+    if (input) {
+        switch (pt) {
+            case 0:
+            {
+                Gin::Field::Sampler<float>* sampler = (Gin::Field::Sampler<float>*)port.GetProperty();
+                if (sampler->IsFieldOfType<Gin::Field::ConstantField<float>>()) {
+                    serializedPort["value"] = sampler->GetField<Gin::Field::ConstantField<float>>()->Get();
+                }
+                break;
+            }
+            default:
+                break;
+        }
+    }
 
 	return serializedPort;
 }
@@ -45,6 +61,10 @@ void DeserializeGraphInputPort(nlohmann::json& serializedPort, Gin::Graph::Graph
     switch (typeId) {
         case 0: {
             graph.AddInput<Gin::Field::Sampler<float>>(serializedPort["name"]);
+            if (serializedPort.count("value")) {
+                float v = serializedPort["value"];
+                graph.GetInputPort(graph.GetInputsCount() - 1).SetValue<Gin::Field::Sampler<float>>(v);
+            }
             break;
         };
         case 1: {
@@ -103,7 +123,7 @@ void Gin::Graph::Serialization::SerializeGraph(Graph& graph, SerializedGraph& se
 	}
 
 	for (size_t i = 0; i < graph.GetInputsCount(); ++i) {
-		nlohmann::json serializedPort = SerializeGraphPort(graph.GetInputPort(i));
+		nlohmann::json serializedPort = SerializeGraphPort(graph.GetInputPort(i), true);
 		serializedGraph.graphData["inputs"][i] = serializedPort;
 	}
 

@@ -243,6 +243,21 @@ void GraphEditorWindow::DrawGraphPortTypeList(size_t idx, Gin::Graph::GraphPort 
             ImGui::EndCombo();
         }
 
+        if (input) {
+            switch (port.GetType().type) {
+                case (Gin::Graph::PortType)34:
+                {
+                    Gin::Field::Sampler<Gin::Math::Scalar>* property = (Gin::Field::Sampler<Gin::Math::Scalar>*)port.GetProperty();
+                    if (property->IsFieldOfType<Gin::Field::ConstantField<Gin::Math::Scalar>>()) {
+                        ImGui::InputFloat("##GraphInputValue", &(property->GetField<Gin::Field::ConstantField<Gin::Math::Scalar>>()->Get()));
+                    }
+                    break;
+                }
+                default:
+                    break;
+            }
+        }
+
         if (ImGui::Button("Delete")) {
             if (input) {
                 graphs[currentGraphIdx].graph->RemoveInput(idx);
@@ -586,14 +601,14 @@ void GraphEditorWindow::DrawGraphPortNode() {
     ax::NodeEditor::BeginNode(GRAPH_INPUT_NODE_ID);
     for (size_t i = 0; i < entry.graph->GetInputsCount(); ++i) {
         Gin::Graph::GraphPort& port = entry.graph->GetInputPort(i);
-        DrawPin(port, GRAPH_ID_MAX - i, false, port.GetLinks().size() > 0);
+        DrawPin(port, GRAPH_ID_MAX - i - 1, false, port.GetLinks().size() > 0);
     }
     ax::NodeEditor::EndNode();
 
     ax::NodeEditor::BeginNode(GRAPH_OUTPUT_NODE_ID);
     for (size_t i = 0; i < entry.graph->GetOutputsCount(); ++i) {
         Gin::Graph::GraphPort& port = entry.graph->GetOutputPort(i);
-        DrawPin(port, GRAPH_ID_MAX - i - MAX_PORT, true, port.GetLinks().size() > 0);
+        DrawPin(port, GRAPH_ID_MAX - i - MAX_PORT - 1, true, port.GetLinks().size() > 0);
     }
     ax::NodeEditor::EndNode();
 }
@@ -669,7 +684,7 @@ void GraphEditorWindow::DrawLinks() {
             int portAId = (int)(portId + (nodeId + 1) * MAX_PORT);
             for (std::pair<Gin::Graph::GraphId, Gin::Graph::GraphId>& link : adj[nodeId][portId]) {
                 if (link.first == GRAPH_INPUT_NODE_ID) {
-                    Gin::Graph::GraphId portBId = GRAPH_INPUT_NODE_ID - link.second;
+                    Gin::Graph::GraphId portBId = GRAPH_INPUT_NODE_ID - link.second - 1;
                     ax::NodeEditor::Link(i, portAId, portBId);
                 }
                 else {
@@ -689,7 +704,7 @@ void GraphEditorWindow::DrawLinks() {
 
     for (Gin::Graph::GraphId portId = 0; portId < entry.graph->GetOutputsCount(); ++portId) {
         auto& port = entry.graph->GetOutputPort(portId);
-        Gin::Graph::GraphId portAId = GRAPH_INPUT_NODE_ID - portId - MAX_PORT;
+        Gin::Graph::GraphId portAId = GRAPH_INPUT_NODE_ID - portId - MAX_PORT - 1;
 
         for (std::pair<Gin::Graph::GraphId, Gin::Graph::GraphId>& link : port.GetLinks()) {
             Gin::Graph::GraphId portBId = link.second + (link.first + 1) * MAX_PORT;
@@ -738,7 +753,7 @@ void GraphEditorWindow::HandleLinkCreation() {
                             std::swap(start, end);
 
                         if (start > GRAPH_INPUT_NODE_ID - MAX_PORT) {
-                            Gin::Graph::GraphId graphInputIdx = GRAPH_INPUT_NODE_ID - start;
+                            Gin::Graph::GraphId graphInputIdx = GRAPH_INPUT_NODE_ID - start - 1;
                             Gin::Graph::GraphId portBIdx = end % MAX_PORT;
                             Gin::Graph::GraphId nodeBIdx = (end - portBIdx) / MAX_PORT - 1;
 
@@ -750,7 +765,7 @@ void GraphEditorWindow::HandleLinkCreation() {
                             }
                         }
                         else {
-                            Gin::Graph::GraphId graphOutputIdx = GRAPH_INPUT_NODE_ID - start - MAX_PORT;
+                            Gin::Graph::GraphId graphOutputIdx = GRAPH_INPUT_NODE_ID - start - MAX_PORT - 1;
                             Gin::Graph::GraphId portAIdx = end % MAX_PORT;
                             Gin::Graph::GraphId nodeAIdx = (end - portAIdx) / MAX_PORT - 1;
 

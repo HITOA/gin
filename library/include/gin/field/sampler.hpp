@@ -44,7 +44,7 @@ namespace Gin::Field {
 
         template<typename U>
         inline bool IsFieldOfType() {
-            return typeIndex == typeid(U);
+            return typeIndex == typeid(U) && field != nullptr;
         }
 
         inline uint32_t GetComponentCount() {

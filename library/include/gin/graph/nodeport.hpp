@@ -29,6 +29,62 @@ namespace Gin::Graph {
 		T* property{ nullptr };
 	};
 
+    template<>
+    class NodePort<int> : public Port {
+    public:
+        NodePort(const std::string& name, int& property) : Port(GetPortTypeInfo<int>(), name), property{ &property } {};
+
+        virtual bool Match(Port& port) final {
+            return ((uint32_t)port.GetType().type & (uint32_t)PortType::Scalar) == 2;
+        }
+        virtual bool CopyFrom(Port& port) final {
+            if (!Match(port))
+                return false;
+
+            if (port.GetType().type == PortType::Scalar) {
+                *property = *((float*)port.GetProperty());
+            } else {
+                Field::Sampler<float>* sampler = (Field::Sampler<float>*)port.GetProperty();
+                *property = sampler->GetScalar(0, 0, 0);
+            }
+            return true;
+        }
+        virtual void* GetProperty() final { return property; };
+        virtual void Clear() final {
+            *property = float{};
+        }
+    public:
+        int* property{ nullptr };
+    };
+
+    template<>
+    class NodePort<float> : public Port {
+    public:
+        NodePort(const std::string& name, float& property) : Port(GetPortTypeInfo<float>(), name), property{ &property } {};
+
+        virtual bool Match(Port& port) final {
+            return ((uint32_t)port.GetType().type & (uint32_t)PortType::Scalar) == 2;
+        }
+        virtual bool CopyFrom(Port& port) final {
+            if (!Match(port))
+                return false;
+
+            if (port.GetType().type == PortType::Scalar) {
+                *property = *((float*)port.GetProperty());
+            } else {
+                Field::Sampler<float>* sampler = (Field::Sampler<float>*)port.GetProperty();
+                *property = sampler->GetScalar(0, 0, 0);
+            }
+            return true;
+        }
+        virtual void* GetProperty() final { return property; };
+        virtual void Clear() final {
+            *property = float{};
+        }
+    public:
+        float* property{ nullptr };
+    };
+
     template<typename U>
     class NodePort<Field::Sampler<U>> : public Port {
     public:

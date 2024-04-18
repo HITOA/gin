@@ -410,6 +410,8 @@ void Gin::Graph::Graph::Compile()
     for (int i = program.size() - 1; i >= 0; --i) {
         if (program[i].type == GraphActionType::COPY) {
             if (!freedNodes.count(program[i].nodeBId)) {
+                if (program[i].nodeBId == GRAPH_INPUT_NODE_ID)
+                    continue;
                 GraphAction action{};
                 action.type = GraphActionType::FREE;
                 action.nodeAId = program[i].nodeBId;

@@ -88,6 +88,8 @@ if(GIN_BUILD_BENCH)
             library/include/gin/field/field.hpp
             library/include/gin/field/constantfield.hpp
             library/include/gin/sdf/primitive.hpp
+            modules/geometry/geometry.hpp
+            modules/geometry/geometry.cpp
     )
     target_link_libraries(gin_bench gin_library nanobench)
 endif ()
