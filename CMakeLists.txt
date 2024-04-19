@@ -90,6 +90,7 @@ if(GIN_BUILD_BENCH)
             library/include/gin/sdf/primitive.hpp
             modules/geometry/geometry.hpp
             modules/geometry/geometry.cpp
+            modules/geometry/nodes/point.hpp
     )
     target_link_libraries(gin_bench gin_library nanobench)
 endif ()

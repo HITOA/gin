@@ -15,6 +15,8 @@ namespace Gin::Module::Base {
 			AddInputPort("W", w);
 
 			AddOutputPort("Vector4", vec4);
+            AddOutputPort("Vector3", vec3);
+            AddOutputPort("Vector2", vec2);
 		}
 
         virtual void Initialize(Graph::GraphContext ctx) final {
@@ -23,9 +25,13 @@ namespace Gin::Module::Base {
                 z.IsFieldOfType<Field::ConstantField<float>>() &&
                 w.IsFieldOfType<Field::ConstantField<float>>()) {
                 vec4.SetField(std::make_shared<Field::ConstantField<Math::Vector4>>());
+                vec3.SetField(std::make_shared<Field::ConstantField<Math::Vector3>>());
+                vec2.SetField(std::make_shared<Field::ConstantField<Math::Vector2>>());
             } else {
                 Gin::Math::Vector3 size{ Gin::Math::Ceil(ctx.bounds.extent * 2.0 / ctx.scale) };
                 vec4.SetField(std::make_shared<Field::VectorizedVector4Field>(size.x, size.y, size.z));
+                vec3.SetField(std::make_shared<Field::VectorizedVector3Field>(size.x, size.y, size.z));
+                vec2.SetField(std::make_shared<Field::VectorizedVector2Field>(size.x, size.y, size.z));
             }
         }
 
@@ -36,10 +42,19 @@ namespace Gin::Module::Base {
                     w.IsFieldOfType<Field::ConstantField<float>>()) {
 
                 vec4.GetField<Field::ConstantField<Math::Vector4>>()->Get() = Math::Vector4{
-                    x.GetScalar(0, 0, 0),
-                    y.GetScalar(0, 0, 0),
-                    z.GetScalar(0, 0, 0),
-                    w.GetScalar(0, 0, 0) };
+                        x.GetScalar(0, 0, 0),
+                        y.GetScalar(0, 0, 0),
+                        z.GetScalar(0, 0, 0),
+                        w.GetScalar(0, 0, 0) };
+
+                vec3.GetField<Field::ConstantField<Math::Vector3>>()->Get() = Math::Vector3{
+                        x.GetScalar(0, 0, 0),
+                        y.GetScalar(0, 0, 0),
+                        z.GetScalar(0, 0, 0) };
+
+                vec2.GetField<Field::ConstantField<Math::Vector2>>()->Get() = Math::Vector2{
+                        x.GetScalar(0, 0, 0),
+                        y.GetScalar(0, 0, 0) };
 
             } else {
                 Gin::Math::Vector3 size{ Gin::Math::Ceil(ctx.bounds.extent * 2.0 / ctx.scale) };
@@ -48,15 +63,28 @@ namespace Gin::Module::Base {
                 size_t idx = 0;
 
                 std::shared_ptr<Field::VectorizedVector4Field> fv4 = vec4.GetField<Field::VectorizedVector4Field>();
+                std::shared_ptr<Field::VectorizedVector3Field> fv3 = vec3.GetField<Field::VectorizedVector3Field>();
+                std::shared_ptr<Field::VectorizedVector2Field> fv2 = vec2.GetField<Field::VectorizedVector2Field>();
 
                 for (size_t _z = 0; _z < size.z; ++_z) {
                     for (size_t _y = 0; _y < size.y; ++_y) {
                         for (size_t _x = 0; _x < size.x; _x += simdSizeW) {
                             Field::VectorizedVector4Field::VectorVector4& vv4 = fv4->GetVectorVector4(idx);
+                            Field::VectorizedVector3Field::VectorVector3& vv3 = fv3->GetVectorVector3(idx);
+                            Field::VectorizedVector2Field::VectorVector2& vv2 = fv2->GetVectorVector2(idx);
+
                             xsimd::store_aligned(vv4.x, x.GetScalarBatch(_x, _y, _z));
                             xsimd::store_aligned(vv4.y, y.GetScalarBatch(_x, _y, _z));
                             xsimd::store_aligned(vv4.z, z.GetScalarBatch(_x, _y, _z));
                             xsimd::store_aligned(vv4.w, w.GetScalarBatch(_x, _y, _z));
+
+                            xsimd::store_aligned(vv3.x, x.GetScalarBatch(_x, _y, _z));
+                            xsimd::store_aligned(vv3.y, y.GetScalarBatch(_x, _y, _z));
+                            xsimd::store_aligned(vv3.z, z.GetScalarBatch(_x, _y, _z));
+
+                            xsimd::store_aligned(vv2.x, x.GetScalarBatch(_x, _y, _z));
+                            xsimd::store_aligned(vv2.y, y.GetScalarBatch(_x, _y, _z));
+
                             ++idx;
                         }
                     }
@@ -75,6 +103,8 @@ namespace Gin::Module::Base {
         Field::Sampler<float> w{};
 
         Field::Sampler<Math::Vector4> vec4{};
+        Field::Sampler<Math::Vector3> vec3{};
+        Field::Sampler<Math::Vector2> vec2{};
 	};
 
 	class Split : public Graph::Node {

@@ -836,8 +836,11 @@ void GraphEditorWindow::HandleDeletion() {
             Gin::Graph::GraphId nodeBId = (endId.Get() - portBId) / MAX_PORT - 1;
 
             if (startId.Get() >= GRAPH_INPUT_NODE_ID - MAX_PORT * 2) {
-                Gin::Graph::GraphId outputPortId = startId.Get() - (GRAPH_INPUT_NODE_ID - MAX_PORT);
+                Gin::Graph::GraphId outputPortId = MAX_PORT - (startId.Get() - (GRAPH_INPUT_NODE_ID - MAX_PORT * 2 - 1));
                 entry.graph->GetNode<Gin::Graph::Node>(nodeBId).GetPort(portBId).UnlinkGraphOutput(outputPortId);
+            } else if (endId.Get() >= GRAPH_INPUT_NODE_ID - MAX_PORT) {
+                Gin::Graph::GraphId inputPortId = MAX_PORT - (endId.Get() - (GRAPH_INPUT_NODE_ID - MAX_PORT  - 1));
+                entry.graph->GetNode<Gin::Graph::Node>(nodeAId).GetPort(portAId).UnlinkGraphInput(inputPortId);
             } else {
                 entry.graph->GetNode<Gin::Graph::Node>(nodeAId).GetPort(portAId).Unlink(
                         entry.graph->GetNode<Gin::Graph::Node>(nodeBId).GetPort(portBId));
@@ -901,6 +904,15 @@ void GraphEditorWindow::BuildVolume(Gin::Graph::GraphContext &context) {
     buildData.scale = context.scale;
     buildData.bounds = context.bounds;
     buildData.volume = *volumeSampler;
+
+    size_t colorIdx = entry.graph->HasOutput("_Color");
+    if (colorIdx != GRAPH_ID_MAX) {
+        Gin::Graph::GraphPort& colorPort = entry.graph->GetOutputPort(colorIdx);
+
+        if (colorPort.GetType().type == (Gin::Graph::PortType)((int)Gin::Graph::PortType::Vector4 + (int)Gin::Graph::PortType::Field)) {
+            buildData.color = *(Gin::Field::Sampler<Gin::Math::Vector4>*)colorPort.GetProperty();
+        }
+    }
 
     switch (meshBuilderType) {
         case MeshBuilderType::MarchingCube:

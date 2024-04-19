@@ -1,5 +1,66 @@
 #include "transform.hpp"
 
+#include <xsimd/xsimd.hpp>
+
+Gin::Module::Math::DomainRepeat::DomainRepeat() {
+    AddInputPort("In", in);
+    AddInputPort("Domain Size", domainSize);
+
+    AddOutputPort("Out", out);
+    AddOutputPort("Domain Position", domainPosition);
+}
+
+void Gin::Module::Math::DomainRepeat::Initialize(Graph::GraphContext ctx) {
+    Gin::Math::Vector3 size{ Gin::Math::Ceil(ctx.bounds.extent * 2.0 / ctx.scale) };
+    out.SetField(std::make_shared<Field::VectorizedVector3Field>(size.x, size.y, size.z));
+    domainPosition.SetField(std::make_shared<Field::VectorizedVector3Field>(size.x, size.y, size.z));
+}
+
+void Gin::Module::Math::DomainRepeat::Execute(Graph::GraphContext ctx) {
+    Gin::Math::Vector3 size{ Gin::Math::Ceil(ctx.bounds.extent * 2.0 / ctx.scale) };
+
+    std::shared_ptr<Field::VectorizedVector3Field> o = out.GetField<Field::VectorizedVector3Field>();
+    std::shared_ptr<Field::VectorizedVector3Field> p = domainPosition.GetField<Field::VectorizedVector3Field>();
+
+    constexpr size_t simdSizeW = xsimd::simd_type<Gin::Math::Scalar>::size;
+    size_t idx = 0;
+
+    for (size_t z = 0; z < size.z; ++z) {
+        for (size_t y = 0; y < size.y; ++y) {
+            for (size_t x = 0; x < size.x; x += simdSizeW) {
+                auto p1 = in.GetVector3Batch(x, y, z);
+                auto s = domainSize.GetVector3Batch(x, y, z);
+
+                p1.c[0] = xsimd::floor((p1.c[0] + s.c[0]) / (s.c[0] * 2));
+                p1.c[1] = xsimd::floor((p1.c[1] + s.c[1]) / (s.c[1] * 2));
+                p1.c[2] = xsimd::floor((p1.c[2] + s.c[2]) / (s.c[2] * 2));
+
+                Field::VectorizedVector3Field::VectorVector3& vv3p = p->GetVectorVector3(idx);
+                xsimd::store_aligned(vv3p.x, p1.c[0]);
+                xsimd::store_aligned(vv3p.y, p1.c[1]);
+                xsimd::store_aligned(vv3p.z, p1.c[2]);
+
+                auto p2 = in.GetVector3Batch(x, y, z);
+
+                p2.c[0] = p2.c[0] - p1.c[0] * (s.c[0] * 2);
+                p2.c[1] = p2.c[1] - p1.c[1] * (s.c[1] * 2);
+                p2.c[2] = p2.c[2] - p1.c[2] * (s.c[2] * 2);
+
+                Field::VectorizedVector3Field::VectorVector3& vv3o = o->GetVectorVector3(idx);
+                xsimd::store_aligned(vv3o.x, p2.c[0]);
+                xsimd::store_aligned(vv3o.y, p2.c[1]);
+                xsimd::store_aligned(vv3o.z, p2.c[2]);
+
+                ++idx;
+            }
+        }
+    }
+}
+
+std::string Gin::Module::Math::DomainRepeat::GetName() {
+    return "Domain Repeat";
+}
+
 /*
 Gin::Module::Math::Translate::Translate()
 {

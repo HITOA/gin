@@ -16,6 +16,12 @@ void InitializeMathModule()
     Gin::Module::AddNodesToRegistry<Gin::Module::Math::Divide>("Math/Operation/Divide");
     Gin::Module::AddNodesToRegistry<Gin::Module::Math::Pow>("Math/Operation/Pow");
 
+    Gin::Module::AddNodesToRegistry<Gin::Module::Math::DomainRepeat>("Math/Transform/Domain Repeat");
+
+    Gin::Module::AddNodesToRegistry<Gin::Module::Math::HashVector3>("Math/Hash/Hash Vector3");
+    Gin::Module::AddNodesToRegistry<Gin::Module::Math::UniformDistribution>("Math/Hash/Uniform Distribution");
+    Gin::Module::AddNodesToRegistry<Gin::Module::Math::RandomOffset>("Math/Hash/Random Offset");
+
 	/*Gin::Module::AddNodesToRegistry<Gin::Module::Math::Multiply<float>>("Math/Operation/Multiply");
 	Gin::Module::AddNodesToRegistry<Gin::Module::Math::Add<float>>("Math/Operation/Add");
 	Gin::Module::AddNodesToRegistry<Gin::Module::Math::Substract<float>>("Math/Operation/Substract");
