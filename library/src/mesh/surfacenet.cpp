@@ -1,51 +1,61 @@
 #include <gin/mesh/surfacenet.hpp>
 
 #include <gin/math/interpolation.hpp>
+#include <gin/math/math.hpp>
 
-void Gin::Mesh::SurfaceNetMeshBuilder::Build(Mesh& mesh, Spatial::Sampler<float>& volume, Spatial::Sampler<Eigen::Vector4<float>>& colors)
+void Gin::Mesh::SurfaceNetMeshBuilder::Build(MeshBuildData& data)
 {
     SurfaceNetMeshingData meshingData{};
 
-    meshingData.posToVertexIdx.resize(volume->GetWidth() * volume->GetHeight() * volume->GetDepth());
+    Math::Vector3 size{ data.bounds.extent * 2.0 / data.scale };
+    size.x = std::ceil(size.x);
+    size.y = std::ceil(size.y);
+    size.z = std::ceil(size.z);
 
-    meshingData.positions.reserve(volume->GetWidth() * volume->GetDepth());
-    meshingData.normals.reserve(volume->GetWidth() * volume->GetDepth());
-    meshingData.colors.reserve(volume->GetWidth() * volume->GetDepth());
-    meshingData.vertexIdxToPos.reserve(volume->GetWidth() * volume->GetDepth());
+    uint32_t width{ (uint32_t)std::ceil(size.x) };
+    uint32_t height{ (uint32_t)std::ceil(size.y) };
+    uint32_t depth{ (uint32_t)std::ceil(size.z) };
+
+    meshingData.posToVertexIdx.resize(width * height * depth);
+
+    meshingData.positions.reserve(width * depth);
+    meshingData.normals.reserve(width * depth);
+    meshingData.colors.reserve(width * depth);
+    meshingData.vertexIdxToPos.reserve(width * depth);
 
     std::fill(meshingData.posToVertexIdx.begin(), meshingData.posToVertexIdx.end(), NULL_VERTEX_IDX);
 
-    for (size_t z = 0; z < volume->GetDepth() - 1; ++z) {
-        for (size_t y = 0; y < volume->GetHeight() - 1; ++y) {
-            for (size_t x = 0; x < volume->GetWidth() - 1; ++x) {
+    for (size_t z = 0; z < depth - 1; ++z) {
+        for (size_t y = 0; y < height - 1; ++y) {
+            for (size_t x = 0; x < width - 1; ++x) {
                 int sum = 0;
 
-                size_t idx = x + y * volume->GetWidth() + z * volume->GetWidth() * volume->GetHeight();
+                size_t idx = x + y * width + z * width * height;
 
-                float v000 = volume[idx];
-                float v100 = volume[idx + 1];
-                float v010 = volume[idx + volume->GetWidth()];
-                float v110 = volume[idx + volume->GetWidth() + 1];
-                float v001 = volume[idx + volume->GetWidth() * volume->GetHeight()];
-                float v101 = volume[idx + volume->GetWidth() * volume->GetHeight() + 1];
-                float v011 = volume[idx + volume->GetWidth() * volume->GetHeight() + volume->GetWidth()];
-                float v111 = volume[idx + volume->GetWidth() * volume->GetHeight() + volume->GetWidth() + 1];
+                float v000 = data.volume.GetScalar(x, y, z);
+                float v100 = data.volume.GetScalar(x + 1, y, z);
+                float v010 = data.volume.GetScalar(x, y + 1, z);
+                float v110 = data.volume.GetScalar(x + 1, y + 1, z);
+                float v001 = data.volume.GetScalar(x, y, z + 1);
+                float v101 = data.volume.GetScalar(x + 1, y, z + 1);
+                float v011 = data.volume.GetScalar(x, y + 1, z + 1);
+                float v111 = data.volume.GetScalar(x + 1, y + 1, z + 1);
 
                 sum = (v000 >= 0) + (v100 >= 0) + (v010 >= 0) + (v110 >= 0) + (v001 >= 0) + (v101 >= 0) + (v011 >= 0) + (v111 >= 0);
 
                 if (sum % 8 != 0) {
                     meshingData.posToVertexIdx[idx] = meshingData.positions.size();
 
-                    Eigen::Vector3<float> p000{ (float)x, (float)y, (float)z };
-                    Eigen::Vector3<float> p100{ (float)x + 1.0f, (float)y, (float)z };
-                    Eigen::Vector3<float> p010{ (float)x, (float)y + 1.0f , (float)z };
-                    Eigen::Vector3<float> p110{ (float)x + 1.0f, (float)y + 1.0f, (float)z };
-                    Eigen::Vector3<float> p001{ (float)x, (float)y, (float)z + 1.0f };
-                    Eigen::Vector3<float> p101{ (float)x + 1.0f, (float)y, (float)z + 1.0f };
-                    Eigen::Vector3<float> p011{ (float)x, (float)y + 1.0f, (float)z + 1.0f };
-                    Eigen::Vector3<float> p111{ (float)x + 1.0f, (float)y + 1.0f, (float)z + 1.0f };
+                    Math::Vector3 p000{ (float)x, (float)y, (float)z };
+                    Math::Vector3 p100{ (float)x + 1.0f, (float)y, (float)z };
+                    Math::Vector3 p010{ (float)x, (float)y + 1.0f , (float)z };
+                    Math::Vector3 p110{ (float)x + 1.0f, (float)y + 1.0f, (float)z };
+                    Math::Vector3 p001{ (float)x, (float)y, (float)z + 1.0f };
+                    Math::Vector3 p101{ (float)x + 1.0f, (float)y, (float)z + 1.0f };
+                    Math::Vector3 p011{ (float)x, (float)y + 1.0f, (float)z + 1.0f };
+                    Math::Vector3 p111{ (float)x + 1.0f, (float)y + 1.0f, (float)z + 1.0f };
 
-                    Eigen::Vector3<float> p{ 0.0f, 0.0f, 0.0f };
+                    Math::Vector3 p{ 0.0f, 0.0f, 0.0f };
                     size_t c = 0;
 
                     if ((v000 >= 0) ^ (v100 >= 0)) {
@@ -114,11 +124,11 @@ void Gin::Mesh::SurfaceNetMeshBuilder::Build(Mesh& mesh, Spatial::Sampler<float>
 
                     p = p / c;
 
-                    meshingData.positions.push_back(p * volume.GetScale() - volume.GetBounds().extent.cast<float>());
-
-                    meshingData.normals.push_back(Eigen::Vector3<float>{ v100 - v000, v010 - v000, v001 - v000 }.normalized());
-                    meshingData.colors.push_back(colors[idx]);
-                    meshingData.vertexIdxToPos.push_back(Eigen::Vector3<int>{ (int)x, (int)y, (int)z });
+                    meshingData.positions.push_back(Math::Vector3{ p.x, p.y, p.z } * data.scale - data.bounds.extent);
+                    Math::Vector3 n = Math::Normalize(Math::Vector3{ v100 - v000, v010 - v000, v001 - v000 });
+                    meshingData.normals.push_back(Math::Vector3(n.x, n.y, n.z));
+                    meshingData.colors.push_back(data.color.GetVector4(x, y, z));
+                    meshingData.vertexIdxToPos.push_back(Math::Vector3Int{ (int)x, (int)y, (int)z });
                 }
             }
         }
@@ -127,106 +137,97 @@ void Gin::Mesh::SurfaceNetMeshBuilder::Build(Mesh& mesh, Spatial::Sampler<float>
     meshingData.indices.reserve(meshingData.positions.size() * 2);
 
     for (size_t i = 0; i < meshingData.positions.size(); ++i) {
-        Eigen::Vector3<int> position{ meshingData.vertexIdxToPos[i] };
+        Math::Vector3Int position{ meshingData.vertexIdxToPos[i] };
 
-        size_t idx = position.x() + position.y() * volume->GetWidth() + position.z() * volume->GetWidth() * volume->GetHeight();
+        size_t idx = position.x + position.y * width + position.z * width * height;
 
         {   //XY Faces
-            size_t idxA = (position.x() + 1) + (position.y() + 1) * volume->GetWidth() + position.z() * volume->GetWidth() * volume->GetHeight();
-            size_t idxB = (position.x() + 1) + (position.y() + 1) * volume->GetWidth() + (position.z() + 1) * volume->GetWidth() * volume->GetHeight();
-
-            float vA = volume[idxA];
-            float vB = volume[idxB];
+            float vA = data.volume.GetScalar(position.x + 1, position.y + 1, position.z);
+            float vB = data.volume.GetScalar(position.x + 1, position.y + 1, position.z + 1);
 
             if (meshingData.posToVertexIdx[idx + 1] != NULL_VERTEX_IDX && 
-                meshingData.posToVertexIdx[idx + volume->GetWidth()] != NULL_VERTEX_IDX &&
-                meshingData.posToVertexIdx[idx + volume->GetWidth() + 1] != NULL_VERTEX_IDX) {
+                meshingData.posToVertexIdx[idx + width] != NULL_VERTEX_IDX &&
+                meshingData.posToVertexIdx[idx + width + 1] != NULL_VERTEX_IDX) {
 
                 if (vA >= 0 && vB < 0) {
                     meshingData.indices.push_back(i);
-                    meshingData.indices.push_back(meshingData.posToVertexIdx[idx + volume->GetWidth()]);
+                    meshingData.indices.push_back(meshingData.posToVertexIdx[idx + width]);
                     meshingData.indices.push_back(meshingData.posToVertexIdx[idx + 1]);
-                    meshingData.indices.push_back(meshingData.posToVertexIdx[idx + volume->GetWidth()]);
-                    meshingData.indices.push_back(meshingData.posToVertexIdx[idx + volume->GetWidth()] + 1);
+                    meshingData.indices.push_back(meshingData.posToVertexIdx[idx + width]);
+                    meshingData.indices.push_back(meshingData.posToVertexIdx[idx + width] + 1);
                     meshingData.indices.push_back(meshingData.posToVertexIdx[idx + 1]);
                 }
                 else if (vA < 0 && vB >= 0) {
                     meshingData.indices.push_back(i);
                     meshingData.indices.push_back(meshingData.posToVertexIdx[idx + 1]);
-                    meshingData.indices.push_back(meshingData.posToVertexIdx[idx + volume->GetWidth()]);
-                    meshingData.indices.push_back(meshingData.posToVertexIdx[idx + volume->GetWidth()]);
+                    meshingData.indices.push_back(meshingData.posToVertexIdx[idx + width]);
+                    meshingData.indices.push_back(meshingData.posToVertexIdx[idx + width]);
                     meshingData.indices.push_back(meshingData.posToVertexIdx[idx + 1]);
-                    meshingData.indices.push_back(meshingData.posToVertexIdx[idx + volume->GetWidth()] + 1);
+                    meshingData.indices.push_back(meshingData.posToVertexIdx[idx + width] + 1);
                 }
             }
         }
 
         {   //YZ Faces
-            size_t idxA = position.x() + (position.y() + 1) * volume->GetWidth() + (position.z() + 1) * volume->GetWidth() * volume->GetHeight();
-            size_t idxB = (position.x() + 1) + (position.y() + 1) * volume->GetWidth() + (position.z() + 1) * volume->GetWidth() * volume->GetHeight();
+            float vA = data.volume.GetScalar(position.x, position.y + 1, position.z + 1);
+            float vB = data.volume.GetScalar(position.x + 1, position.y + 1, position.z + 1);
 
-            float vA = volume[idxA];
-            float vB = volume[idxB];
-
-            if (meshingData.posToVertexIdx[idx + volume->GetWidth()] != NULL_VERTEX_IDX &&
-                meshingData.posToVertexIdx[idx + volume->GetWidth() + volume->GetWidth() * volume->GetHeight()] != NULL_VERTEX_IDX &&
-                meshingData.posToVertexIdx[idx + volume->GetWidth() * volume->GetHeight()] != NULL_VERTEX_IDX) {
+            if (meshingData.posToVertexIdx[idx + width] != NULL_VERTEX_IDX &&
+                meshingData.posToVertexIdx[idx + width + width * height] != NULL_VERTEX_IDX &&
+                meshingData.posToVertexIdx[idx + width * height] != NULL_VERTEX_IDX) {
 
                 if (vA >= 0 && vB < 0) {
                     meshingData.indices.push_back(i);
-                    meshingData.indices.push_back(meshingData.posToVertexIdx[idx + volume->GetWidth() * volume->GetHeight()]);
-                    meshingData.indices.push_back(meshingData.posToVertexIdx[idx + volume->GetWidth()]);
-                    meshingData.indices.push_back(meshingData.posToVertexIdx[idx + volume->GetWidth() * volume->GetHeight()]);
-                    meshingData.indices.push_back(meshingData.posToVertexIdx[idx + volume->GetWidth() * volume->GetHeight() + volume->GetWidth()]);
-                    meshingData.indices.push_back(meshingData.posToVertexIdx[idx + volume->GetWidth()]);
+                    meshingData.indices.push_back(meshingData.posToVertexIdx[idx + width * height]);
+                    meshingData.indices.push_back(meshingData.posToVertexIdx[idx + width]);
+                    meshingData.indices.push_back(meshingData.posToVertexIdx[idx + width * height]);
+                    meshingData.indices.push_back(meshingData.posToVertexIdx[idx + width * height + width]);
+                    meshingData.indices.push_back(meshingData.posToVertexIdx[idx + width]);
                 }
                 else if (vA < 0 && vB >= 0) {
                     meshingData.indices.push_back(i);
-                    meshingData.indices.push_back(meshingData.posToVertexIdx[idx + volume->GetWidth()]);
-                    meshingData.indices.push_back(meshingData.posToVertexIdx[idx + volume->GetWidth() * volume->GetHeight()]);
-                    meshingData.indices.push_back(meshingData.posToVertexIdx[idx + volume->GetWidth() * volume->GetHeight()]);
-                    meshingData.indices.push_back(meshingData.posToVertexIdx[idx + volume->GetWidth()]);
-                    meshingData.indices.push_back(meshingData.posToVertexIdx[idx + volume->GetWidth() * volume->GetHeight() + volume->GetWidth()]);
+                    meshingData.indices.push_back(meshingData.posToVertexIdx[idx + width]);
+                    meshingData.indices.push_back(meshingData.posToVertexIdx[idx + width * height]);
+                    meshingData.indices.push_back(meshingData.posToVertexIdx[idx + width * height]);
+                    meshingData.indices.push_back(meshingData.posToVertexIdx[idx + width]);
+                    meshingData.indices.push_back(meshingData.posToVertexIdx[idx + width * height + width]);
                 }
             }
         }
 
         {   //XZ Faces
-            size_t idxA = (position.x() + 1) + position.y() * volume->GetWidth() + (position.z() + 1) * volume->GetWidth() * volume->GetHeight();
-            size_t idxB = (position.x() + 1) + (position.y() + 1) * volume->GetWidth() + (position.z() + 1) * volume->GetWidth() * volume->GetHeight();
-
-            float vA = volume[idxA];
-            float vB = volume[idxB];
+            float vA = data.volume.GetScalar(position.x + 1, position.y, position.z + 1);
+            float vB = data.volume.GetScalar(position.x + 1, position.y + 1, position.z + 1);
 
             if (meshingData.posToVertexIdx[idx + 1] != NULL_VERTEX_IDX &&
-                meshingData.posToVertexIdx[idx + volume->GetWidth() * volume->GetHeight() + 1] != NULL_VERTEX_IDX &&
-                meshingData.posToVertexIdx[idx + volume->GetWidth() * volume->GetHeight()] != NULL_VERTEX_IDX) {
+                meshingData.posToVertexIdx[idx + width * height + 1] != NULL_VERTEX_IDX &&
+                meshingData.posToVertexIdx[idx + width * height] != NULL_VERTEX_IDX) {
 
                 if (vA >= 0 && vB < 0) {
                     meshingData.indices.push_back(i);
                     meshingData.indices.push_back(meshingData.posToVertexIdx[idx + 1]);
-                    meshingData.indices.push_back(meshingData.posToVertexIdx[idx + volume->GetWidth() * volume->GetHeight()]);
-                    meshingData.indices.push_back(meshingData.posToVertexIdx[idx + volume->GetWidth() * volume->GetHeight()]);
+                    meshingData.indices.push_back(meshingData.posToVertexIdx[idx + width * height]);
+                    meshingData.indices.push_back(meshingData.posToVertexIdx[idx + width * height]);
                     meshingData.indices.push_back(meshingData.posToVertexIdx[idx + 1]);
-                    meshingData.indices.push_back(meshingData.posToVertexIdx[idx + volume->GetWidth() * volume->GetHeight() + 1]);
+                    meshingData.indices.push_back(meshingData.posToVertexIdx[idx + width * height + 1]);
                 }
                 else if (vA < 0 && vB >= 0) {
                     meshingData.indices.push_back(i);
-                    meshingData.indices.push_back(meshingData.posToVertexIdx[idx + volume->GetWidth() * volume->GetHeight()]);
+                    meshingData.indices.push_back(meshingData.posToVertexIdx[idx + width * height]);
                     meshingData.indices.push_back(meshingData.posToVertexIdx[idx + 1]);
-                    meshingData.indices.push_back(meshingData.posToVertexIdx[idx + volume->GetWidth() * volume->GetHeight()]);
-                    meshingData.indices.push_back(meshingData.posToVertexIdx[idx + volume->GetWidth() * volume->GetHeight() + 1]);
+                    meshingData.indices.push_back(meshingData.posToVertexIdx[idx + width * height]);
+                    meshingData.indices.push_back(meshingData.posToVertexIdx[idx + width * height + 1]);
                     meshingData.indices.push_back(meshingData.posToVertexIdx[idx + 1]);
                 }
             }
         }
     }
 
-    mesh.Clear();
+    data.mesh->Clear();
 
-    mesh.SetVertices(meshingData.positions.data(), meshingData.positions.size());
-    mesh.SetNormals(meshingData.normals.data(), meshingData.normals.size());
-    mesh.SetColors(meshingData.colors.data(), meshingData.colors.size());
-    mesh.SetIndices(meshingData.indices.data(), meshingData.indices.size());
+    data.mesh->SetVertices(meshingData.positions.data(), meshingData.positions.size());
+    data.mesh->SetNormals(meshingData.normals.data(), meshingData.normals.size());
+    data.mesh->SetColors(meshingData.colors.data(), meshingData.colors.size());
+    data.mesh->SetIndices(meshingData.indices.data(), meshingData.indices.size());
 
 }

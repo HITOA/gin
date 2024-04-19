@@ -4,6 +4,7 @@
 
 namespace Gin::Module::Terrain {
 
+    /*
 	class TerrainMix : public Gin::Graph::Node {
 	public:
 		TerrainMix();
@@ -18,6 +19,6 @@ namespace Gin::Module::Terrain {
 		Spatial::Spatial<float> mask{};
 
 		Spatial::Spatial<float> distance{};
-	};
+	};*/
 
 }

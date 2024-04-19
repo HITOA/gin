@@ -1,21 +1,17 @@
 #pragma once
 
-#include <Eigen/Core>
-#include <gin/math/bounds.hpp>
+
 #include <gin/mesh/meshbuilder.hpp>
 
 namespace Gin::Mesh {
 
-	struct CubeData {
-		Eigen::Vector3<double> position[8];
-		float distance[8];
-	};
+
 
 	class MarchingCubeMeshBuilder : public MeshBuilder {
 	public:
-		void Build(Mesh& mesh, Spatial::Sampler<float>& volume, Spatial::Sampler<Eigen::Vector4<float>>& colors) final;
+		void Build(MeshBuildData& data) final;
 
-	private:
+	/*private:
 		inline unsigned char GetCubeIndex(CubeData& data) {
 			return ((data.distance[0] <= 0) & 0x01) |
 				(((data.distance[1] <= 0) << 1) & 0x02) |
@@ -39,7 +35,7 @@ namespace Gin::Mesh {
 			Eigen::Vector3<float> d{ sampler.nearest(point), sampler.nearest(point), sampler.nearest(point) };
 			Eigen::Vector3<float> r{ sampler.nearest(point + offsets[0]), sampler.nearest(point + offsets[1]), sampler.nearest(point + offsets[2]) };
 			return (r - d).normalized();
-		}
+		}*/
 	};
 
 }

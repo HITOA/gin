@@ -1,10 +1,28 @@
 #pragma once
 
 #include <gin/graph/node.hpp>
+#include <gin/math/type.hpp>
 
 namespace Gin::Module::Math {
 
-	class Translate : public Graph::Node {
+    class DomainRepeat : public Graph::Node {
+    public:
+        DomainRepeat();
+
+        virtual void Initialize(Graph::GraphContext ctx) final;
+        virtual void Execute(Graph::GraphContext ctx) final;
+
+        virtual std::string GetName() final;
+
+    private:
+        Field::Sampler<Gin::Math::Vector3> in{};
+        Field::Sampler<Gin::Math::Vector3> domainSize{};
+
+        Field::Sampler<Gin::Math::Vector3> out{};
+        Field::Sampler<Gin::Math::Vector3> domainPosition{};
+    };
+
+	/*class Translate : public Graph::Node {
 	public:
 		Translate();
 
@@ -85,6 +103,6 @@ namespace Gin::Module::Math {
 
 		Spatial::Spatial<Eigen::Vector3<double>> out{};
 		Spatial::Spatial<Eigen::Vector3<double>> domainPosition{};
-	};
+	};*/
 
 }

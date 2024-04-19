@@ -9,10 +9,8 @@ void InitializeBaseModule()
 {
 	Gin::Module::AddNodesToRegistry<Gin::Module::Base::Position>("Base/Position");
 
-	Gin::Module::AddNodesToRegistry<Gin::Module::Base::Combine<double>>("Base/Utils/Combine");
-	Gin::Module::AddNodesToRegistry<Gin::Module::Base::Split3<double>>("Base/Utils/Split3");
-	Gin::Module::AddNodesToRegistry<Gin::Module::Base::CombineSpatial<double>>("Base/Utils/CombineSpatial");
-	Gin::Module::AddNodesToRegistry<Gin::Module::Base::Split3Spatial<double>>("Base/Utils/Split3Spatial");
+	Gin::Module::AddNodesToRegistry<Gin::Module::Base::Combine>("Base/Utils/Combine");
+	Gin::Module::AddNodesToRegistry<Gin::Module::Base::Split>("Base/Utils/Split3");
 }
 
 void UninitializeBaseModule()

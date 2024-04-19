@@ -1,7 +1,8 @@
 #pragma once
 
 #include <gin/graph/port.hpp>
-#include <Eigen/Core>
+#include <memory>
+#include <gin/field/sampler.hpp>
 
 namespace Gin::Graph {
 
@@ -21,19 +22,104 @@ namespace Gin::Graph {
 			return true;
 		}
 		virtual void* GetProperty() final { return property; };
+        virtual void Clear() final {
+            *property = T{};
+        }
 	public:
 		T* property{ nullptr };
 	};
 
+    template<>
+    class NodePort<int> : public Port {
+    public:
+        NodePort(const std::string& name, int& property) : Port(GetPortTypeInfo<int>(), name), property{ &property } {};
+
+        virtual bool Match(Port& port) final {
+            return ((uint32_t)port.GetType().type & (uint32_t)PortType::Scalar) == 2;
+        }
+        virtual bool CopyFrom(Port& port) final {
+            if (!Match(port))
+                return false;
+
+            if (port.GetType().type == PortType::Scalar) {
+                *property = *((float*)port.GetProperty());
+            } else {
+                Field::Sampler<float>* sampler = (Field::Sampler<float>*)port.GetProperty();
+                *property = sampler->GetScalar(0, 0, 0);
+            }
+            return true;
+        }
+        virtual void* GetProperty() final { return property; };
+        virtual void Clear() final {
+            *property = float{};
+        }
+    public:
+        int* property{ nullptr };
+    };
+
+    template<>
+    class NodePort<float> : public Port {
+    public:
+        NodePort(const std::string& name, float& property) : Port(GetPortTypeInfo<float>(), name), property{ &property } {};
+
+        virtual bool Match(Port& port) final {
+            return ((uint32_t)port.GetType().type & (uint32_t)PortType::Scalar) == 2;
+        }
+        virtual bool CopyFrom(Port& port) final {
+            if (!Match(port))
+                return false;
+
+            if (port.GetType().type == PortType::Scalar) {
+                *property = *((float*)port.GetProperty());
+            } else {
+                Field::Sampler<float>* sampler = (Field::Sampler<float>*)port.GetProperty();
+                *property = sampler->GetScalar(0, 0, 0);
+            }
+            return true;
+        }
+        virtual void* GetProperty() final { return property; };
+        virtual void Clear() final {
+            *property = float{};
+        }
+    public:
+        float* property{ nullptr };
+    };
+
+    template<typename U>
+    class NodePort<Field::Sampler<U>> : public Port {
+    public:
+        NodePort(const std::string& name, Field::Sampler<U>& property) :
+            Port(GetPortTypeInfo<Field::Sampler<U>>(), name), property{ &property } {};
+
+        virtual bool Match(Port& port) final {
+            return ((int)port.GetType().type & (int)PortType::Field) || (port.GetType().type == PortType::Dynamic);
+        }
+        virtual bool CopyFrom(Port& port) final {
+            if (!Match(port))
+                return false;
+
+            *property = *((Field::Sampler<U>*)port.GetProperty());
+
+            return true;
+        }
+        virtual void* GetProperty() final { return property; };
+        virtual void Clear() final {
+            if (property)
+                property->Clear();
+        }
+    public:
+        Field::Sampler<U>* property{ nullptr };
+    };
+
 	//Number
 
-	template<>
+	/*template<>
 	class NodePort<int> : public Port {
 	public:
 		NodePort(const std::string& name, int& property) : Port(GetPortTypeInfo<int>(), name), property{ &property } {};
 
 		virtual bool Match(Port& port) final {
-			return port.GetType().type == PortType::Number;
+			return port.GetType().type == PortType::Scalar;
 		}
 		virtual bool CopyFrom(Port& port) final {
 			if (!Match(port))
@@ -67,7 +153,7 @@ namespace Gin::Graph {
 		NodePort(const std::string& name, float& property) : Port(GetPortTypeInfo<float>(), name), property{ &property } {};
 
 		virtual bool Match(Port& port) final {
-			return port.GetType().type == PortType::Number;
+			return port.GetType().type == PortType::Scalar;
 		}
 		virtual bool CopyFrom(Port& port) final {
 			if (!Match(port))
@@ -101,7 +187,7 @@ namespace Gin::Graph {
 		NodePort(const std::string& name, double& property) : Port(GetPortTypeInfo<double>(), name), property{ &property } {};
 
 		virtual bool Match(Port& port) final {
-			return port.GetType().type == PortType::Number;
+			return port.GetType().type == PortType::Scalar;
 		}
 		virtual bool CopyFrom(Port& port) final {
 			if (!Match(port))
@@ -127,7 +213,7 @@ namespace Gin::Graph {
 		virtual void* GetProperty() final { return property; };
 	public:
 		double* property{ nullptr };
-	};
+	};*
 
 	//Vector2
 
@@ -353,10 +439,10 @@ namespace Gin::Graph {
 		virtual void* GetProperty() final { return property; };
 	public:
 		Eigen::Vector3<double>* property{ nullptr };
-	};
+	};*/
 
 	//Spatial Number
-
+    /*
 	template<>
 	class NodePort<Spatial::Spatial<int>> : public Port {
 	public:
@@ -701,7 +787,7 @@ namespace Gin::Graph {
 		virtual void* GetProperty() final { return property; };
 	public:
 		Spatial::Spatial<Eigen::Vector3<double>>* property{ nullptr };
-	};
+	};*/
 
 	template<typename T>
 	inline std::shared_ptr<Port> CreateNodePort(const std::string& name, T& property) {

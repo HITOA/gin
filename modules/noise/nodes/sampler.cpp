@@ -9,20 +9,26 @@ Gin::Module::Noise::Sampler3D::Sampler3D()
 	AddOutputPort("Output", output);
 }
 
+void Gin::Module::Noise::Sampler3D::Initialize(Graph::GraphContext ctx) {
+    Math::Vector3 size{ Math::Ceil(ctx.bounds.extent * 2.0 / ctx.scale) };
+    output.SetField(std::make_shared<Field::ScalarField<float>>(size.x, size.y, size.z));
+}
+
 void Gin::Module::Noise::Sampler3D::Execute(Graph::GraphContext ctx)
 {
 	if (source.get() == nullptr)
 		return;
 
-	Eigen::Vector3<double> t = (ctx.bounds.origin - ctx.bounds.extent) / ctx.scale;
-	Eigen::Vector3<int> o = Math::Ceil<double, int, 3>(t);
-	source->GenUniformGrid3D(output.Data(), o.x(), o.y(), o.z(), output.GetWidth(), output.GetHeight(), output.GetDepth(), ctx.scale * frequency, seed);
+    std::shared_ptr<Field::ScalarField<float>> f = output.GetField<Field::ScalarField<float>>();
+
+	source->GenUniformGrid3D(&(*f)[0], 0, 0, 0, f->GetVecWidth(), f->GetHeight(), f->GetDepth(), ctx.scale * frequency, seed);
 }
 
 std::string Gin::Module::Noise::Sampler3D::GetName()
 {
 	return "Sampler3D";
 }
+
 
 Gin::Module::Noise::Sampler2D::Sampler2D()
 {
@@ -33,20 +39,27 @@ Gin::Module::Noise::Sampler2D::Sampler2D()
 	AddOutputPort("Output", output);
 }
 
+void Gin::Module::Noise::Sampler2D::Initialize(Graph::GraphContext ctx) {
+    Math::Vector3 size{ Math::Ceil(ctx.bounds.extent * 2.0 / ctx.scale) };
+    output.SetField(std::make_shared<Field::ScalarField<float>>(size.x, size.y, size.z));
+}
+
 void Gin::Module::Noise::Sampler2D::Execute(Graph::GraphContext ctx)
 {
 	if (source.get() == nullptr)
 		return;
 
-	Eigen::Vector3<double> t = (ctx.bounds.origin - ctx.bounds.extent) / ctx.scale;
-	Eigen::Vector3<int> o = Math::Ceil<double, int, 3>(t);
+
+    Math::Vector3 size{ Math::Ceil(ctx.bounds.extent * 2.0 / ctx.scale) };
 
 	auto rd = FastNoise::New<FastNoise::RemoveDimension>();
 
 	rd->SetSource(source);
 	rd->SetRemoveDimension(FastNoise::Dim::Y);
 
-	rd->GenUniformGrid3D(output.Data(), o.x(), o.y(), o.z(), output.GetWidth(), output.GetHeight(), output.GetDepth(), ctx.scale * frequency, seed);
+    std::shared_ptr<Field::ScalarField<float>> f = output.GetField<Field::ScalarField<float>>();
+
+	rd->GenUniformGrid3D(&(*f)[0], 0, 0, 0, f->GetVecWidth(), f->GetHeight(), f->GetDepth(), ctx.scale * frequency, seed);
 }
 
 std::string Gin::Module::Noise::Sampler2D::GetName()

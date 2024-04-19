@@ -1,5 +1,6 @@
 #include <gin/graph/graph.hpp>
 #include <queue>
+#include <unordered_set>
 
 void Gin::Graph::GraphPortOperator::Link(GraphPortOperator port) {
 	if (port.graph != graph)
@@ -43,6 +44,9 @@ void Gin::Graph::GraphPortOperator::Link(GraphPortOperator port) {
 
 	graph->adj[nodeId][portId].emplace_back(port.nodeId, port.portId);
 	graph->adj[port.nodeId][port.portId].emplace_back(nodeId, portId);
+
+    nodeA->Update();
+    nodeB->Update();
 }
 
 void Gin::Graph::GraphPortOperator::Unlink(GraphPortOperator port)
@@ -84,6 +88,8 @@ void  Gin::Graph::GraphPortOperator::LinkGraphInput(GraphId id) {
 
 	graph->inputs[id].GetLinks().emplace_back(nodeId, portId);
 	graph->adj[nodeId][portId].emplace_back(GRAPH_INPUT_NODE_ID, id);
+
+    node->Update();
 }
 
 void  Gin::Graph::GraphPortOperator::LinkGraphOutput(GraphId id) {
@@ -109,6 +115,8 @@ void  Gin::Graph::GraphPortOperator::LinkGraphOutput(GraphId id) {
 
 	graph->outputs[id].GetLinks().emplace_back(nodeId, portId);
 	graph->adj[nodeId][portId].emplace_back(GRAPH_OUTPUT_NODE_ID, id);
+
+    node->Update();
 }
 
 void Gin::Graph::GraphPortOperator::LinkGraphInput(std::string_view name)
@@ -282,9 +290,11 @@ void Gin::Graph::Graph::RemoveOutput(GraphId Id) {
 void Gin::Graph::Graph::Compile()
 {
 	program.clear();
-;
+
 	std::vector<size_t> nodesOrder{};
 	nodesOrder.resize(nodes.size());
+
+    std::unordered_set<GraphId> freedNodes{};
 
 	size_t order = 1;
 
@@ -396,20 +406,34 @@ void Gin::Graph::Graph::Compile()
 		}
 	}
 
-	//check for transforming Copy to Move action
+    //Insert free operation
+    for (int i = program.size() - 1; i >= 0; --i) {
+        if (program[i].type == GraphActionType::COPY) {
+            if (!freedNodes.count(program[i].nodeBId)) {
+                if (program[i].nodeBId == GRAPH_INPUT_NODE_ID)
+                    continue;
+                GraphAction action{};
+                action.type = GraphActionType::FREE;
+                action.nodeAId = program[i].nodeBId;
+                program.insert(program.begin() + i + 1, action);
+                freedNodes.insert(program[i].nodeBId);
+            }
+        }
+    }
 }
 
 void Gin::Graph::Graph::Execute(GraphContext ctx)
 {
-	for (auto& action : program) {
+	/*for (auto& action : program) {
 		if (action.type == Gin::Graph::GraphActionType::EXEC)
 			nodes[action.nodeAId]->Initialize(ctx);
-	}
+	}*/
 
 	for (auto action = program.begin(); action != program.end(); ++action) {
 		switch (action->type)
 		{
 		case Gin::Graph::GraphActionType::EXEC:
+            nodes[action->nodeAId]->Initialize(ctx);
 			nodes[action->nodeAId]->Execute(ctx);
 			break;
 		case Gin::Graph::GraphActionType::COPY:
@@ -431,6 +455,12 @@ void Gin::Graph::Graph::Execute(GraphContext ctx)
 				dst.CopyFrom(src);
 			}
 			break;
+        case Gin::Graph::GraphActionType::FREE:
+            for (size_t i = 0; i < nodes[action->nodeAId]->GetInputPortCount(); ++i)
+                nodes[action->nodeAId]->GetInputPort(i).Clear();
+            for (size_t i = 0; i < nodes[action->nodeAId]->GetOutputPortCount(); ++i)
+                nodes[action->nodeAId]->GetOutputPort(i).Clear();
+            break;
 		case Gin::Graph::GraphActionType::MOVE:
 			break;
 		default:
@@ -442,10 +472,10 @@ void Gin::Graph::Graph::Execute(GraphContext ctx)
 
 void Gin::Graph::Graph::Execute(GraphContext ctx, Thread::ThreadPool& pool)
 {
-	for (auto& action : program) {
+	/*for (auto& action : program) {
 		if (action.type == Gin::Graph::GraphActionType::EXEC)
 			nodes[action.nodeAId]->Initialize(ctx);
-	}
+	}*/
 
 	for (size_t Id = 0; Id < program.size();) {
 		GraphAction& action = program[Id];
@@ -458,6 +488,7 @@ void Gin::Graph::Graph::Execute(GraphContext ctx, Thread::ThreadPool& pool)
 					GraphContext ctxI = ctx;
 					++running;
 					pool.Execute([this, nodeI, ctxI, &pool]() {
+                        nodeI->Initialize(ctxI);
 						nodeI->Execute(ctxI, pool);
 						{
 							std::unique_lock<std::mutex> lock{ mutex };
@@ -477,9 +508,6 @@ void Gin::Graph::Graph::Execute(GraphContext ctx, Thread::ThreadPool& pool)
 
 				continue;
 			}
-
-			//nodes[action->nodeAId]->Initialize(ctx, pool);
-			//nodes[action->nodeAId]->Execute(ctx, pool);
 			break;
 		case Gin::Graph::GraphActionType::COPY:
 			if (action.nodeAId == GRAPH_OUTPUT_NODE_ID) {
@@ -500,6 +528,13 @@ void Gin::Graph::Graph::Execute(GraphContext ctx, Thread::ThreadPool& pool)
 				dst.CopyFrom(src);
 			}
 			break;
+        case Gin::Graph::GraphActionType::FREE:
+            for (size_t i = 0; i < nodes[action.nodeAId]->GetInputPortCount(); ++i)
+                if (!adj[action.nodeAId][i].empty())
+                    nodes[action.nodeAId]->GetInputPort(i).Clear();
+            for (size_t i = 0; i < nodes[action.nodeAId]->GetOutputPortCount(); ++i)
+                nodes[action.nodeAId]->GetOutputPort(i).Clear();
+            break;
 		case Gin::Graph::GraphActionType::MOVE:
 			break;
 		default:

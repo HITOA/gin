@@ -2,7 +2,6 @@
 
 #include <string>
 #include <gin/graph/porttype.hpp>
-#include <Eigen/Core>
 
 namespace Gin::Graph {
 
@@ -14,6 +13,7 @@ namespace Gin::Graph {
 		virtual bool Match(Port& port) = 0;
 		virtual bool CopyFrom(Port& port) = 0;
 		virtual void* GetProperty() = 0;
+        virtual void Clear() = 0;
 
 		inline PortTypeInfo GetType() { return type; };
 		inline void SetType(PortTypeInfo type) { this->type = type; };

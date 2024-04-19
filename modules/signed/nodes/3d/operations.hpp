@@ -1,6 +1,7 @@
 #pragma once
 
 #include <gin/graph/node.hpp>
+#include <gin/field/sampler.hpp>
 
 namespace Gin::Module::Signed {
 
@@ -11,16 +12,16 @@ namespace Gin::Module::Signed {
 	public:
 		OPUnion();
 
+        virtual void Initialize(Graph::GraphContext ctx) final;
 		virtual void Execute(Graph::GraphContext ctx) final;
-		virtual void Execute(Graph::GraphContext ctx, Thread::ThreadPool& pool) final;
 		virtual std::string GetName() final;
 
 	private:
-		Spatial::Spatial<float> distanceA{};
-		Spatial::Spatial<float> distanceB{};
+        Field::Sampler<float> distanceA{};
+        Field::Sampler<float> distanceB{};
 
-		Spatial::Spatial<float> distanceR{};
-		Spatial::Spatial<float> t{};
+        Field::Sampler<float> distanceR{};
+        Field::Sampler<float> t{};
 	};
 
 	/**
@@ -30,16 +31,16 @@ namespace Gin::Module::Signed {
 	public:
 		OPSubstraction();
 
+        virtual void Initialize(Graph::GraphContext ctx) final;
 		virtual void Execute(Graph::GraphContext ctx) final;
-		virtual void Execute(Graph::GraphContext ctx, Thread::ThreadPool& pool) final;
 		virtual std::string GetName() final;
 
 	private:
-		Spatial::Spatial<float> distanceA{};
-		Spatial::Spatial<float> distanceB{};
+        Field::Sampler<float> distanceA{};
+        Field::Sampler<float> distanceB{};
 
-		Spatial::Spatial<float> distanceR{};
-		Spatial::Spatial<float> t{};
+        Field::Sampler<float> distanceR{};
+        Field::Sampler<float> t{};
 	};
 
 	/**
@@ -49,16 +50,16 @@ namespace Gin::Module::Signed {
 	public:
 		OPIntersection();
 
+        virtual void Initialize(Graph::GraphContext ctx) final;
 		virtual void Execute(Graph::GraphContext ctx) final;
-		virtual void Execute(Graph::GraphContext ctx, Thread::ThreadPool& pool) final;
 		virtual std::string GetName() final;
 
 	private:
-		Spatial::Spatial<float> distanceA{};
-		Spatial::Spatial<float> distanceB{};
+        Field::Sampler<float> distanceA{};
+        Field::Sampler<float> distanceB{};
 
-		Spatial::Spatial<float> distanceR{};
-		Spatial::Spatial<float> t{};
+        Field::Sampler<float> distanceR{};
+        Field::Sampler<float> t{};
 	};
 
 	/**
@@ -68,17 +69,17 @@ namespace Gin::Module::Signed {
 	public:
 		OPSmoothUnion();
 
+        virtual void Initialize(Graph::GraphContext ctx) final;
 		virtual void Execute(Graph::GraphContext ctx) final;
-		virtual void Execute(Graph::GraphContext ctx, Thread::ThreadPool& pool) final;
 		virtual std::string GetName() final;
 
 	private:
-		Spatial::Spatial<float> distanceA{};
-		Spatial::Spatial<float> distanceB{};
-		Spatial::Spatial<float> smoothFactor{ 2.0 };
+        Field::Sampler<float> distanceA{};
+        Field::Sampler<float> distanceB{};
+        Field::Sampler<float> smoothFactor{ 2.0f };
 
-		Spatial::Spatial<float> distanceR{};
-		Spatial::Spatial<float> t{};
+        Field::Sampler<float> distanceR{};
+        Field::Sampler<float> t{};
 	};
 
 	/**
@@ -88,23 +89,23 @@ namespace Gin::Module::Signed {
 	public:
 		OPSmoothSubstraction();
 
+        virtual void Initialize(Graph::GraphContext ctx) final;
 		virtual void Execute(Graph::GraphContext ctx) final;
-		virtual void Execute(Graph::GraphContext ctx, Thread::ThreadPool& pool) final;
 		virtual std::string GetName() final;
 
 	private:
-		Spatial::Spatial<float> distanceA{};
-		Spatial::Spatial<float> distanceB{};
-		Spatial::Spatial<float> smoothFactor{ 2.0 };
+        Field::Sampler<float> distanceA{};
+        Field::Sampler<float> distanceB{};
+        Field::Sampler<float> smoothFactor{ 2.0f };
 
-		Spatial::Spatial<float> distanceR{};
-		Spatial::Spatial<float> t{};
+        Field::Sampler<float> distanceR{};
+        Field::Sampler<float> t{};
 	};
 
 	/**
 	 * Smooth Interstection Operation For 2 Signed Distance.
 	 */
-	class OPSmoothIntersection : public Graph::Node {
+	/*class OPSmoothIntersection : public Graph::Node {
 	public:
 		OPSmoothIntersection();
 
@@ -119,5 +120,5 @@ namespace Gin::Module::Signed {
 
 		Spatial::Spatial<float> distanceR{};
 		Spatial::Spatial<float> t{};
-	};
+	};*/
 }

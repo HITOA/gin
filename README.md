@@ -7,3 +7,4 @@
 - imgui
 - glad
 - glfw
+- xsimd

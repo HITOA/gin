@@ -3,32 +3,47 @@
         "editor": {
             "inputs": {
                 "position": [
-                    -1687.0,
-                    -462.0
+                    1634.0,
+                    -398.0
                 ]
             },
             "outputs": {
                 "position": [
-                    1128.0,
-                    -558.0
+                    2401.0,
+                    -398.0
                 ]
             }
         },
+        "inputs": [
+            {
+                "name": "Radius",
+                "type": 0,
+                "value": 2.0
+            }
+        ],
         "outputs": [
             {
                 "name": "_Volume",
-                "type": 11
+                "type": 0
             }
         ]
     },
     "links": [
         0,
+        0,
+        4294967295,
+        0,
+        1,
+        0,
+        0,
         1,
         1,
+        1,
+        2,
         0,
         4294967294,
         0,
-        0,
+        1,
         2
     ],
     "name": "Sphere",
@@ -37,13 +52,11 @@
             "data": {
                 "editor": {
                     "position": [
-                        683.0,
-                        -582.0
+                        1784.0,
+                        -430.0
                     ]
                 },
-                "node": {
-                    "Radius": 10.0
-                }
+                "node": {}
             },
             "path": "Signed/3D/Primitives/Sphere"
         },
@@ -51,8 +64,20 @@
             "data": {
                 "editor": {
                     "position": [
-                        373.0,
-                        -558.0
+                        2069.0,
+                        -415.0
+                    ]
+                },
+                "node": {}
+            },
+            "path": "Signed/3D/Primitives/Sampler"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        1861.0,
+                        -350.0
                     ]
                 },
                 "node": {}

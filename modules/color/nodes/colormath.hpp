@@ -4,6 +4,7 @@
 
 namespace Gin::Module::Color {
 
+    /*
 	class Blend : public Graph::Node {
 	public:
 		Blend();
@@ -19,6 +20,6 @@ namespace Gin::Module::Color {
 		Spatial::Spatial<float> t{};
 
 		Spatial::Spatial<Eigen::Vector4<float>> color{};
-	};
+	};*/
 
 }

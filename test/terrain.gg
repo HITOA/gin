@@ -1,0 +1,417 @@
+{
+    "data": {
+        "editor": {
+            "inputs": {
+                "position": [
+                    496.0,
+                    -144.0
+                ]
+            },
+            "outputs": {
+                "position": [
+                    3496.0,
+                    -494.0
+                ]
+            }
+        },
+        "inputs": [
+            {
+                "name": "Seed",
+                "type": 0,
+                "value": 1234.0
+            }
+        ],
+        "outputs": [
+            {
+                "name": "_Volume",
+                "type": 0
+            }
+        ]
+    },
+    "links": [
+        0,
+        0,
+        12,
+        2,
+        1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        2,
+        0,
+        4,
+        0,
+        3,
+        0,
+        5,
+        0,
+        4,
+        4,
+        5,
+        2,
+        4294967295,
+        0,
+        6,
+        0,
+        5,
+        3,
+        7,
+        0,
+        11,
+        2,
+        8,
+        0,
+        7,
+        1,
+        8,
+        1,
+        2,
+        0,
+        9,
+        0,
+        1,
+        2,
+        9,
+        1,
+        8,
+        2,
+        10,
+        0,
+        3,
+        0,
+        10,
+        2,
+        4294967295,
+        0,
+        11,
+        0,
+        10,
+        3,
+        12,
+        0,
+        6,
+        2,
+        12,
+        1,
+        11,
+        2,
+        13,
+        0,
+        19,
+        4,
+        13,
+        2,
+        4294967295,
+        0,
+        14,
+        0,
+        18,
+        2,
+        15,
+        0,
+        14,
+        2,
+        16,
+        0,
+        15,
+        1,
+        16,
+        1,
+        2,
+        0,
+        17,
+        0,
+        16,
+        2,
+        17,
+        1,
+        9,
+        3,
+        18,
+        0,
+        13,
+        3,
+        19,
+        0,
+        3,
+        0,
+        4294967294,
+        0,
+        17,
+        3
+    ],
+    "name": "Terrain",
+    "nodes": [
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        1915.0,
+                        -446.0
+                    ]
+                },
+                "node": {}
+            },
+            "path": "Signed/3D/Primitives/Ground"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        2229.0,
+                        -415.0
+                    ]
+                },
+                "node": {}
+            },
+            "path": "Signed/3D/Primitives/Sampler"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        1973.0,
+                        -94.0
+                    ]
+                },
+                "node": {}
+            },
+            "path": "Base/Position"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        209.0,
+                        -485.0
+                    ]
+                },
+                "node": {}
+            },
+            "path": "FastNoise2/Generator/Simplex"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        390.0,
+                        -485.0
+                    ]
+                },
+                "node": {
+                    "Gain": 0.5,
+                    "Lacunarity": 2.0,
+                    "Octaves": 8
+                }
+            },
+            "path": "FastNoise2/Fractal/Fractal Ridged"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        712.0,
+                        -485.0
+                    ]
+                },
+                "node": {
+                    "Frequency": 0.0020000000949949026,
+                    "Seed": 0
+                }
+            },
+            "path": "FastNoise2/Sampler2D"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        1099.0,
+                        -478.0
+                    ]
+                },
+                "node": {
+                    "B": 32.0
+                }
+            },
+            "path": "Math/Operation/Multiply"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        1912.0,
+                        -318.0
+                    ]
+                },
+                "node": {}
+            },
+            "path": "Signed/3D/Primitives/Ground"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        2232.0,
+                        -286.0
+                    ]
+                },
+                "node": {}
+            },
+            "path": "Signed/3D/Primitives/Sampler"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        2614.0,
+                        -398.0
+                    ]
+                },
+                "node": {
+                    "Smooth Factor": 10.0
+                }
+            },
+            "path": "Signed/3D/Operations/SmoothUnion"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        801.0,
+                        -222.0
+                    ]
+                },
+                "node": {
+                    "Frequency": 0.0020000000949949026,
+                    "Seed": 0
+                }
+            },
+            "path": "FastNoise2/Sampler2D"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        1133.0,
+                        -174.0
+                    ]
+                },
+                "node": {
+                    "B": 50.0
+                }
+            },
+            "path": "Math/Operation/Multiply"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        1512.0,
+                        -446.0
+                    ]
+                },
+                "node": {}
+            },
+            "path": "Math/Operation/Add"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        714.0,
+                        -639.0
+                    ]
+                },
+                "node": {
+                    "Frequency": 0.0003000000142492354,
+                    "Seed": 0
+                }
+            },
+            "path": "FastNoise2/Sampler2D"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        1448.0,
+                        -626.0
+                    ]
+                },
+                "node": {
+                    "B": 300.0
+                }
+            },
+            "path": "Math/Operation/Multiply"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        1749.0,
+                        -622.0
+                    ]
+                },
+                "node": {}
+            },
+            "path": "Signed/3D/Primitives/Ground"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        2232.0,
+                        -607.0
+                    ]
+                },
+                "node": {}
+            },
+            "path": "Signed/3D/Primitives/Sampler"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        3062.0,
+                        -527.0
+                    ]
+                },
+                "node": {
+                    "Smooth Factor": 10.0
+                }
+            },
+            "path": "Signed/3D/Operations/SmoothUnion"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        1096.0,
+                        -626.0
+                    ]
+                },
+                "node": {
+                    "B": 0.10000000149011612
+                }
+            },
+            "path": "Math/Operation/Add"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        383.0,
+                        -633.0
+                    ]
+                },
+                "node": {
+                    "Gain": 0.5,
+                    "Lacunarity": 2.0,
+                    "Octaves": 16
+                }
+            },
+            "path": "FastNoise2/Fractal/Fractal Ridged"
+        }
+    ]
+}

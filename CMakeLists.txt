@@ -5,6 +5,12 @@ project(gin)
 set(CMAKE_CXX_STANDARD 17)
 set(EXTERNAL_PATH ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty)
 
+if (MSVC)
+    add_compile_options(/arch:AVX)
+else()
+    add_compile_options(-mavx)
+endif()
+
 option(GIN_BUILD_BENCH "Build gin benchmark" ON)
 option(GIN_BUILD_EDITOR "Build gin editor" ON)
 option(GIN_BUILD_EDITOR_WITH_WAYLAND "Build gin editor using wayland" OFF)
@@ -17,7 +23,7 @@ else()
     set(GLFW_BUILD_X11 ON)
 endif()
 
-
+add_subdirectory(${EXTERNAL_PATH}/xsimd)
 add_subdirectory(${EXTERNAL_PATH}/eigen)
 add_subdirectory(${EXTERNAL_PATH}/nanobench)
 add_subdirectory(${EXTERNAL_PATH}/nativefiledialog-extended-1.1.0)
@@ -62,18 +68,29 @@ set(module_file_src "#pragma once\n\n${includes}\n\ninline void Initialize() \{\
 
 file(WRITE ${CMAKE_CURRENT_SOURCE_DIR}/modules/module.hpp ${module_file_src})
 
-add_library(gin_library STATIC ${gin_library_src} ${gin_modules_src} ${CMAKE_CURRENT_SOURCE_DIR}/modules/module.hpp)
+add_library(gin_library STATIC ${gin_library_src} ${gin_modules_src} ${CMAKE_CURRENT_SOURCE_DIR}/modules/module.hpp
+        modules/signed/nodes/3d/sampler.hpp
+        modules/signed/nodes/3d/sampler.cpp)
 
 target_include_directories(gin_library PUBLIC library/include modules)
-target_link_libraries(gin_library Eigen3::Eigen FastNoise)
+target_link_libraries(gin_library xsimd FastNoise)
 
 if(GIN_BUILD_EDITOR)
     add_executable(gin_editor ${gin_editor_src})
-    target_link_libraries(gin_editor gin_library nfd glfw imgui imgui_node_editor)
+    target_link_libraries(gin_editor gin_library Eigen3::Eigen nfd glfw imgui imgui_node_editor)
     target_include_directories(gin_editor PRIVATE ${EXTERNAL_PATH}/glad/include)
 endif()
 
 if(GIN_BUILD_BENCH)
-    add_executable(gin_bench ${gin_bench_src})
+    add_executable(gin_bench ${gin_bench_src}
+            library/include/gin/field/sampler.hpp
+            library/include/gin/math/type.hpp
+            library/include/gin/field/field.hpp
+            library/include/gin/field/constantfield.hpp
+            library/include/gin/sdf/primitive.hpp
+            modules/geometry/geometry.hpp
+            modules/geometry/geometry.cpp
+            modules/geometry/nodes/point.hpp
+    )
     target_link_libraries(gin_bench gin_library nanobench)
 endif ()

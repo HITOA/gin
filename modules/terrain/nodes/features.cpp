@@ -2,7 +2,7 @@
 
 #include <gin/math/interpolation.hpp>
 #include <gin/math/math.hpp>
-
+/*
 Gin::Module::Terrain::Overhang::Overhang()
 {
 	AddInputPort("Base Height", base);
@@ -44,3 +44,4 @@ std::string Gin::Module::Terrain::Overhang::GetName()
 {
 	return "Overhang";
 }
+*/

@@ -1,6 +1,8 @@
 #pragma once
 
 #include <gin/graph/node.hpp>
+#include <gin/field/sampler.hpp>
+#include <gin/sdf/primitive.hpp>
 
 namespace Gin::Module::Signed {
 
@@ -11,16 +13,24 @@ namespace Gin::Module::Signed {
 	public:
 		SDSphere();
 
+        virtual void Initialize(Graph::GraphContext ctx) final;
 		virtual void Execute(Graph::GraphContext ctx) final;
-		virtual void Execute(Graph::GraphContext ctx, Thread::ThreadPool& pool) final;
 		virtual std::string GetName() final;
 
 	private:
-		Spatial::Spatial<float> radius{ 1.0f };
-		Spatial::Spatial<Eigen::Vector3<double>> position{};
+        Field::Sampler<Math::Scalar> radius{ 1.0f };
 
-		Spatial::Spatial<float> distance{};
+        std::shared_ptr<SDF::Primitive> primitive{};
+
+        class SpherePrimitive : public SDF::Primitive {
+        public:
+            virtual Field::Sampler<float> Compute(Field::Sampler<Math::Vector3> position) final;
+
+        public:
+            Field::Sampler<Math::Scalar> radius{ 1.0f };
+        };
 	};
+
 
 	/**
 	 * Signed Distance Function For A Sphere.
@@ -29,15 +39,22 @@ namespace Gin::Module::Signed {
 	public:
 		SDBox();
 
+        virtual void Initialize(Graph::GraphContext ctx) final;
 		virtual void Execute(Graph::GraphContext ctx) final;
-		virtual void Execute(Graph::GraphContext ctx, Thread::ThreadPool& pool) final;
 		virtual std::string GetName() final;
 
 	private:
-		Spatial::Spatial<Eigen::Vector3<double>> size{ Eigen::Vector3<double>{ 1.0f, 1.0f, 1.0f } };
-		Spatial::Spatial<Eigen::Vector3<double>> position{};
+        Field::Sampler<Math::Vector3> bsize{ Math::Vector3{ 1.0f, 1.0f, 1.0f } };
 
-		Spatial::Spatial<float> distance{};
+        std::shared_ptr<SDF::Primitive> primitive{};
+
+        class BoxPrimitive : public SDF::Primitive {
+        public:
+            virtual Field::Sampler<float> Compute(Field::Sampler<Math::Vector3> position) final;
+
+        public:
+            Field::Sampler<Math::Vector3> bsize{ Math::Vector3{ 1.0f } };
+        };
 	};
 
 	/**
@@ -47,22 +64,29 @@ namespace Gin::Module::Signed {
 	public:
 		SDGround();
 
+        virtual void Initialize(Graph::GraphContext ctx) final;
 		virtual void Execute(Graph::GraphContext ctx) final;
-		virtual void Execute(Graph::GraphContext ctx, Thread::ThreadPool& pool) final;
 		virtual std::string GetName() final;
 
 	private:
-		Spatial::Spatial<float> height{ 0.0f };
-		Spatial::Spatial<Eigen::Vector3<double>> position{};
+        Field::Sampler<float> height{ 0.0f };
 
-		Spatial::Spatial<float> distance{};
+        std::shared_ptr<SDF::Primitive> primitive{};
+
+        class GroundPrimitive : public SDF::Primitive {
+        public:
+            virtual Field::Sampler<float> Compute(Field::Sampler<Math::Vector3> position) final;
+
+        public:
+            Field::Sampler<float> height{ 0.0f };
+        };
 
 	};
 
 	/**
 	 * Signed Distance Function For A Plane In Any Direction.
 	 */
-	class SDPlane : public Graph::Node {
+	/*class SDPlane : public Graph::Node {
 	public:
 		SDPlane();
 
@@ -76,12 +100,12 @@ namespace Gin::Module::Signed {
 		Spatial::Spatial<Eigen::Vector3<double>> position{};
 
 		Spatial::Spatial<float> distance{};
-	};
+	};*/
 
 	/**
 	 * Signed Distance Function For A Torus.
 	 */
-	class SDTorus : public Graph::Node {
+	/*class SDTorus : public Graph::Node {
 	public:
 		SDTorus();
 
@@ -95,5 +119,5 @@ namespace Gin::Module::Signed {
 		Spatial::Spatial<Eigen::Vector3<double>> position{};
 
 		Spatial::Spatial<float> distance{};
-	};
+	};*/
 }

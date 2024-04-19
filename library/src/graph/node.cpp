@@ -1,66 +1,31 @@
 #include <gin/graph/node.hpp>
 #include <gin/math/math.hpp>
-#include <gin/spatial/spatial.hpp>
+#include <gin/field/sampler.hpp>
 
-void Gin::Graph::Node::Initialize(GraphContext ctx)
+void Gin::Graph::Node::Initialize(GraphContext ctx) {}
+
+void Gin::Graph::Node::Initialize(GraphContext ctx, Thread::ThreadPool& pool)
 {
-    this->ctx = ctx;
+    Initialize(ctx);
+}
 
-    Eigen::Vector3<double> t{ ctx.bounds.extent * 2.0 / ctx.scale };
-    Eigen::Vector3<int> size = Math::Ceil<double, int, 3>(t);
-
-    for (auto& output : outputs) {
+void Gin::Graph::Node::Clear() {
+    /*for (auto& output : outputs) {
         if ((int)(output->GetType().type) & (int)PortType::Spatial) {
             Spatial::BaseSpatial* spatial = (Spatial::BaseSpatial*)output->GetProperty();
-            spatial->Resize(size.x(), size.y(), size.z());
+            spatial->Resize(1, 1, 1);
         }
     }
 
     for (auto& input : inputs) {
         if ((int)(input->GetType().type) & (int)PortType::Spatial) {
             Spatial::BaseSpatial* spatial = (Spatial::BaseSpatial*)input->GetProperty();
-            spatial->Resize(size.x(), size.y(), size.z());
-        }
-    }
-}
-
-void Gin::Graph::Node::Initialize(GraphContext ctx, Thread::ThreadPool& pool)
-{
-    this->ctx = ctx;
-
-    Eigen::Vector3<double> t{ ctx.bounds.extent * 2.0 / ctx.scale };
-    Eigen::Vector3<int> size = Math::Ceil<double, int, 3>(t);
-
-    for (auto& output : outputs) {
-        if ((int)(output->GetType().type) & (int)PortType::Spatial) {
-            Spatial::BaseSpatial* spatial = (Spatial::BaseSpatial*)output->GetProperty();
-            spatial->Resize(size.x(), size.y(), size.z());
-        }
-    }
-
-    /*for (auto& input : inputs) {
-        if ((int)(input->GetType().type) & (int)PortType::Spatial) {
-            Spatial::BaseSpatial* spatial = (Spatial::BaseSpatial*)input->GetProperty();
-            spatial->Resize(size.x(), size.y(), size.z());
+            spatial->Resize(1, 1, 1);
         }
     }*/
 }
 
-void Gin::Graph::Node::Clear() {
-    for (auto& output : outputs) {
-        if ((int)(output->GetType().type) & (int)PortType::Spatial) {
-            Spatial::BaseSpatial* spatial = (Spatial::BaseSpatial*)output->GetProperty();
-            spatial->Resize(1, 1, 1);
-        }
-    }
-
-    for (auto& input : inputs) {
-        if ((int)(input->GetType().type) & (int)PortType::Spatial) {
-            Spatial::BaseSpatial* spatial = (Spatial::BaseSpatial*)input->GetProperty();
-            spatial->Resize(1, 1, 1);
-        }
-    }
-}
+void Gin::Graph::Node::Update() {}
 
 void Gin::Graph::Node::Execute(GraphContext ctx, Thread::ThreadPool& pool)
 {
@@ -86,18 +51,18 @@ nlohmann::json Gin::Graph::Node::Serialize()
             continue;
         }
 
-        //Spatial Number
-        if (input->GetType() == GetPortTypeInfo<Spatial::Spatial<int>>()) {
-            data[input->GetName()] = (*(Spatial::Spatial<int>*)input->GetProperty())[0];
-            continue;
+        //Constant Field
+        if (input->GetType() == GetPortTypeInfo<Field::Sampler<float>>()) {
+            Field::Sampler<float>* f = (Field::Sampler<float>*)input->GetProperty();
+            if (f->IsFieldOfType<Field::ConstantField<float>>())
+                data[input->GetName()] = f->GetScalar(0, 0, 0);
         }
-        if (input->GetType() == GetPortTypeInfo<Spatial::Spatial<float>>()) {
-            data[input->GetName()] = (*(Spatial::Spatial<float>*)input->GetProperty())[0];
-            continue;
-        }
-        if (input->GetType() == GetPortTypeInfo<Spatial::Spatial<double>>()) {
-            data[input->GetName()] = (*(Spatial::Spatial<double>*)input->GetProperty())[0];
-            continue;
+
+        //Dynamic Field
+        if (input->GetType() == GetPortTypeInfo<Field::DynamicSampler>()) {
+            Field::DynamicSampler* f = (Field::DynamicSampler*)input->GetProperty();
+            if (f->IsFieldOfType<Field::ConstantField<float>>())
+                data[input->GetName()] = f->GetScalar(0, 0, 0);
         }
     }
 
@@ -122,18 +87,17 @@ void Gin::Graph::Node::Deserialize(nlohmann::json data)
                 continue;
             }
 
-            //Spatial Number
-            if (input->GetType() == GetPortTypeInfo<Spatial::Spatial<int>>()) {
-                (*(Spatial::Spatial<int>*)input->GetProperty())[0] = data[input->GetName()];
-                continue;
+            //Constant Field
+            if (input->GetType() == GetPortTypeInfo<Field::Sampler<float>>()) {
+                Field::Sampler<float>* f = (Field::Sampler<float>*)input->GetProperty();
+                if (f->IsFieldOfType<Field::ConstantField<float>>())
+                    f->GetField<Field::ConstantField<float>>()->Get() = data[input->GetName()];
             }
-            if (input->GetType() == GetPortTypeInfo<Spatial::Spatial<float>>()) {
-                (*(Spatial::Spatial<float>*)input->GetProperty())[0] = data[input->GetName()];
-                continue;
-            }
-            if (input->GetType() == GetPortTypeInfo<Spatial::Spatial<double>>()) {
-                (*(Spatial::Spatial<double>*)input->GetProperty())[0] = data[input->GetName()];
-                continue;
+
+            if (input->GetType() == GetPortTypeInfo<Field::DynamicSampler>()) {
+                Field::DynamicSampler* f = (Field::DynamicSampler*)input->GetProperty();
+                if (f->IsFieldOfType<Field::ConstantField<float>>())
+                    f->GetField<Field::ConstantField<float>>()->Get() = data[input->GetName()];
             }
         }
     }

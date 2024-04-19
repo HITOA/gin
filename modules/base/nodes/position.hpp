@@ -8,12 +8,12 @@ namespace Gin::Module::Base {
 	public:
 		Position();
 
+        virtual void Initialize(Graph::GraphContext ctx) final;
 		virtual void Execute(Graph::GraphContext ctx) final;
-		virtual void Execute(Graph::GraphContext ctx, Thread::ThreadPool& pool) final;
 		virtual std::string GetName() final;
 
 	private:
-		Spatial::Spatial<Eigen::Vector3<double>> position{};
+        Field::Sampler<Math::Vector3> position{};
 	};
 
 }

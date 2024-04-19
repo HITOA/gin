@@ -2,6 +2,7 @@
 
 #include <gin/graph/node.hpp>
 
+/*
 namespace Gin::Module::Terrain {
 
 	class Overhang : public Gin::Graph::Node {
@@ -26,3 +27,4 @@ namespace Gin::Module::Terrain {
 	};
 
 }
+*/

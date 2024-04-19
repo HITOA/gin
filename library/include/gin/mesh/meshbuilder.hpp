@@ -1,7 +1,7 @@
 #pragma once
 
 #include <gin/mesh/mesh.hpp>
-#include <gin/spatial/sampler.hpp>
+#include <gin/field/sampler.hpp>
 
 namespace Gin::Mesh {
 
@@ -10,9 +10,17 @@ namespace Gin::Mesh {
 		COUNTER_CLOCK_WISE
 	};
 
+    struct MeshBuildData {
+        Mesh* mesh{ nullptr };
+        Math::Scalar scale{ 1.0f };
+        Math::Bounds bounds{};
+        Field::Sampler<float> volume{};
+        Field::Sampler<Math::Vector4> color{ Math::Vector4{ 1.0f, 1.0f, 1.0f, 1.0f } };
+    };
+
 	class MeshBuilder {
 	public:
-		virtual void Build(Mesh& mesh, Spatial::Sampler<float>& volume, Spatial::Sampler<Eigen::Vector4<float>>& colors) = 0;
+		virtual void Build(MeshBuildData& data) = 0;
 		
 		inline void SetTriangleWindingOrder(TriangleWindingOrder windingOrder) {
 			triangleWindingOrder = windingOrder;
@@ -22,7 +30,7 @@ namespace Gin::Mesh {
 			return triangleWindingOrder;
 		}
 
-	private:
+    protected:
 		TriangleWindingOrder triangleWindingOrder{ TriangleWindingOrder::COUNTER_CLOCK_WISE };
 	};
 

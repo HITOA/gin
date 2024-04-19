@@ -1,0 +1,136 @@
+{
+    "data": {
+        "editor": {
+            "inputs": {
+                "position": [
+                    -1687.0,
+                    -462.0
+                ]
+            },
+            "outputs": {
+                "position": [
+                    2008.0,
+                    -510.0
+                ]
+            }
+        },
+        "outputs": [
+            {
+                "name": "_Volume",
+                "type": 0
+            }
+        ]
+    },
+    "links": [
+        1,
+        1,
+        0,
+        0,
+        2,
+        0,
+        5,
+        3,
+        2,
+        1,
+        0,
+        0,
+        3,
+        0,
+        2,
+        2,
+        3,
+        1,
+        1,
+        2,
+        5,
+        0,
+        4,
+        0,
+        4294967294,
+        0,
+        3,
+        3
+    ],
+    "name": "Test Memory",
+    "nodes": [
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        389.0,
+                        -446.0
+                    ]
+                },
+                "node": {}
+            },
+            "path": "Base/Position"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        1063.0,
+                        -526.0
+                    ]
+                },
+                "node": {
+                    "Radius": 1.0
+                }
+            },
+            "path": "Signed/3D/Primitives/Sphere"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        1064.0,
+                        -645.0
+                    ]
+                },
+                "node": {}
+            },
+            "path": "Signed/3D/Primitives/Ground"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        1446.0,
+                        -575.0
+                    ]
+                },
+                "node": {
+                    "Smooth Factor": 1.0
+                }
+            },
+            "path": "Signed/3D/Operations/SmoothUnion"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        464.0,
+                        -686.0
+                    ]
+                },
+                "node": {}
+            },
+            "path": "FastNoise2/Generator/OpenSimplex2"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        673.0,
+                        -686.0
+                    ]
+                },
+                "node": {
+                    "Frequency": 0.5,
+                    "Seed": 1234
+                }
+            },
+            "path": "FastNoise2/Sampler3D"
+        }
+    ]
+}

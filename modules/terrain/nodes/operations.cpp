@@ -2,6 +2,7 @@
 
 #include <gin/math/interpolation.hpp>
 
+/*
 Gin::Module::Terrain::TerrainMix::TerrainMix()
 {
 	AddInputPort("A", a);
@@ -22,3 +23,4 @@ std::string Gin::Module::Terrain::TerrainMix::GetName()
 {
 	return "Terrain Mix";
 }
+*/

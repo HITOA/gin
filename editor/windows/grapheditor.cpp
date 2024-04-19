@@ -3,10 +3,10 @@
 #include <nfd.h>
 #include <gin/module/registry.hpp>
 #include <iostream>
-#include <gin/spatial/sampler.hpp>
 #include <gin/mesh/indexedmesh.hpp>
 #include <gin/mesh/marchingcube.hpp>
 #include <gin/mesh/surfacenet.hpp>
+#include <gin/field/sampler.hpp>
 #include "view.hpp"
 #include "profiler.hpp"
 
@@ -231,71 +231,31 @@ void GraphEditorWindow::DrawGraphPortTypeList(size_t idx, Gin::Graph::GraphPort 
         ImGui::TextUnformatted("Type : ");
         ImGui::SameLine();
         if (ImGui::BeginCombo((name + "_Type").c_str(), port.GetType().fullName)) {
-            if (ImGui::Selectable("Int"))
-                SetGraphPortType<int>(idx, input);
             if (ImGui::Selectable("Float"))
-                SetGraphPortType<float>(idx, input);
-            if (ImGui::Selectable("Double"))
-                SetGraphPortType<double>(idx, input);
-
-            ImGui::Separator();
-
-            if (ImGui::Selectable("Vec2<Int>"))
-                SetGraphPortType<Eigen::Vector2<int>>(idx, input);
-            if (ImGui::Selectable("Vec2<Float>"))
-                SetGraphPortType<Eigen::Vector2<float>>(idx, input);
-            if (ImGui::Selectable("Vec2<Double>"))
-                SetGraphPortType<Eigen::Vector2<double>>(idx, input);
-
-            ImGui::Separator();
-
-            if (ImGui::Selectable("Vec3<Int>"))
-                SetGraphPortType<Eigen::Vector3<int>>(idx, input);
-            if (ImGui::Selectable("Vec3<Float>"))
-                SetGraphPortType<Eigen::Vector3<float>>(idx, input);
-            if (ImGui::Selectable("Vec3<Double>"))
-                SetGraphPortType<Eigen::Vector3<double>>(idx, input);
-
-            ImGui::Separator();
-
-            if (ImGui::Selectable("Color"))
-                SetGraphPortType<Eigen::Vector4<float>>(idx, input);
-
-            if (!input) {
-                ImGui::Separator();
-
-                if (ImGui::Selectable("Spatial<Int>"))
-                    SetGraphPortType<Gin::Spatial::Spatial<int>>(idx, input);
-                if (ImGui::Selectable("Spatial<Float>"))
-                    SetGraphPortType<Gin::Spatial::Spatial<float>>(idx, input);
-                if (ImGui::Selectable("Spatial<Double>"))
-                    SetGraphPortType<Gin::Spatial::Spatial<double>>(idx, input);
-
-                ImGui::Separator();
-
-                if (ImGui::Selectable("Spatial<Vec2<Int>>"))
-                    SetGraphPortType<Gin::Spatial::Spatial<Eigen::Vector2<int>>>(idx, input);
-                if (ImGui::Selectable("Spatial<Vec2<Float>>"))
-                    SetGraphPortType<Gin::Spatial::Spatial<Eigen::Vector2<float>>>(idx, input);
-                if (ImGui::Selectable("Spatial<Vec2<Double>>"))
-                    SetGraphPortType<Gin::Spatial::Spatial<Eigen::Vector2<double>>>(idx, input);
-
-                ImGui::Separator();
-
-                if (ImGui::Selectable("Spatial<Vec3<Int>>"))
-                    SetGraphPortType<Gin::Spatial::Spatial<Eigen::Vector3<int>>>(idx, input);
-                if (ImGui::Selectable("Spatial<Vec3<Float>>"))
-                    SetGraphPortType<Gin::Spatial::Spatial<Eigen::Vector3<float>>>(idx, input);
-                if (ImGui::Selectable("Spatial<Vec3<Double>>"))
-                    SetGraphPortType<Gin::Spatial::Spatial<Eigen::Vector3<double>>>(idx, input);
-
-                ImGui::Separator();
-
-                if (ImGui::Selectable("Spatial<Color>"))
-                    SetGraphPortType<Gin::Spatial::Spatial<Eigen::Vector4<float>>>(idx, input);
-            }
+                SetGraphPortType<Gin::Field::Sampler<Gin::Math::Scalar>>(idx, input);
+            if (ImGui::Selectable("Vector2"))
+                SetGraphPortType<Gin::Field::Sampler<Gin::Math::Vector2>>(idx, input);
+            if (ImGui::Selectable("Vector3"))
+                SetGraphPortType<Gin::Field::Sampler<Gin::Math::Vector3>>(idx, input);
+            if (ImGui::Selectable("Vector4"))
+                SetGraphPortType<Gin::Field::Sampler<Gin::Math::Vector4>>(idx, input);
 
             ImGui::EndCombo();
+        }
+
+        if (input) {
+            switch (port.GetType().type) {
+                case (Gin::Graph::PortType)34:
+                {
+                    Gin::Field::Sampler<Gin::Math::Scalar>* property = (Gin::Field::Sampler<Gin::Math::Scalar>*)port.GetProperty();
+                    if (property->IsFieldOfType<Gin::Field::ConstantField<Gin::Math::Scalar>>()) {
+                        ImGui::InputFloat("##GraphInputValue", &(property->GetField<Gin::Field::ConstantField<Gin::Math::Scalar>>()->Get()));
+                    }
+                    break;
+                }
+                default:
+                    break;
+            }
         }
 
         if (ImGui::Button("Delete")) {
@@ -397,7 +357,7 @@ void GraphEditorWindow::DrawGraphPortToolTab() {
         DrawGraphPortTypeList(i, entry.graph->GetInputPort(i), true);
 
     if (ImGui::Button("Add Input")) {
-        entry.graph->AddInput<int>("New Int (" + std::to_string(entry.graph->GetInputsCount()) + ")");
+        entry.graph->AddInput<Gin::Field::Sampler<Gin::Math::Scalar>>("New Input (" + std::to_string(entry.graph->GetInputsCount()) + ")");
     }
     ImGui::Separator();
 
@@ -407,7 +367,7 @@ void GraphEditorWindow::DrawGraphPortToolTab() {
         DrawGraphPortTypeList(i, entry.graph->GetOutputPort(i), false);
 
     if (ImGui::Button("Add Outputs")) {
-        entry.graph->AddOutput<int>("New Int (" + std::to_string(entry.graph->GetOutputsCount()) + ")");
+        entry.graph->AddOutput<Gin::Field::Sampler<Gin::Math::Scalar>>("New Output (" + std::to_string(entry.graph->GetOutputsCount()) + ")");
     }
     ImGui::Separator();
 }
@@ -452,6 +412,9 @@ void GraphEditorWindow::DrawGraphProgramToolTab() {
                 text = StringFormat("Move (%u)->(%u) to (%u)->(%u)\n",
                                     action->nodeBId, action->portBId, action->nodeAId, action->portAId);
                 break;
+            case Gin::Graph::GraphActionType::FREE:
+                text = StringFormat("Free (%u)\n", action->nodeAId);
+                break;
             default:
                 text = "Unknown Action";
                 break;
@@ -495,19 +458,19 @@ void GraphEditorWindow::DrawMeshBuilderToolTab() {
 
     ImGui::PushItemWidth(75);
 
-    ImGui::InputDouble("##Origin_X", &ctx.bounds.origin.x());
+    ImGui::InputFloat("##Origin_X", &ctx.bounds.origin.x);
     ImGui::SameLine();
-    ImGui::InputDouble("##Origin_Y", &ctx.bounds.origin.y());
+    ImGui::InputFloat("##Origin_Y", &ctx.bounds.origin.y);
     ImGui::SameLine();
-    ImGui::InputDouble("##Origin_Z", &ctx.bounds.origin.z());
+    ImGui::InputFloat("##Origin_Z", &ctx.bounds.origin.z);
     ImGui::SameLine();
     ImGui::TextUnformatted("Origin");
 
-    ImGui::InputDouble("##Extent_X", &ctx.bounds.extent.x());
+    ImGui::InputFloat("##Extent_X", &ctx.bounds.extent.x);
     ImGui::SameLine();
-    ImGui::InputDouble("##Extent_Y", &ctx.bounds.extent.y());
+    ImGui::InputFloat("##Extent_Y", &ctx.bounds.extent.y);
     ImGui::SameLine();
-    ImGui::InputDouble("##Extent_Z", &ctx.bounds.extent.z());
+    ImGui::InputFloat("##Extent_Z", &ctx.bounds.extent.z);
     ImGui::SameLine();
     ImGui::TextUnformatted("Extent");
 
@@ -525,7 +488,7 @@ ImColor GetColorByType(Gin::Graph::PortType type) {
     if ((int)type & (int)Gin::Graph::PortType::Object) {
         return ImColor(70, 204, 65, 255);
     }
-    if ((int)type & (int)Gin::Graph::PortType::Number) {
+    if ((int)type & (int)Gin::Graph::PortType::Scalar) {
         return ImColor(204, 65, 65, 255);
     }
     if ((int)type & (int)Gin::Graph::PortType::Vector2) {
@@ -533,6 +496,9 @@ ImColor GetColorByType(Gin::Graph::PortType type) {
     }
     if ((int)type & (int)Gin::Graph::PortType::Vector3) {
         return ImColor(204, 192, 65, 255);
+    }
+    if ((int)type & (int)Gin::Graph::PortType::Dynamic) {
+        return ImColor(204, 204, 204, 255);
     }
 
     return ImColor(65, 128, 204, 255);
@@ -574,7 +540,7 @@ void GraphEditorWindow::DrawPin(Gin::Graph::Port &port, Gin::Graph::GraphId id, 
     }
 
     std::string name = port.GetName() + "(" + port.GetType().shortName + ")";
-    if ((int)port.GetType().type & (int)Gin::Graph::PortType::Spatial) {
+    if (((int)port.GetType().type & (int)Gin::Graph::PortType::Field) || port.GetType().type == Gin::Graph::PortType::Dynamic) {
         ImGui::TextUnformatted(name.c_str());
     }
     else {
@@ -601,33 +567,23 @@ void GraphEditorWindow::DrawPin(Gin::Graph::Port &port, Gin::Graph::GraphId id, 
             ImGui::PopItemWidth();
         }
 
-        if (port.GetType() == Gin::Graph::GetPortTypeInfo<Gin::Spatial::Spatial<int>>()) {
-            ImGui::PushItemWidth(50);
-            static int i{ 0 };
-            Gin::Spatial::Spatial<int>& spatial = *(Gin::Spatial::Spatial<int>*)port.GetProperty();
-            i = spatial[0];
-            ImGui::InputInt("##Input", &i, 0, 0);
-            std::fill(&spatial[0], &spatial[spatial.GetWidth() * spatial.GetHeight() * spatial.GetDepth() + 1], i);
-            ImGui::PopItemWidth();
+        if (port.GetType() == Gin::Graph::GetPortTypeInfo<Gin::Field::Sampler<float>>()) {
+            Gin::Field::Sampler<float>* f = (Gin::Field::Sampler<float>*)port.GetProperty();
+            if (auto cf = f->GetField<Gin::Field::ConstantField<float>>()) {
+                ImGui::PushItemWidth(50);
+                ImGui::InputFloat("##Input", &cf->Get());
+                ImGui::PopItemWidth();
+            }
         }
-        if (port.GetType() == Gin::Graph::GetPortTypeInfo<Gin::Spatial::Spatial<float>>()) {
-            ImGui::PushItemWidth(50);
-            static float f{ 0.0f };
-            Gin::Spatial::Spatial<float>& spatial = *(Gin::Spatial::Spatial<float>*)port.GetProperty();
-            f = spatial[0];
-            ImGui::InputFloat("##Input", &f);
-            std::fill(&spatial[0], &spatial[spatial.GetWidth() * spatial.GetHeight() * spatial.GetDepth() + 1], f);
-            ImGui::PopItemWidth();
+        if (port.GetType() == Gin::Graph::GetPortTypeInfo<Gin::Field::DynamicSampler>()) {
+            Gin::Field::DynamicSampler* f = (Gin::Field::DynamicSampler*)port.GetProperty();
+            if (auto cf = f->GetField<Gin::Field::ConstantField<float>>()) {
+                ImGui::PushItemWidth(50);
+                ImGui::InputFloat("##Input", &cf->Get());
+                ImGui::PopItemWidth();
+            }
         }
-        if (port.GetType() == Gin::Graph::GetPortTypeInfo<Gin::Spatial::Spatial<double>>()) {
-            ImGui::PushItemWidth(50);
-            static double d{ 0.0 };
-            Gin::Spatial::Spatial<double>& spatial = *(Gin::Spatial::Spatial<double>*)port.GetProperty();
-            d = spatial[0];
-            ImGui::InputDouble("##Input", &d);
-            std::fill(&spatial[0], &spatial[spatial.GetWidth() * spatial.GetHeight() * spatial.GetDepth() + 1], d);
-            ImGui::PopItemWidth();
-        }
+
     }
 
     if (!input) {
@@ -645,20 +601,23 @@ void GraphEditorWindow::DrawGraphPortNode() {
     ax::NodeEditor::BeginNode(GRAPH_INPUT_NODE_ID);
     for (size_t i = 0; i < entry.graph->GetInputsCount(); ++i) {
         Gin::Graph::GraphPort& port = entry.graph->GetInputPort(i);
-        DrawPin(port, GRAPH_ID_MAX - i, false, port.GetLinks().size() > 0);
+        DrawPin(port, GRAPH_ID_MAX - i - 1, false, port.GetLinks().size() > 0);
     }
     ax::NodeEditor::EndNode();
 
     ax::NodeEditor::BeginNode(GRAPH_OUTPUT_NODE_ID);
     for (size_t i = 0; i < entry.graph->GetOutputsCount(); ++i) {
         Gin::Graph::GraphPort& port = entry.graph->GetOutputPort(i);
-        DrawPin(port, GRAPH_ID_MAX - i - MAX_PORT, true, port.GetLinks().size() > 0);
+        DrawPin(port, GRAPH_ID_MAX - i - MAX_PORT - 1, true, port.GetLinks().size() > 0);
     }
     ax::NodeEditor::EndNode();
 }
 
 void GraphEditorWindow::DrawNode(Gin::Graph::GraphNodeOperator<Gin::Graph::Node>& node) {
-    if (focusedAction && focusedAction->type == Gin::Graph::GraphActionType::EXEC && focusedAction->nodeAId == node.GetNodeId()) {
+    if (focusedAction &&
+        (focusedAction->type == Gin::Graph::GraphActionType::EXEC ||
+        focusedAction->type == Gin::Graph::GraphActionType::FREE) &&
+        focusedAction->nodeAId == node.GetNodeId()) {
         ax::NodeEditor::PushStyleColor(ax::NodeEditor::StyleColor_NodeBorder, ImVec4(1.0f, 0.5f, 0.05f, 1.0f));
         ax::NodeEditor::PushStyleColor(ax::NodeEditor::StyleColor_HovNodeBorder, ImVec4(1.0f, 0.5f, 0.05f, 1.0f));
         ax::NodeEditor::PushStyleColor(ax::NodeEditor::StyleColor_SelNodeBorder, ImVec4(1.0f, 0.5f, 0.05f, 1.0f));
@@ -701,7 +660,10 @@ void GraphEditorWindow::DrawNode(Gin::Graph::GraphNodeOperator<Gin::Graph::Node>
 
     ax::NodeEditor::PopStyleVar();
 
-    if (focusedAction && focusedAction->type == Gin::Graph::GraphActionType::EXEC && focusedAction->nodeAId == node.GetNodeId()) {
+    if (focusedAction &&
+        (focusedAction->type == Gin::Graph::GraphActionType::EXEC ||
+        focusedAction->type == Gin::Graph::GraphActionType::FREE) &&
+        focusedAction->nodeAId == node.GetNodeId()) {
         ax::NodeEditor::PopStyleColor(3);
     }
 }
@@ -722,7 +684,7 @@ void GraphEditorWindow::DrawLinks() {
             int portAId = (int)(portId + (nodeId + 1) * MAX_PORT);
             for (std::pair<Gin::Graph::GraphId, Gin::Graph::GraphId>& link : adj[nodeId][portId]) {
                 if (link.first == GRAPH_INPUT_NODE_ID) {
-                    Gin::Graph::GraphId portBId = GRAPH_INPUT_NODE_ID - link.second;
+                    Gin::Graph::GraphId portBId = GRAPH_INPUT_NODE_ID - link.second - 1;
                     ax::NodeEditor::Link(i, portAId, portBId);
                 }
                 else {
@@ -742,7 +704,7 @@ void GraphEditorWindow::DrawLinks() {
 
     for (Gin::Graph::GraphId portId = 0; portId < entry.graph->GetOutputsCount(); ++portId) {
         auto& port = entry.graph->GetOutputPort(portId);
-        Gin::Graph::GraphId portAId = GRAPH_INPUT_NODE_ID - portId - MAX_PORT;
+        Gin::Graph::GraphId portAId = GRAPH_INPUT_NODE_ID - portId - MAX_PORT - 1;
 
         for (std::pair<Gin::Graph::GraphId, Gin::Graph::GraphId>& link : port.GetLinks()) {
             Gin::Graph::GraphId portBId = link.second + (link.first + 1) * MAX_PORT;
@@ -791,7 +753,7 @@ void GraphEditorWindow::HandleLinkCreation() {
                             std::swap(start, end);
 
                         if (start > GRAPH_INPUT_NODE_ID - MAX_PORT) {
-                            Gin::Graph::GraphId graphInputIdx = GRAPH_INPUT_NODE_ID - start;
+                            Gin::Graph::GraphId graphInputIdx = GRAPH_INPUT_NODE_ID - start - 1;
                             Gin::Graph::GraphId portBIdx = end % MAX_PORT;
                             Gin::Graph::GraphId nodeBIdx = (end - portBIdx) / MAX_PORT - 1;
 
@@ -803,7 +765,7 @@ void GraphEditorWindow::HandleLinkCreation() {
                             }
                         }
                         else {
-                            Gin::Graph::GraphId graphOutputIdx = GRAPH_INPUT_NODE_ID - start - MAX_PORT;
+                            Gin::Graph::GraphId graphOutputIdx = GRAPH_INPUT_NODE_ID - start - MAX_PORT - 1;
                             Gin::Graph::GraphId portAIdx = end % MAX_PORT;
                             Gin::Graph::GraphId nodeAIdx = (end - portAIdx) / MAX_PORT - 1;
 
@@ -874,8 +836,11 @@ void GraphEditorWindow::HandleDeletion() {
             Gin::Graph::GraphId nodeBId = (endId.Get() - portBId) / MAX_PORT - 1;
 
             if (startId.Get() >= GRAPH_INPUT_NODE_ID - MAX_PORT * 2) {
-                Gin::Graph::GraphId outputPortId = startId.Get() - (GRAPH_INPUT_NODE_ID - MAX_PORT);
+                Gin::Graph::GraphId outputPortId = MAX_PORT - (startId.Get() - (GRAPH_INPUT_NODE_ID - MAX_PORT * 2 - 1));
                 entry.graph->GetNode<Gin::Graph::Node>(nodeBId).GetPort(portBId).UnlinkGraphOutput(outputPortId);
+            } else if (endId.Get() >= GRAPH_INPUT_NODE_ID - MAX_PORT) {
+                Gin::Graph::GraphId inputPortId = MAX_PORT - (endId.Get() - (GRAPH_INPUT_NODE_ID - MAX_PORT  - 1));
+                entry.graph->GetNode<Gin::Graph::Node>(nodeAId).GetPort(portAId).UnlinkGraphInput(inputPortId);
             } else {
                 entry.graph->GetNode<Gin::Graph::Node>(nodeAId).GetPort(portAId).Unlink(
                         entry.graph->GetNode<Gin::Graph::Node>(nodeBId).GetPort(portBId));
@@ -902,14 +867,14 @@ void GraphEditorWindow::BuildVolume(Gin::Graph::GraphContext &context) {
     size_t volumeIdx = entry.graph->HasOutput("_Volume");
 
     if (volumeIdx == GRAPH_ID_MAX) {
-        printf("Can't build volume : a Spatial<Float> _Volume output is required.");
+        printf("Can't build volume : a Float _Volume output is required.");
         return;
     }
 
     Gin::Graph::GraphPort& volumePort = entry.graph->GetOutputPort(volumeIdx);
 
-    if (volumePort.GetType().type != (Gin::Graph::PortType)((int)Gin::Graph::PortType::Number + (int)Gin::Graph::PortType::Spatial)) {
-        printf("Can't build volume : a Spatial<Float> _Volume output is required.");
+    if (volumePort.GetType().type != (Gin::Graph::PortType)((int)Gin::Graph::PortType::Scalar + (int)Gin::Graph::PortType::Field)) {
+        printf("Can't build volume : a Float _Volume output is required.");
         return;
     }
 
@@ -925,45 +890,41 @@ void GraphEditorWindow::BuildVolume(Gin::Graph::GraphContext &context) {
 
     Gin::Profiler::Stop();
 
-    Gin::Spatial::Spatial<float> volume = *(Gin::Spatial::Spatial<float>*)volumePort.GetProperty();
-    Gin::Spatial::Sampler<float> volumeSampler{ volume };
-
-    Gin::Spatial::Spatial<Eigen::Vector4<float>> colors{ Eigen::Vector4<float>{1.0f, 1.0f, 1.0f, 1.0f} };
-
-    size_t colorsIdx = entry.graph->HasOutput("_Color");
-    if (colorsIdx != GRAPH_ID_MAX) {
-        Gin::Graph::GraphPort& colorsPort = entry.graph->GetOutputPort(colorsIdx);
-        if (colorsPort.GetType().type == (Gin::Graph::PortType)((int)Gin::Graph::PortType::Color + (int)Gin::Graph::PortType::Spatial)) {
-            colors = *(Gin::Spatial::Spatial<Eigen::Vector4<float>>*)(colorsPort.GetProperty());
-        }
-        else {
-            colors.Resize(volume.GetWidth(), volume.GetHeight(), volume.GetDepth());
-        }
-    }
-    else {
-        colors.Resize(volume.GetWidth(), volume.GetHeight(), volume.GetDepth());
-    }
-
-    Gin::Spatial::Sampler<Eigen::Vector4<float>> colorsSampler{ colors };
-
-    volumeSampler.SetScale(context.scale);
-    volumeSampler.SetBounds(context.bounds);
-    colorsSampler.SetScale(context.scale);
-    colorsSampler.SetBounds(context.bounds);
-
     Gin::Mesh::IndexedMesh indexedMesh{};
+
+    Gin::Math::Vector3 size{ context.bounds.extent * 2.0 / context.scale };
+    size.x = std::ceil(size.x);
+    size.y = std::ceil(size.y);
+    size.z = std::ceil(size.z);
+
+    Gin::Field::Sampler<float>* volumeSampler = (Gin::Field::Sampler<float>*)volumePort.GetProperty();
+
+    Gin::Mesh::MeshBuildData buildData{};
+    buildData.mesh = &indexedMesh;
+    buildData.scale = context.scale;
+    buildData.bounds = context.bounds;
+    buildData.volume = *volumeSampler;
+
+    size_t colorIdx = entry.graph->HasOutput("_Color");
+    if (colorIdx != GRAPH_ID_MAX) {
+        Gin::Graph::GraphPort& colorPort = entry.graph->GetOutputPort(colorIdx);
+
+        if (colorPort.GetType().type == (Gin::Graph::PortType)((int)Gin::Graph::PortType::Vector4 + (int)Gin::Graph::PortType::Field)) {
+            buildData.color = *(Gin::Field::Sampler<Gin::Math::Vector4>*)colorPort.GetProperty();
+        }
+    }
 
     switch (meshBuilderType) {
         case MeshBuilderType::MarchingCube:
         {
             Gin::Mesh::MarchingCubeMeshBuilder builder{};
-            builder.Build(indexedMesh, volumeSampler, colorsSampler);
+            builder.Build(buildData);
             indexedMesh.BuildIndex();
             break;
         }
         case MeshBuilderType::SurfaceNet: {
             Gin::Mesh::SurfaceNetMeshBuilder builder{};
-            builder.Build(indexedMesh, volumeSampler, colorsSampler);
+            builder.Build(buildData);
             break;
         }
     }
