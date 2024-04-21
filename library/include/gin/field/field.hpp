@@ -101,8 +101,10 @@ namespace Gin::Field {
         uint32_t GetDepth() { return depth; };
         uint32_t GetVecWidth() { return vecWidth; };
 
-        void Fill(int v) {
-            memset(data, v, vecWidth * height * depth * sizeof(T));
+        void Fill(T v) {
+            int m = vecWidth * height * depth;
+            for (int i = 0; i < m; ++i)
+                data[i] = v;
         }
 
         inline T& operator[](size_t idx) {

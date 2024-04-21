@@ -38,6 +38,7 @@ namespace Gin::Module::Geometry {
         std::shared_ptr<Gin::SDF::Primitive> primitive{};
         std::shared_ptr<std::vector<Math::Vector3>> points{};
         float boudingSphereRadius{ 1.0f };
+        float smoothness{ 1.0f };
 
         Field::Sampler<float> distance{};
     };

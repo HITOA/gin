@@ -87,6 +87,7 @@ Gin::Module::Geometry::ScatterSampler::ScatterSampler() {
     AddInputPort("In", primitive);
     AddInputPort("Points", points);
     AddInputPort("Bounding Sphere Radius", boudingSphereRadius);
+    AddInputPort("Smoothness", smoothness);
 
     AddOutputPort("Out", distance);
 }
@@ -138,22 +139,28 @@ void Gin::Module::Geometry::ScatterSampler::Execute(Graph::GraphContext ctx) {
 
 
     std::shared_ptr<Field::ScalarField<float>> d = distance.GetField<Field::ScalarField<float>>();
-    d->Fill(0);
+    d->Fill(boudingSphereRadius);
 
     int radius = std::ceil(boudingSphereRadius / ctx.scale);
 
     for (int i = 0; i < points->size(); ++i) {
         Math::Vector3 point = (*points)[i];
-        point = Math::Floor((point - ctx.bounds.origin + ctx.bounds.extent) / ctx.scale);
+        point = (point - ctx.bounds.origin + ctx.bounds.extent) / ctx.scale;
         for (int z = -radius; z <= radius; ++z) {
             for (int y = -radius; y <= radius; ++y) {
                 for (int x = -radius; x <= radius; ++x) {
-                    Math::Vector3 sPoint = point + Math::Vector3{ (float)x, (float)y, (float)z };
+                    Math::Vector3 sPoint = Math::Round(point + Math::Vector3{ (float)x, (float)y, (float)z });
                     if (sPoint.x >= 0 && sPoint.y >= 0 && sPoint.z >= 0 &&
                             sPoint.x < size.x && sPoint.y < size.y && sPoint.z < size.z) {
                         float v = sdf.GetScalar(x + size.x / 2, y + size.y / 2, z + size.z / 2);
-                        size_t idx = sPoint.x + sPoint.y * size.x + sPoint.z * size.x * size.y;
-                        (*d)[idx] = std::min((*d)[idx], v);
+                        size_t idx = (int)sPoint.x + (int)sPoint.y * d->GetVecWidth() + (int)sPoint.z * d->GetVecWidth() * (int)size.y;
+                        float ov = (*d)[idx];
+
+                        float h = std::max(smoothness - std::abs(v - ov), 0.0f) / smoothness;
+                        float m = h * h * 0.5f;
+                        float s = m * smoothness * 0.5f;
+
+                        (*d)[idx] = v < ov ? v - s : ov - s;
                     }
                 }
             }
