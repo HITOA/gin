@@ -295,4 +295,9 @@ namespace Gin::Math {
         Vector3 extent{};
     };
 
+    struct Sphere {
+        Vector3 origin{};
+        float radius{};
+    };
+
 }

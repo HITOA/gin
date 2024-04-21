@@ -91,6 +91,7 @@ if(GIN_BUILD_BENCH)
             modules/geometry/geometry.hpp
             modules/geometry/geometry.cpp
             modules/geometry/nodes/point.hpp
+            modules/geometry/nodes/point.cpp
     )
     target_link_libraries(gin_bench gin_library nanobench)
 endif ()
