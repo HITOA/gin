@@ -21,9 +21,24 @@ namespace Gin::Module::Geometry {
 
     private:
         float distance{ 1.0 };
-        float randomness{ 0.0 };
 
         std::shared_ptr<std::vector<Math::Vector3>> points{};
+    };
+
+    class RandomOffset : public Gin::Graph::Node {
+    public:
+        RandomOffset();
+
+        virtual void Initialize(Graph::GraphContext ctx) final;
+        virtual void Execute(Graph::GraphContext ctx) final;
+        virtual std::string GetName() final;
+
+    private:
+        std::shared_ptr<std::vector<Math::Vector3>> in{};
+        Field::Sampler<Math::Vector3> min{};
+        Field::Sampler<Math::Vector3> max{};
+
+        std::shared_ptr<std::vector<Math::Vector3>> out{};
     };
 
     class ScatterSampler : public Gin::Graph::Node {

@@ -9,6 +9,7 @@
 void InitializeGeometryModule()
 {
     Gin::Module::AddNodesToRegistry<Gin::Module::Geometry::PointsCloud>("Geometry/Points Cloud");
+    Gin::Module::AddNodesToRegistry<Gin::Module::Geometry::RandomOffset>("Geometry/Random Offset");
     Gin::Module::AddNodesToRegistry<Gin::Module::Geometry::ScatterSampler>("Geometry/Scatter Sampler");
 }
 

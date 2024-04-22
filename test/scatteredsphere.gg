@@ -3,8 +3,8 @@
         "editor": {
             "inputs": {
                 "position": [
-                    1634.0,
-                    -398.0
+                    1618.0,
+                    -350.0
                 ]
             },
             "outputs": {
@@ -40,7 +40,11 @@
         1,
         1,
         2,
+        1,
+        1,
         2,
+        4294967295,
+        0,
         4294967294,
         0,
         1,
@@ -65,11 +69,11 @@
                 "editor": {
                     "position": [
                         2011.0,
-                        -426.0
+                        -419.0
                     ]
                 },
                 "node": {
-                    "Bounding Sphere Radius": 3.0,
+                    "Bounding Sphere Radius": 0.0,
                     "Smoothness": 1.0
                 }
             },
@@ -79,13 +83,12 @@
             "data": {
                 "editor": {
                     "position": [
-                        1658.0,
-                        -318.0
+                        1656.0,
+                        -302.0
                     ]
                 },
                 "node": {
-                    "Distance": 8.0,
-                    "Randomness": 4.0
+                    "Distance": 8.0
                 }
             },
             "path": "Geometry/Points Cloud"

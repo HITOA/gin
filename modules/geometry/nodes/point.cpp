@@ -44,7 +44,6 @@ Gin::Math::Vector3 GetRandomOffsetFromPosition(Gin::Math::Vector3 position, Gin:
 
 Gin::Module::Geometry::PointsCloud::PointsCloud() {
     AddInputPort("Distance", distance);
-    AddInputPort("Randomness", randomness);
 
     AddOutputPort("Points", points);
 }
@@ -54,16 +53,13 @@ void Gin::Module::Geometry::PointsCloud::Initialize(Graph::GraphContext ctx) {
 }
 
 void Gin::Module::Geometry::PointsCloud::Execute(Graph::GraphContext ctx) {
-    Math::Vector3 size = Math::Floor((ctx.bounds.extent * 2) / distance);
+    Math::Vector3 size = Math::Floor((ctx.bounds.extent * 2 + distance) / distance);
     Math::Vector3 offset = ctx.bounds.origin;
     offset.x = fmod(offset.x, distance) / distance;
     offset.y = fmod(offset.y, distance) / distance;
     offset.z = fmod(offset.z, distance) / distance;
 
     points->resize(size.x * size.y * size.z);
-
-    Math::Vector3 max{ randomness, randomness, randomness };
-    Math::Vector3 min = Math::Vector3{ 0.0f } - max;
 
     for (int z = 0; z < size.z; ++z) {
         for (int y = 0; y < size.y; ++y) {
@@ -72,7 +68,6 @@ void Gin::Module::Geometry::PointsCloud::Execute(Graph::GraphContext ctx) {
                 currentPoint -= size / 2.0;
                 currentPoint *= distance;
                 currentPoint += ctx.bounds.origin - offset + distance / 2;
-                currentPoint += GetRandomOffsetFromPosition(currentPoint, min, max);
                 (*points)[x + y * (int)size.x + z * (int)size.x * (int)size.y] = currentPoint;
             }
         }
@@ -81,6 +76,29 @@ void Gin::Module::Geometry::PointsCloud::Execute(Graph::GraphContext ctx) {
 
 std::string Gin::Module::Geometry::PointsCloud::GetName() {
     return "Points Cloud";
+}
+
+Gin::Module::Geometry::RandomOffset::RandomOffset() {
+    AddInputPort("In Points", in);
+    AddInputPort("Min", min);
+    AddInputPort("Max", max);
+
+    AddOutputPort("Out Points", out);
+}
+
+void Gin::Module::Geometry::RandomOffset::Initialize(Graph::GraphContext ctx) {
+    out = std::make_shared<std::vector<Gin::Math::Vector3>>();
+}
+
+void Gin::Module::Geometry::RandomOffset::Execute(Graph::GraphContext ctx) {
+    out->resize(in->size());
+
+    for (int i = 0; i < in->size(); ++i)
+        (*out)[i] = (*in)[i] + GetRandomOffsetFromPosition((*in)[i], min.GetVector3(0, 0, 0), max.GetVector3(0, 0, 0));
+}
+
+std::string Gin::Module::Geometry::RandomOffset::GetName() {
+    return "Random Offset";
 }
 
 Gin::Module::Geometry::ScatterSampler::ScatterSampler() {

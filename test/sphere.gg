@@ -3,8 +3,8 @@
         "editor": {
             "inputs": {
                 "position": [
-                    1634.0,
-                    -398.0
+                    1618.0,
+                    -350.0
                 ]
             },
             "outputs": {
@@ -40,13 +40,17 @@
         1,
         1,
         2,
+        1,
+        1,
+        2,
+        4294967295,
         0,
         4294967294,
         0,
         1,
-        2
+        4
     ],
-    "name": "Sphere",
+    "name": "Scattered Sphere",
     "nodes": [
         {
             "data": {
@@ -64,25 +68,30 @@
             "data": {
                 "editor": {
                     "position": [
-                        2069.0,
-                        -415.0
+                        2011.0,
+                        -419.0
                     ]
                 },
-                "node": {}
+                "node": {
+                    "Bounding Sphere Radius": 0.0,
+                    "Smoothness": 1.0
+                }
             },
-            "path": "Signed/3D/Primitives/Sampler"
+            "path": "Geometry/Scatter Sampler"
         },
         {
             "data": {
                 "editor": {
                     "position": [
-                        1861.0,
-                        -350.0
+                        1656.0,
+                        -302.0
                     ]
                 },
-                "node": {}
+                "node": {
+                    "Distance": 8.0
+                }
             },
-            "path": "Base/Position"
+            "path": "Geometry/Points Cloud"
         }
     ]
 }

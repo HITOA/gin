@@ -444,8 +444,8 @@ void GraphEditorWindow::DrawMeshBuilderToolTab() {
     ImGui::TextUnformatted("Builder Type");
     if (ImGui::BeginCombo("##MeshBuilderType", GetMeshBuilderTypeName(meshBuilderType))) {
 
-        if (ImGui::Selectable(GetMeshBuilderTypeName(MeshBuilderType::MarchingCube)))
-            meshBuilderType = MeshBuilderType::MarchingCube;
+        //if (ImGui::Selectable(GetMeshBuilderTypeName(MeshBuilderType::MarchingCube)))
+        //    meshBuilderType = MeshBuilderType::MarchingCube;
         if (ImGui::Selectable(GetMeshBuilderTypeName(MeshBuilderType::SurfaceNet)))
             meshBuilderType = MeshBuilderType::SurfaceNet;
 
