@@ -424,11 +424,6 @@ void Gin::Graph::Graph::Compile()
 
 void Gin::Graph::Graph::Execute(GraphContext ctx)
 {
-	/*for (auto& action : program) {
-		if (action.type == Gin::Graph::GraphActionType::EXEC)
-			nodes[action.nodeAId]->Initialize(ctx);
-	}*/
-
 	for (auto action = program.begin(); action != program.end(); ++action) {
 		switch (action->type)
 		{
@@ -457,9 +452,10 @@ void Gin::Graph::Graph::Execute(GraphContext ctx)
 			break;
         case Gin::Graph::GraphActionType::FREE:
             for (size_t i = 0; i < nodes[action->nodeAId]->GetInputPortCount(); ++i)
-                nodes[action->nodeAId]->GetInputPort(i).Clear();
-            for (size_t i = 0; i < nodes[action->nodeAId]->GetOutputPortCount(); ++i)
-                nodes[action->nodeAId]->GetOutputPort(i).Clear();
+                if (!adj[action->nodeAId][i].empty())
+                    nodes[action->nodeAId]->GetInputPort(i).Clear();
+                for (size_t i = 0; i < nodes[action->nodeAId]->GetOutputPortCount(); ++i)
+                    nodes[action->nodeAId]->GetOutputPort(i).Clear();
             break;
 		case Gin::Graph::GraphActionType::MOVE:
 			break;
@@ -472,11 +468,6 @@ void Gin::Graph::Graph::Execute(GraphContext ctx)
 
 void Gin::Graph::Graph::Execute(GraphContext ctx, Thread::ThreadPool& pool)
 {
-	/*for (auto& action : program) {
-		if (action.type == Gin::Graph::GraphActionType::EXEC)
-			nodes[action.nodeAId]->Initialize(ctx);
-	}*/
-
 	for (size_t Id = 0; Id < program.size();) {
 		GraphAction& action = program[Id];
 		switch (action.type)
@@ -542,9 +533,4 @@ void Gin::Graph::Graph::Execute(GraphContext ctx, Thread::ThreadPool& pool)
 		}
 		++Id;
 	}
-
-    for (auto& action : program) {
-        if (action.type == Gin::Graph::GraphActionType::EXEC)
-            nodes[action.nodeAId]->Clear();
-    }
 }

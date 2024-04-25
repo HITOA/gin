@@ -882,7 +882,7 @@ void GraphEditorWindow::BuildVolume(Gin::Graph::GraphContext &context) {
 
     try {
         entry.graph->Compile();
-        entry.graph->Execute(context, threadPool);
+        entry.graph->Execute(context);
     } catch (std::exception& e) {
         printf("Error while building volume : %s", e.what());
         return;
