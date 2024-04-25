@@ -145,6 +145,9 @@ void Gin::Mesh::SurfaceNetMeshBuilder::Build(MeshBuildData& data)
             float vA = data.volume.GetScalar(position.x + 1, position.y + 1, position.z);
             float vB = data.volume.GetScalar(position.x + 1, position.y + 1, position.z + 1);
 
+            if (triangleWindingOrder == TriangleWindingOrder::CLOCK_WISE)
+                std::swap(vA, vB);
+
             if (meshingData.posToVertexIdx[idx + 1] != NULL_VERTEX_IDX && 
                 meshingData.posToVertexIdx[idx + width] != NULL_VERTEX_IDX &&
                 meshingData.posToVertexIdx[idx + width + 1] != NULL_VERTEX_IDX) {
@@ -172,6 +175,9 @@ void Gin::Mesh::SurfaceNetMeshBuilder::Build(MeshBuildData& data)
             float vA = data.volume.GetScalar(position.x, position.y + 1, position.z + 1);
             float vB = data.volume.GetScalar(position.x + 1, position.y + 1, position.z + 1);
 
+            if (triangleWindingOrder == TriangleWindingOrder::CLOCK_WISE)
+                std::swap(vA, vB);
+
             if (meshingData.posToVertexIdx[idx + width] != NULL_VERTEX_IDX &&
                 meshingData.posToVertexIdx[idx + width + width * height] != NULL_VERTEX_IDX &&
                 meshingData.posToVertexIdx[idx + width * height] != NULL_VERTEX_IDX) {
@@ -198,6 +204,9 @@ void Gin::Mesh::SurfaceNetMeshBuilder::Build(MeshBuildData& data)
         {   //XZ Faces
             float vA = data.volume.GetScalar(position.x + 1, position.y, position.z + 1);
             float vB = data.volume.GetScalar(position.x + 1, position.y + 1, position.z + 1);
+
+            if (triangleWindingOrder == TriangleWindingOrder::CLOCK_WISE)
+                std::swap(vA, vB);
 
             if (meshingData.posToVertexIdx[idx + 1] != NULL_VERTEX_IDX &&
                 meshingData.posToVertexIdx[idx + width * height + 1] != NULL_VERTEX_IDX &&
