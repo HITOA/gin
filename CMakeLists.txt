@@ -5,12 +5,6 @@ project(gin)
 set(CMAKE_CXX_STANDARD 17)
 set(EXTERNAL_PATH ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty)
 
-if (MSVC)
-    add_compile_options(/arch:AVX)
-else()
-    add_compile_options(-mavx)
-endif()
-
 option(GIN_BUILD_BENCH "Build gin benchmark" ON)
 option(GIN_BUILD_EDITOR "Build gin editor" ON)
 option(GIN_BUILD_EDITOR_WITH_WAYLAND "Build gin editor using wayland" OFF)
