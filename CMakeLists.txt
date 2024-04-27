@@ -5,7 +5,6 @@ project(gin)
 set(CMAKE_CXX_STANDARD 17)
 set(EXTERNAL_PATH ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty)
 
-option(GIN_BUILD_BENCH "Build gin benchmark" ON)
 option(GIN_BUILD_EDITOR "Build gin editor" ON)
 option(GIN_BUILD_EDITOR_WITH_WAYLAND "Build gin editor using wayland" OFF)
 
@@ -19,7 +18,6 @@ endif()
 
 add_subdirectory(${EXTERNAL_PATH}/xsimd)
 add_subdirectory(${EXTERNAL_PATH}/eigen)
-add_subdirectory(${EXTERNAL_PATH}/nanobench)
 add_subdirectory(${EXTERNAL_PATH}/nativefiledialog-extended-1.1.0)
 add_subdirectory(${EXTERNAL_PATH}/FastNoise2)
 add_subdirectory(${EXTERNAL_PATH}/glfw)
@@ -31,7 +29,6 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data
 
 file(GLOB_RECURSE gin_library_src "library/*.cpp" "library/*.hpp")
 file(GLOB_RECURSE gin_editor_src "editor/*.cpp" "editor/*.hpp")
-file(GLOB_RECURSE gin_bench_src "bench/*.cpp" "bench/*.hpp")
 
 file(GLOB files "modules/*")
 foreach(file ${files})
@@ -74,18 +71,3 @@ if(GIN_BUILD_EDITOR)
     target_link_libraries(gin_editor gin_library Eigen3::Eigen nfd glfw imgui imgui_node_editor)
     target_include_directories(gin_editor PRIVATE ${EXTERNAL_PATH}/glad/include)
 endif()
-
-if(GIN_BUILD_BENCH)
-    add_executable(gin_bench ${gin_bench_src}
-            library/include/gin/field/sampler.hpp
-            library/include/gin/math/type.hpp
-            library/include/gin/field/field.hpp
-            library/include/gin/field/constantfield.hpp
-            library/include/gin/sdf/primitive.hpp
-            modules/geometry/geometry.hpp
-            modules/geometry/geometry.cpp
-            modules/geometry/nodes/point.hpp
-            modules/geometry/nodes/point.cpp
-    )
-    target_link_libraries(gin_bench gin_library nanobench)
-endif ()
