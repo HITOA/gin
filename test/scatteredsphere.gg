@@ -3,8 +3,8 @@
         "editor": {
             "inputs": {
                 "position": [
-                    1618.0,
-                    -350.0
+                    2376.0,
+                    -398.0
                 ]
             },
             "outputs": {
@@ -60,7 +60,9 @@
                         -430.0
                     ]
                 },
-                "node": {}
+                "node": {
+                    "Radius": 1.0
+                }
             },
             "path": "Signed/3D/Primitives/Sphere"
         },

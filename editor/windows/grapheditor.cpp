@@ -598,14 +598,14 @@ void GraphEditorWindow::DrawPin(Gin::Graph::Port &port, Gin::Graph::GraphId id, 
 void GraphEditorWindow::DrawGraphPortNode() {
     GraphEntry& entry = graphs[currentGraphIdx];
 
-    ax::NodeEditor::BeginNode(GRAPH_INPUT_NODE_ID);
+    ax::NodeEditor::BeginNode(GRAPH_INPUT_NODE_ID + 1);
     for (size_t i = 0; i < entry.graph->GetInputsCount(); ++i) {
         Gin::Graph::GraphPort& port = entry.graph->GetInputPort(i);
         DrawPin(port, GRAPH_ID_MAX - i - 1, false, port.GetLinks().size() > 0);
     }
     ax::NodeEditor::EndNode();
 
-    ax::NodeEditor::BeginNode(GRAPH_OUTPUT_NODE_ID);
+    ax::NodeEditor::BeginNode(GRAPH_OUTPUT_NODE_ID + 1);
     for (size_t i = 0; i < entry.graph->GetOutputsCount(); ++i) {
         Gin::Graph::GraphPort& port = entry.graph->GetOutputPort(i);
         DrawPin(port, GRAPH_ID_MAX - i - MAX_PORT - 1, true, port.GetLinks().size() > 0);
