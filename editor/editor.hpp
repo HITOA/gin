@@ -8,6 +8,7 @@
 #include <imgui.h>
 #include <imgui_internal.h>
 #include <typeindex>
+#include "event.hpp"
 
 class Editor;
 
@@ -17,6 +18,7 @@ public:
     virtual void Initialize() {};
     virtual void Draw(bool* open) = 0;
     virtual std::string_view GetName() = 0;
+    virtual void OnEvent(EventHandler& handler) {};
 
     void SetEditor(Editor* e) { editor = e; };
 

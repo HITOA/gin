@@ -140,25 +140,32 @@ void GraphEditorWindow::Open() {
 
     std::string path{ outPath };
 
-    Gin::Graph::Serialization::SerializedGraph serializedGraph{};
-    Gin::Graph::Serialization::LoadSerializedGraphFromFile(serializedGraph, path);
+    try {
+        Gin::Graph::Serialization::SerializedGraph serializedGraph{};
+        Gin::Graph::Serialization::LoadSerializedGraphFromFile(serializedGraph, path);
 
-    GraphEntry entry{};
-    entry.graph = std::make_shared<Gin::Graph::Graph>();
-    Gin::Graph::Serialization::DeserializeGraph(*entry.graph, serializedGraph);
-    entry.name = serializedGraph.graphName;
-    entry.path = path;
+        GraphEntry entry{};
+        entry.graph = std::make_shared<Gin::Graph::Graph>();
+        Gin::Graph::Serialization::DeserializeGraph(*entry.graph, serializedGraph);
+        entry.name = serializedGraph.graphName;
+        entry.path = path;
 
-    if (serializedGraph.graphData.contains("editor")) {
-        entry.positions.emplace_back(serializedGraph.graphData["editor"]["inputs"]["position"][0], serializedGraph.graphData["editor"]["inputs"]["position"][1]);
-        entry.positions.emplace_back(serializedGraph.graphData["editor"]["outputs"]["position"][0], serializedGraph.graphData["editor"]["outputs"]["position"][1]);
+        if (serializedGraph.graphData.contains("editor")) {
+            entry.positions.emplace_back(serializedGraph.graphData["editor"]["inputs"]["position"][0],
+                                         serializedGraph.graphData["editor"]["inputs"]["position"][1]);
+            entry.positions.emplace_back(serializedGraph.graphData["editor"]["outputs"]["position"][0],
+                                         serializedGraph.graphData["editor"]["outputs"]["position"][1]);
 
-        for (size_t i = 0; i < serializedGraph.nodesData.size(); ++i)
-            entry.positions.emplace_back(serializedGraph.nodesData[i]["editor"]["position"][0], serializedGraph.nodesData[i]["editor"]["position"][1]);
+            for (size_t i = 0; i < serializedGraph.nodesData.size(); ++i)
+                entry.positions.emplace_back(serializedGraph.nodesData[i]["editor"]["position"][0],
+                                             serializedGraph.nodesData[i]["editor"]["position"][1]);
+        }
+
+        graphs.push_back(entry);
+        SetGraphEntry(graphs.size() - 1);
+    } catch (std::exception& error) {
+        Gin::Utils::Logger::Err(error.what());
     }
-
-    graphs.push_back(entry);
-    SetGraphEntry(graphs.size() - 1);
 
     NFD_FreePath(outPath);
 }
