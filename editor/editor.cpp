@@ -3,6 +3,8 @@
 
 #define GLAD_GL_IMPLEMENTATION
 #include <glad/gl.h>
+#include <gin/utils/logger.hpp>
+#include <iostream>
 
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
@@ -140,6 +142,10 @@ void GinImguiSettingsWriteAll(ImGuiContext*, ImGuiSettingsHandler* handler, ImGu
 }
 
 void Editor::Initialize() {
+    Gin::Utils::Logger::GetSingleton()->AddLogOutput(&std::cout);
+    Gin::Utils::Logger::GetSingleton()->AddWarnOutput(&std::cout);
+    Gin::Utils::Logger::GetSingleton()->AddErrOutput(&std::cerr);
+
     glfwInit();
 
     glfwSetErrorCallback(ErrorCallback);

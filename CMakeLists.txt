@@ -67,7 +67,12 @@ target_include_directories(gin_library PUBLIC library/include modules)
 target_link_libraries(gin_library xsimd FastNoise)
 
 if(GIN_BUILD_EDITOR)
-    add_executable(gin_editor ${gin_editor_src})
+    add_executable(gin_editor ${gin_editor_src}
+            library/include/gin/utils/logger.hpp
+            library/include/gin/utils/formatter.hpp
+            library/src/utils/logger.cpp
+            editor/windows/console.hpp
+            editor/windows/console.cpp)
     target_link_libraries(gin_editor gin_library Eigen3::Eigen nfd glfw imgui imgui_node_editor)
     target_include_directories(gin_editor PRIVATE ${EXTERNAL_PATH}/glad/include)
 endif()

@@ -2,13 +2,13 @@
 #include <misc/cpp/imgui_stdlib.h>
 #include <nfd.h>
 #include <gin/module/registry.hpp>
-#include <iostream>
 #include <gin/mesh/indexedmesh.hpp>
 #include <gin/mesh/marchingcube.hpp>
 #include <gin/mesh/surfacenet.hpp>
 #include <gin/field/sampler.hpp>
 #include "view.hpp"
 #include "profiler.hpp"
+#include <gin/utils/logger.hpp>
 
 GraphEditorWindow::~GraphEditorWindow() noexcept {
     ax::NodeEditor::DestroyEditor(context);
@@ -746,7 +746,7 @@ void GraphEditorWindow::HandleLinkCreation() {
                             entry.graph->GetNode<Gin::Graph::Node>(nodeAIdx).GetPort(portAIdx).Link(entry.graph->GetNode<Gin::Graph::Node>(nodeBIdx).GetPort(portBIdx));
                         }
                         catch (std::exception& e) {
-                            std::cout << "Graph Editor : " << e.what() << std::endl;
+                            Gin::Utils::Logger::Err("Graph Editor : ", e.what());
                         }
                     }else {
                         if (end > GRAPH_INPUT_NODE_ID - MAX_PORT * 2)
@@ -761,7 +761,7 @@ void GraphEditorWindow::HandleLinkCreation() {
                                 entry.graph->GetNode<Gin::Graph::Node>(nodeBIdx).GetPort(portBIdx).LinkGraphInput(graphInputIdx);
                             }
                             catch (std::exception& e) {
-                                std::cout << "Graph Editor : " << e.what() << std::endl;
+                                Gin::Utils::Logger::Err("Graph Editor : ", e.what());
                             }
                         }
                         else {
@@ -773,7 +773,7 @@ void GraphEditorWindow::HandleLinkCreation() {
                                 entry.graph->GetNode<Gin::Graph::Node>(nodeAIdx).GetPort(portAIdx).LinkGraphOutput(graphOutputIdx);
                             }
                             catch (std::exception& e) {
-                                std::cout << "Graph Editor : " << e.what() << std::endl;
+                                Gin::Utils::Logger::Err("Graph Editor : ", e.what());
                             }
                         }
                     }
