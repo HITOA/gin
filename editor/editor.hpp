@@ -8,7 +8,7 @@
 #include <imgui.h>
 #include <imgui_internal.h>
 #include <typeindex>
-#include "event.hpp"
+#include "eventhandler.hpp"
 
 class Editor;
 
@@ -46,6 +46,8 @@ public:
         }
         return nullptr;
     }
+
+    void SendEvent(EventHandler handler);
 
 private:
     void DrawDockSpace();

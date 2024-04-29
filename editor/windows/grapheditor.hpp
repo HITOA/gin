@@ -32,6 +32,7 @@ public:
     void Initialize() final;
     void Draw(bool* open) final;
     std::string_view GetName() final;
+    void OnEvent(EventHandler& handler) final;
 
 private:
     template<typename T>

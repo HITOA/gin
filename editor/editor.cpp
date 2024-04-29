@@ -8,6 +8,7 @@
 
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
+#include "editorevent.hpp"
 
 void SetupImGuiStyle()
 {
@@ -229,6 +230,13 @@ void Editor::Run() {
     }
 }
 
+void Editor::SendEvent(EventHandler handler) {
+    for (auto& entry : editorWindows) {
+        if (entry.open)
+            entry.window->OnEvent(handler);
+    }
+}
+
 void Editor::DrawDockSpace() {
     ImGuiViewport* viewport = ImGui::GetMainViewport();
     ImGui::SetNextWindowPos(viewport->WorkPos);
@@ -255,8 +263,28 @@ void Editor::DrawMainMenuBar() {
     if (ImGui::BeginMainMenuBar()) {
         if (ImGui::BeginMenu("File")) {
 
-            if (ImGui::MenuItem("Quit"))
+            if (ImGui::MenuItem("New")) {
+                SendEvent(EventHandler::create(EditorEvent::New));
+            }
+            if (ImGui::MenuItem("Open")) {
+                SendEvent(EventHandler::create(EditorEvent::Open));
+            }
+
+            ImGui::Separator();
+
+            if (ImGui::MenuItem("Save")) {
+                SendEvent(EventHandler::create(EditorEvent::Save));
+            }
+            if (ImGui::MenuItem("Save As")) {
+                SendEvent(EventHandler::create(EditorEvent::SaveAs));
+            }
+
+            ImGui::Separator();
+
+            if (ImGui::MenuItem("Quit")) {
                 glfwSetWindowShouldClose(window, true);
+                SendEvent(EventHandler::create(EditorEvent::Quit));
+            }
 
             ImGui::EndMenu();
         }

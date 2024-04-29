@@ -73,7 +73,8 @@ if(GIN_BUILD_EDITOR)
             library/src/utils/logger.cpp
             editor/windows/console.hpp
             editor/windows/console.cpp
-            editor/event.hpp)
+            editor/eventhandler.hpp
+            editor/editorevent.hpp)
     target_link_libraries(gin_editor gin_library Eigen3::Eigen nfd glfw imgui imgui_node_editor)
     target_include_directories(gin_editor PRIVATE ${EXTERNAL_PATH}/glad/include)
 endif()

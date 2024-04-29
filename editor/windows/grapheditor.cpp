@@ -9,6 +9,7 @@
 #include "view.hpp"
 #include "profiler.hpp"
 #include <gin/utils/logger.hpp>
+#include "../editorevent.hpp"
 
 GraphEditorWindow::~GraphEditorWindow() noexcept {
     ax::NodeEditor::DestroyEditor(context);
@@ -62,6 +63,35 @@ void GraphEditorWindow::Draw(bool *open) {
 
 std::string_view GraphEditorWindow::GetName() {
     return "Graph Editor";
+}
+
+void GraphEditorWindow::OnEvent(EventHandler &handler) {
+    if (EditorEvent* ev = handler.GetEvent<EditorEvent>()) {
+        switch (*ev) {
+            case EditorEvent::New:
+            {
+                GraphEntry entry{};
+                entry.graph = std::make_shared<Gin::Graph::Graph>();
+                graphs.push_back(entry);
+                SetGraphEntry(graphs.size() - 1);
+                break;
+            }
+            case EditorEvent::Open:
+                Open();
+                break;
+            case EditorEvent::Save:
+                if (graphs[currentGraphIdx].path.empty())
+                    SaveAs();
+                else
+                    Save(graphs[currentGraphIdx].path);
+                break;
+            case EditorEvent::SaveAs:
+                SaveAs();
+                break;
+            default:
+                break;
+        }
+    }
 }
 
 void GraphEditorWindow::SetGraphEntry(uint32_t i) {
