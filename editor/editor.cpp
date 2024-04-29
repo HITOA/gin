@@ -211,6 +211,8 @@ void Editor::Run() {
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
+        GlobalShortcut();
+
         DrawDockSpace();
         DrawMainMenuBar();
         DrawBottomBar();
@@ -235,6 +237,10 @@ void Editor::SendEvent(EventHandler handler) {
         if (entry.open)
             entry.window->OnEvent(handler);
     }
+}
+
+EditorSettings &Editor::GetEditorSettings() {
+    return settings;
 }
 
 void Editor::DrawDockSpace() {
@@ -263,19 +269,19 @@ void Editor::DrawMainMenuBar() {
     if (ImGui::BeginMainMenuBar()) {
         if (ImGui::BeginMenu("File")) {
 
-            if (ImGui::MenuItem("New")) {
+            if (ImGui::MenuItem("New", settings.GetShortcutSetting(EditorShortcut::New).GetShortcutName().c_str())) {
                 SendEvent(EventHandler::create(EditorEvent::New));
             }
-            if (ImGui::MenuItem("Open")) {
+            if (ImGui::MenuItem("Open", settings.GetShortcutSetting(EditorShortcut::Open).GetShortcutName().c_str())) {
                 SendEvent(EventHandler::create(EditorEvent::Open));
             }
 
             ImGui::Separator();
 
-            if (ImGui::MenuItem("Save")) {
+            if (ImGui::MenuItem("Save", settings.GetShortcutSetting(EditorShortcut::Save).GetShortcutName().c_str())) {
                 SendEvent(EventHandler::create(EditorEvent::Save));
             }
-            if (ImGui::MenuItem("Save As")) {
+            if (ImGui::MenuItem("Save As", settings.GetShortcutSetting(EditorShortcut::SaveAs).GetShortcutName().c_str())) {
                 SendEvent(EventHandler::create(EditorEvent::SaveAs));
             }
 
@@ -322,4 +328,22 @@ void Editor::DrawBottomBar() {
         }
         ImGui::End();
     }
+}
+
+void Editor::GlobalShortcut() {
+    if (ImGui::Shortcut(settings.GetShortcutSetting(EditorShortcut::New).GetKeyChord(),
+                        ImGuiKeyOwner_Any, ImGuiInputFlags_RouteGlobal))
+        SendEvent(EventHandler::create(EditorEvent::New));
+
+    if (ImGui::Shortcut(settings.GetShortcutSetting(EditorShortcut::Open).GetKeyChord(),
+                        ImGuiKeyOwner_Any, ImGuiInputFlags_RouteGlobal))
+        SendEvent(EventHandler::create(EditorEvent::Open));
+
+    if (ImGui::Shortcut(settings.GetShortcutSetting(EditorShortcut::Save).GetKeyChord(),
+                        ImGuiKeyOwner_Any, ImGuiInputFlags_RouteGlobal))
+        SendEvent(EventHandler::create(EditorEvent::Save));
+
+    if (ImGui::Shortcut(settings.GetShortcutSetting(EditorShortcut::SaveAs).GetKeyChord(),
+                        ImGuiKeyOwner_Any, ImGuiInputFlags_RouteGlobal))
+        SendEvent(EventHandler::create(EditorEvent::SaveAs));
 }

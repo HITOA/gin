@@ -9,6 +9,7 @@
 #include <imgui_internal.h>
 #include <typeindex>
 #include "eventhandler.hpp"
+#include "editorsettings.hpp"
 
 class Editor;
 
@@ -48,11 +49,13 @@ public:
     }
 
     void SendEvent(EventHandler handler);
+    EditorSettings& GetEditorSettings();
 
 private:
     void DrawDockSpace();
     void DrawMainMenuBar();
     void DrawBottomBar();
+    void GlobalShortcut();
 
 private:
     struct EditorWindowEntry {
@@ -63,6 +66,7 @@ private:
 
     GLFWwindow* window{ nullptr };
     std::vector<EditorWindowEntry> editorWindows{};
+    EditorSettings settings{};
 
     friend void* GinImguiSettingsReadOpen(ImGuiContext*, ImGuiSettingsHandler*, const char* name);
     friend void GinImguiSettingsReadLine(ImGuiContext*, ImGuiSettingsHandler*, void* entry, const char* line);
