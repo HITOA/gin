@@ -98,8 +98,8 @@ void GraphEditorWindow::SetGraphEntry(uint32_t i) {
     {
         GraphEntry& entry = graphs[currentGraphIdx];
         entry.positions.clear();
-        entry.positions.push_back(ax::NodeEditor::GetNodePosition(GRAPH_INPUT_NODE_ID));
-        entry.positions.push_back(ax::NodeEditor::GetNodePosition(GRAPH_OUTPUT_NODE_ID));
+        entry.positions.push_back(ax::NodeEditor::GetNodePosition(GRAPH_INPUT_NODE_ID + 1));
+        entry.positions.push_back(ax::NodeEditor::GetNodePosition(GRAPH_OUTPUT_NODE_ID + 1));
 
         for (size_t i = 0; i < entry.graph->GetNodeCount(); ++i)
             entry.positions.push_back(ax::NodeEditor::GetNodePosition(i + 1));
@@ -109,8 +109,8 @@ void GraphEditorWindow::SetGraphEntry(uint32_t i) {
 
     if (graphs[currentGraphIdx].positions.size() >= 2) {
         GraphEntry& entry = graphs[currentGraphIdx];
-        ax::NodeEditor::SetNodePosition(GRAPH_INPUT_NODE_ID, entry.positions[0]);
-        ax::NodeEditor::SetNodePosition(GRAPH_OUTPUT_NODE_ID, entry.positions[1]);
+        ax::NodeEditor::SetNodePosition(GRAPH_INPUT_NODE_ID + 1, entry.positions[0]);
+        ax::NodeEditor::SetNodePosition(GRAPH_OUTPUT_NODE_ID + 1, entry.positions[1]);
 
         for (size_t i = 2; i < entry.positions.size(); ++i)
             ax::NodeEditor::SetNodePosition(i - 1, entry.positions[i]);
@@ -124,8 +124,8 @@ void GraphEditorWindow::Save(std::string_view path) {
     Gin::Graph::Serialization::SerializeGraph(*graphs[currentGraphIdx].graph.get(), serializedGraph);
 
     {
-        ImVec2 inp = ax::NodeEditor::GetNodePosition(GRAPH_INPUT_NODE_ID);
-        ImVec2 onp = ax::NodeEditor::GetNodePosition(GRAPH_OUTPUT_NODE_ID);
+        ImVec2 inp = ax::NodeEditor::GetNodePosition(GRAPH_INPUT_NODE_ID + 1);
+        ImVec2 onp = ax::NodeEditor::GetNodePosition(GRAPH_OUTPUT_NODE_ID + 1);
 
         serializedGraph.graphData["editor"]["inputs"]["position"][0] = inp.x;
         serializedGraph.graphData["editor"]["inputs"]["position"][1] = inp.y;
