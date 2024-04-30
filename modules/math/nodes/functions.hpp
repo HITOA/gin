@@ -3,6 +3,24 @@
 #include <gin/graph/node.hpp>
 
 namespace Gin::Module::Math {
+
+    class Smoothstep : public Graph::Node {
+    public:
+        Smoothstep();
+
+        virtual void Initialize(Graph::GraphContext ctx) final;
+        virtual void Execute(Graph::GraphContext ctx) final;
+
+        virtual std::string GetName() final;
+
+    private:
+        Field::Sampler<float> in{};
+        Field::Sampler<float> min{};
+        Field::Sampler<float> max{};
+
+        Field::Sampler<float> out{};
+    };
+
 /*
 	class Lerp : public Graph::Node {
 	public:

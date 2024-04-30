@@ -98,8 +98,8 @@ void GraphEditorWindow::SetGraphEntry(uint32_t i) {
     {
         GraphEntry& entry = graphs[currentGraphIdx];
         entry.positions.clear();
-        entry.positions.push_back(ax::NodeEditor::GetNodePosition(GRAPH_INPUT_NODE_ID + 1));
-        entry.positions.push_back(ax::NodeEditor::GetNodePosition(GRAPH_OUTPUT_NODE_ID + 1));
+        entry.positions.push_back(ax::NodeEditor::GetNodePosition(GRAPH_INPUT_NODE_ID));
+        entry.positions.push_back(ax::NodeEditor::GetNodePosition(GRAPH_OUTPUT_NODE_ID));
 
         for (size_t i = 0; i < entry.graph->GetNodeCount(); ++i)
             entry.positions.push_back(ax::NodeEditor::GetNodePosition(i + 1));
@@ -109,8 +109,8 @@ void GraphEditorWindow::SetGraphEntry(uint32_t i) {
 
     if (graphs[currentGraphIdx].positions.size() >= 2) {
         GraphEntry& entry = graphs[currentGraphIdx];
-        ax::NodeEditor::SetNodePosition(GRAPH_INPUT_NODE_ID + 1, entry.positions[0]);
-        ax::NodeEditor::SetNodePosition(GRAPH_OUTPUT_NODE_ID + 1, entry.positions[1]);
+        ax::NodeEditor::SetNodePosition(GRAPH_INPUT_NODE_ID, entry.positions[0]);
+        ax::NodeEditor::SetNodePosition(GRAPH_OUTPUT_NODE_ID, entry.positions[1]);
 
         for (size_t i = 2; i < entry.positions.size(); ++i)
             ax::NodeEditor::SetNodePosition(i - 1, entry.positions[i]);
@@ -124,8 +124,8 @@ void GraphEditorWindow::Save(std::string_view path) {
     Gin::Graph::Serialization::SerializeGraph(*graphs[currentGraphIdx].graph.get(), serializedGraph);
 
     {
-        ImVec2 inp = ax::NodeEditor::GetNodePosition(GRAPH_INPUT_NODE_ID + 1);
-        ImVec2 onp = ax::NodeEditor::GetNodePosition(GRAPH_OUTPUT_NODE_ID + 1);
+        ImVec2 inp = ax::NodeEditor::GetNodePosition(GRAPH_INPUT_NODE_ID);
+        ImVec2 onp = ax::NodeEditor::GetNodePosition(GRAPH_OUTPUT_NODE_ID);
 
         serializedGraph.graphData["editor"]["inputs"]["position"][0] = inp.x;
         serializedGraph.graphData["editor"]["inputs"]["position"][1] = inp.y;
@@ -635,17 +635,17 @@ void GraphEditorWindow::DrawPin(Gin::Graph::Port &port, Gin::Graph::GraphId id, 
 void GraphEditorWindow::DrawGraphPortNode() {
     GraphEntry& entry = graphs[currentGraphIdx];
 
-    ax::NodeEditor::BeginNode(GRAPH_INPUT_NODE_ID + 1);
+    ax::NodeEditor::BeginNode(GRAPH_INPUT_NODE_ID);
     for (size_t i = 0; i < entry.graph->GetInputsCount(); ++i) {
         Gin::Graph::GraphPort& port = entry.graph->GetInputPort(i);
-        DrawPin(port, GRAPH_ID_MAX - i - 1, false, port.GetLinks().size() > 0);
+        DrawPin(port, GRAPH_MAX_PORT_ID - i, false, port.GetLinks().size() > 0);
     }
     ax::NodeEditor::EndNode();
 
-    ax::NodeEditor::BeginNode(GRAPH_OUTPUT_NODE_ID + 1);
+    ax::NodeEditor::BeginNode(GRAPH_OUTPUT_NODE_ID);
     for (size_t i = 0; i < entry.graph->GetOutputsCount(); ++i) {
         Gin::Graph::GraphPort& port = entry.graph->GetOutputPort(i);
-        DrawPin(port, GRAPH_ID_MAX - i - MAX_PORT - 1, true, port.GetLinks().size() > 0);
+        DrawPin(port, GRAPH_MAX_PORT_ID - i - MAX_PORT, true, port.GetLinks().size() > 0);
     }
     ax::NodeEditor::EndNode();
 }
@@ -721,7 +721,7 @@ void GraphEditorWindow::DrawLinks() {
             int portAId = (int)(portId + (nodeId + 1) * MAX_PORT);
             for (std::pair<Gin::Graph::GraphId, Gin::Graph::GraphId>& link : adj[nodeId][portId]) {
                 if (link.first == GRAPH_INPUT_NODE_ID) {
-                    Gin::Graph::GraphId portBId = GRAPH_INPUT_NODE_ID - link.second - 1;
+                    Gin::Graph::GraphId portBId = GRAPH_MAX_PORT_ID - link.second;
                     ax::NodeEditor::Link(i, portAId, portBId);
                 }
                 else {
@@ -741,7 +741,7 @@ void GraphEditorWindow::DrawLinks() {
 
     for (Gin::Graph::GraphId portId = 0; portId < entry.graph->GetOutputsCount(); ++portId) {
         auto& port = entry.graph->GetOutputPort(portId);
-        Gin::Graph::GraphId portAId = GRAPH_INPUT_NODE_ID - portId - MAX_PORT - 1;
+        Gin::Graph::GraphId portAId = GRAPH_MAX_PORT_ID - portId - MAX_PORT;
 
         for (std::pair<Gin::Graph::GraphId, Gin::Graph::GraphId>& link : port.GetLinks()) {
             Gin::Graph::GraphId portBId = link.second + (link.first + 1) * MAX_PORT;
@@ -770,10 +770,10 @@ void GraphEditorWindow::HandleLinkCreation() {
                     uint32_t end = outputPinId.Get();
                     GraphEntry& entry = graphs[currentGraphIdx];
 
-                    if (start > GRAPH_INPUT_NODE_ID - MAX_PORT * 2 && end > GRAPH_INPUT_NODE_ID - MAX_PORT * 2)
+                    if (start > GRAPH_MAX_PORT_ID - MAX_PORT * 2 && end > GRAPH_MAX_PORT_ID - MAX_PORT * 2)
                         return;
 
-                    if (start < GRAPH_INPUT_NODE_ID - MAX_PORT * 2 && end < GRAPH_INPUT_NODE_ID - MAX_PORT * 2) {
+                    if (start < GRAPH_MAX_PORT_ID - MAX_PORT * 2 && end < GRAPH_MAX_PORT_ID - MAX_PORT * 2) {
                         Gin::Graph::GraphId portAIdx = start % MAX_PORT;
                         Gin::Graph::GraphId portBIdx = end % MAX_PORT;
                         Gin::Graph::GraphId nodeAIdx = (start - portAIdx) / MAX_PORT - 1;
@@ -786,11 +786,11 @@ void GraphEditorWindow::HandleLinkCreation() {
                             Gin::Utils::Logger::Err("Graph Editor : ", e.what());
                         }
                     }else {
-                        if (end > GRAPH_INPUT_NODE_ID - MAX_PORT * 2)
+                        if (end > GRAPH_MAX_PORT_ID - MAX_PORT * 2)
                             std::swap(start, end);
 
-                        if (start > GRAPH_INPUT_NODE_ID - MAX_PORT) {
-                            Gin::Graph::GraphId graphInputIdx = GRAPH_INPUT_NODE_ID - start - 1;
+                        if (start > GRAPH_MAX_PORT_ID - MAX_PORT) {
+                            Gin::Graph::GraphId graphInputIdx = GRAPH_MAX_PORT_ID - start;
                             Gin::Graph::GraphId portBIdx = end % MAX_PORT;
                             Gin::Graph::GraphId nodeBIdx = (end - portBIdx) / MAX_PORT - 1;
 
@@ -802,7 +802,7 @@ void GraphEditorWindow::HandleLinkCreation() {
                             }
                         }
                         else {
-                            Gin::Graph::GraphId graphOutputIdx = GRAPH_INPUT_NODE_ID - start - MAX_PORT - 1;
+                            Gin::Graph::GraphId graphOutputIdx = GRAPH_MAX_PORT_ID - start - MAX_PORT;
                             Gin::Graph::GraphId portAIdx = end % MAX_PORT;
                             Gin::Graph::GraphId nodeAIdx = (end - portAIdx) / MAX_PORT - 1;
 
@@ -872,11 +872,11 @@ void GraphEditorWindow::HandleDeletion() {
             Gin::Graph::GraphId portBId = endId.Get() % MAX_PORT;
             Gin::Graph::GraphId nodeBId = (endId.Get() - portBId) / MAX_PORT - 1;
 
-            if (startId.Get() >= GRAPH_INPUT_NODE_ID - MAX_PORT * 2) {
-                Gin::Graph::GraphId outputPortId = MAX_PORT - (startId.Get() - (GRAPH_INPUT_NODE_ID - MAX_PORT * 2 - 1));
+            if (startId.Get() >= GRAPH_MAX_PORT_ID - MAX_PORT * 2) {
+                Gin::Graph::GraphId outputPortId = MAX_PORT - (startId.Get() - (GRAPH_MAX_PORT_ID - MAX_PORT * 2));
                 entry.graph->GetNode<Gin::Graph::Node>(nodeBId).GetPort(portBId).UnlinkGraphOutput(outputPortId);
-            } else if (endId.Get() >= GRAPH_INPUT_NODE_ID - MAX_PORT) {
-                Gin::Graph::GraphId inputPortId = MAX_PORT - (endId.Get() - (GRAPH_INPUT_NODE_ID - MAX_PORT  - 1));
+            } else if (endId.Get() >= GRAPH_MAX_PORT_ID - MAX_PORT) {
+                Gin::Graph::GraphId inputPortId = MAX_PORT - (endId.Get() - (GRAPH_MAX_PORT_ID - MAX_PORT));
                 entry.graph->GetNode<Gin::Graph::Node>(nodeAId).GetPort(portAId).UnlinkGraphInput(inputPortId);
             } else {
                 entry.graph->GetNode<Gin::Graph::Node>(nodeAId).GetPort(portAId).Unlink(
