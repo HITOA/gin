@@ -184,9 +184,18 @@ void Editor::Initialize() {
     ImGui::AddSettingsHandler(&editorSettingsHandler);
 
     ImGuiIO& io = ImGui::GetIO();
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+
+    io.Fonts->AddFontDefault();
+
+    static ImWchar ranges[] = { 0xf000, 0xf3ff, 0 };
+    ImFontConfig fontConfig{};
+    fontConfig.MergeMode = true;
+    io.Fonts->AddFontFromFileTTF("data/fonts/fw6s.otf", 13, &fontConfig, ranges);
+    io.Fonts->AddFontFromFileTTF("data/fonts/fw6r.otf", 13, &fontConfig, ranges);
+    io.Fonts->Build();
 
     SetupImGuiStyle();
 
@@ -269,25 +278,25 @@ void Editor::DrawMainMenuBar() {
     if (ImGui::BeginMainMenuBar()) {
         if (ImGui::BeginMenu("File")) {
 
-            if (ImGui::MenuItem("New", settings.GetShortcutSetting(EditorShortcut::New).GetShortcutName().c_str())) {
+            if (ImGui::MenuItemEx("New", "\uF07B", settings.GetShortcutSetting(EditorShortcut::New).GetShortcutName().c_str())) {
                 SendEvent(EventHandler::create(EditorEvent::New));
             }
-            if (ImGui::MenuItem("Open", settings.GetShortcutSetting(EditorShortcut::Open).GetShortcutName().c_str())) {
+            if (ImGui::MenuItemEx("Open", "\uF07C", settings.GetShortcutSetting(EditorShortcut::Open).GetShortcutName().c_str())) {
                 SendEvent(EventHandler::create(EditorEvent::Open));
             }
 
             ImGui::Separator();
 
-            if (ImGui::MenuItem("Save", settings.GetShortcutSetting(EditorShortcut::Save).GetShortcutName().c_str())) {
+            if (ImGui::MenuItemEx("Save", "", settings.GetShortcutSetting(EditorShortcut::Save).GetShortcutName().c_str())) {
                 SendEvent(EventHandler::create(EditorEvent::Save));
             }
-            if (ImGui::MenuItem("Save As", settings.GetShortcutSetting(EditorShortcut::SaveAs).GetShortcutName().c_str())) {
+            if (ImGui::MenuItemEx("Save As", "\uF0C7", settings.GetShortcutSetting(EditorShortcut::SaveAs).GetShortcutName().c_str())) {
                 SendEvent(EventHandler::create(EditorEvent::SaveAs));
             }
 
             ImGui::Separator();
 
-            if (ImGui::MenuItem("Quit")) {
+            if (ImGui::MenuItemEx("Quit", "")) {
                 glfwSetWindowShouldClose(window, true);
                 SendEvent(EventHandler::create(EditorEvent::Quit));
             }
