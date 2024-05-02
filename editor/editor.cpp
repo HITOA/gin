@@ -279,10 +279,10 @@ void Editor::DrawMainMenuBar() {
     if (ImGui::BeginMainMenuBar()) {
         if (ImGui::BeginMenu("File")) {
 
-            if (ImGui::MenuItemEx("New", "\uF07B", settings.GetShortcutSetting(EditorShortcut::New).GetShortcutName().c_str())) {
+            if (ImGui::MenuItemEx("New", u8"\uF07B", settings.GetShortcutSetting(EditorShortcut::New).GetShortcutName().c_str())) {
                 SendEvent(EventHandler::create(EditorEvent::New));
             }
-            if (ImGui::MenuItemEx("Open", "\uF07C", settings.GetShortcutSetting(EditorShortcut::Open).GetShortcutName().c_str())) {
+            if (ImGui::MenuItemEx("Open", u8"\uF07C", settings.GetShortcutSetting(EditorShortcut::Open).GetShortcutName().c_str())) {
                 SendEvent(EventHandler::create(EditorEvent::Open));
             }
 
@@ -291,7 +291,7 @@ void Editor::DrawMainMenuBar() {
             if (ImGui::MenuItemEx("Save", "", settings.GetShortcutSetting(EditorShortcut::Save).GetShortcutName().c_str())) {
                 SendEvent(EventHandler::create(EditorEvent::Save));
             }
-            if (ImGui::MenuItemEx("Save As", "\uF0C7", settings.GetShortcutSetting(EditorShortcut::SaveAs).GetShortcutName().c_str())) {
+            if (ImGui::MenuItemEx("Save As", u8"\uF0C7", settings.GetShortcutSetting(EditorShortcut::SaveAs).GetShortcutName().c_str())) {
                 SendEvent(EventHandler::create(EditorEvent::SaveAs));
             }
 

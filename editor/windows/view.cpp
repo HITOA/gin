@@ -237,7 +237,7 @@ void ViewWindow::Draw(bool *open) {
         ImGui::Spring(1.0f, ImGui::GetStyle().WindowPadding.x);
 
         ImGui::PushItemWidth(125.0f);
-        if (ImGui::BeginCombo("##ViewTypeCombo", "\uF013 View")) {
+        if (ImGui::BeginCombo("##ViewTypeCombo", u8"\uF013 View")) {
 
             ImGui::Checkbox("Lighting", &lighting);
             ImGui::Checkbox("Color", &color);
@@ -254,7 +254,7 @@ void ViewWindow::Draw(bool *open) {
         ImGui::PopItemWidth();
         ImGui::Spring(1.0f);
         ImGui::PushItemWidth(125.0f);
-        if (ImGui::BeginCombo("##ViewCameraCombo", "\uF013 Camera")) {
+        if (ImGui::BeginCombo("##ViewCameraCombo", u8"\uF013 Camera")) {
 
             ImGui::SliderFloat("Far Plane", &zFar, 100.0f, 10000.0f);
 
