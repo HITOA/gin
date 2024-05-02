@@ -12,7 +12,8 @@ public:
     std::string_view GetName() final;
 
     void UpdateSession();
-    void DrawEventGraph();
+    void DrawEventGraph(ImVec2 size);
+    void DrawMemoryUsageGraph(ImVec2 size);
 
 private:
     struct ExtendedNodeEvent {
@@ -27,6 +28,7 @@ private:
     std::shared_ptr<Gin::Profiler::Session> session{ nullptr };
     std::vector<uint64_t> threads{};
     uint64_t tpp{ 0 };
+    uint64_t maxMemoryAllocated{ 0 };
     std::vector<ExtendedNodeEvent> events{};
     double time{ 0.0 };
 };

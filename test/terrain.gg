@@ -125,9 +125,7 @@
                         -273.0
                     ]
                 },
-                "node": {
-                    "Height": 0.0
-                }
+                "node": {}
             },
             "path": "Signed/3D/Primitives/Ground"
         },
@@ -191,7 +189,6 @@
                     ]
                 },
                 "node": {
-                    "A": 0.0,
                     "B": 40.0
                 }
             },
@@ -221,9 +218,7 @@
                         -31.0
                     ]
                 },
-                "node": {
-                    "Height": 0.0
-                }
+                "node": {}
             },
             "path": "Signed/3D/Primitives/Ground"
         },
@@ -248,8 +243,6 @@
                     ]
                 },
                 "node": {
-                    "A": 0.0,
-                    "B": 0.0,
                     "Smooth Factor": 10.0
                 }
             },
@@ -279,7 +272,6 @@
                     ]
                 },
                 "node": {
-                    "A": 0.0,
                     "B": 50.0
                 }
             },
@@ -293,10 +285,7 @@
                         -147.0
                     ]
                 },
-                "node": {
-                    "A": 0.0,
-                    "B": 0.0
-                }
+                "node": {}
             },
             "path": "Math/Operation/Add"
         }
