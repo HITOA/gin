@@ -33,6 +33,7 @@ public:
     void Draw(bool* open) final;
     std::string_view GetName() final;
     void OnEvent(EventHandler& handler) final;
+    GraphEntry& GetCurrentGraph();
 
 private:
     template<typename T>

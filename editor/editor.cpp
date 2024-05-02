@@ -188,10 +188,11 @@ void Editor::Initialize() {
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
-    io.Fonts->AddFontDefault();
+    ImFontConfig fontConfig{};
+    fontConfig.SizePixels = 13.0;
+    io.Fonts->AddFontDefault(&fontConfig);
 
     static ImWchar ranges[] = { 0xf000, 0xf3ff, 0 };
-    ImFontConfig fontConfig{};
     fontConfig.MergeMode = true;
     io.Fonts->AddFontFromFileTTF("data/fonts/fw6s.otf", 13, &fontConfig, ranges);
     io.Fonts->AddFontFromFileTTF("data/fonts/fw6r.otf", 13, &fontConfig, ranges);

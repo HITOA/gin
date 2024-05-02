@@ -475,12 +475,15 @@ void Gin::Graph::Graph::Execute(GraphContext ctx, Thread::ThreadPool& pool)
 		case Gin::Graph::GraphActionType::EXEC:
 			{
 				while (program[Id].type == Gin::Graph::GraphActionType::EXEC) {
-					std::shared_ptr<Node> nodeI = nodes[program[Id].nodeAId];
+                    GraphId nodeId = program[Id].nodeAId;
+					std::shared_ptr<Node> nodeI = nodes[nodeId];
 					GraphContext ctxI = ctx;
 					++running;
-					pool.Execute([this, nodeI, ctxI, &pool]() {
+					pool.Execute([this, nodeI, ctxI, &pool, nodeId]() {
+                        Gin::Profiler::RecordEnterNode(nodeId);
                         nodeI->Initialize(ctxI);
 						nodeI->Execute(ctxI, pool);
+                        Gin::Profiler::RecordLeaveNode();
 						{
 							std::unique_lock<std::mutex> lock{ mutex };
 							--running;

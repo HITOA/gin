@@ -94,6 +94,10 @@ void GraphEditorWindow::OnEvent(EventHandler &handler) {
     }
 }
 
+GraphEntry& GraphEditorWindow::GetCurrentGraph() {
+    return graphs[currentGraphIdx];
+}
+
 void GraphEditorWindow::SetGraphEntry(uint32_t i) {
     {
         GraphEntry& entry = graphs[currentGraphIdx];
