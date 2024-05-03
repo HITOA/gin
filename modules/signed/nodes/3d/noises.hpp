@@ -42,6 +42,7 @@ namespace Gin::Module::Signed {
 
         virtual void Initialize(Gin::Graph::GraphContext ctx) final;
         virtual void Execute(Gin::Graph::GraphContext ctx) final;
+        virtual void Execute(Gin::Graph::GraphContext ctx, Thread::ThreadPool& pool);
         virtual std::string GetName() final;
 
     private:

@@ -172,7 +172,7 @@ void ProfilerWindow::DrawEventGraph(ImVec2 size) {
         eventBB.Max.y = eventBB.Min.y + rectH;
 
         if (eventBB.Contains(g.IO.MousePos)) {
-            ImGui::SetTooltip("Node : %s (%lu)\nDuration : %fms", event.nodeName.c_str(), event.nodeId, event.durationInSeconds / 1000.0);
+            ImGui::SetTooltip("Node : %s (%lu)\nDuration : %fms", event.nodeName.c_str(), event.nodeId, event.durationInSeconds * 1000.0);
             window->DrawList->AddRectFilled(eventBB.Min, eventBB.Max, ImGui::GetColorU32(ImGuiCol_PlotHistogramHovered));
         } else {
             window->DrawList->AddRectFilled(eventBB.Min, eventBB.Max, ImGui::GetColorU32(ImGuiCol_PlotHistogram));
