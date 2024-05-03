@@ -4,6 +4,7 @@
 #include <signed/nodes/3d/primitives.hpp>
 #include <signed/nodes/3d/operations.hpp>
 #include <signed/nodes/3d/sampler.hpp>
+#include <signed/nodes/3d/noises.hpp>
 
 void InitializeSignedModule()
 {
@@ -20,6 +21,9 @@ void InitializeSignedModule()
 
     Gin::Module::AddNodesToRegistry<Gin::Module::Signed::OPSmoothUnion>("Signed/3D/Operations/SmoothUnion");
     Gin::Module::AddNodesToRegistry<Gin::Module::Signed::OPSmoothSubstraction>("Signed/3D/Operations/SmoothSubstraction");
+
+    Gin::Module::AddNodesToRegistry<Gin::Module::Signed::SDSphericalNoise>("Signed/3D/Noises/SphericalNoise");
+    Gin::Module::AddNodesToRegistry<Gin::Module::Signed::SDFBMNoiseSampler>("Signed/3D/Noises/FBMNoiseSampler");
 /*
     Gin::Module::AddNodesToRegistry<Gin::Module::Signed::SDPlane>("Signed/3D/Primitives/Plane");
     Gin::Module::AddNodesToRegistry<Gin::Module::Signed::SDTorus>("Signed/3D/Primitives/Torus");

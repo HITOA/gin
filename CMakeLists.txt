@@ -68,7 +68,9 @@ set(module_file_src "#pragma once\n\n${includes}\n\ninline void Initialize() \{\
 file(WRITE ${CMAKE_CURRENT_SOURCE_DIR}/modules/module.hpp ${module_file_src})
 
 add_library(gin_library STATIC ${gin_library_src} ${gin_modules_src} ${CMAKE_CURRENT_SOURCE_DIR}/modules/module.hpp
-        modules/geometry/nodes/volume.hpp)
+        modules/geometry/nodes/volume.hpp
+        modules/signed/nodes/3d/noises.hpp
+        modules/signed/nodes/3d/noises.cpp)
 
 target_include_directories(gin_library PUBLIC library/include modules)
 target_link_libraries(gin_library xsimd FastNoise)

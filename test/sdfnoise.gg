@@ -1,0 +1,121 @@
+{
+    "data": {
+        "editor": {
+            "inputs": {
+                "position": [
+                    -48.0,
+                    -126.0
+                ]
+            },
+            "outputs": {
+                "position": [
+                    2392.0,
+                    -190.0
+                ]
+            }
+        },
+        "outputs": [
+            {
+                "name": "_Volume",
+                "type": 0
+            }
+        ]
+    },
+    "links": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        4,
+        0,
+        0,
+        2,
+        2,
+        2,
+        2,
+        0,
+        3,
+        1,
+        2,
+        1,
+        4,
+        0,
+        4294967294,
+        0,
+        0,
+        8
+    ],
+    "name": "<new graph>",
+    "nodes": [
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        1996.0,
+                        -206.0
+                    ]
+                },
+                "node": {
+                    "Frequency": 0.05000000074505806,
+                    "Gain": 0.41499999165534973,
+                    "Lacunarity": 2.0,
+                    "Octave": 8,
+                    "Seed": 7564.0
+                }
+            },
+            "path": "Signed/3D/Noises/FBMNoiseSampler"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        1720.0,
+                        -238.0
+                    ]
+                },
+                "node": {}
+            },
+            "path": "Signed/3D/Noises/SphericalNoise"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        1656.0,
+                        -63.0
+                    ]
+                },
+                "node": {}
+            },
+            "path": "Signed/3D/Primitives/Sampler"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        1304.0,
+                        -46.0
+                    ]
+                },
+                "node": {
+                    "Height": 0.0
+                }
+            },
+            "path": "Signed/3D/Primitives/Ground"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        1445.0,
+                        -158.0
+                    ]
+                },
+                "node": {}
+            },
+            "path": "Base/Position"
+        }
+    ]
+}
