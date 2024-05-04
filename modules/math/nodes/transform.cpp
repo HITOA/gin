@@ -206,9 +206,9 @@ void Gin::Module::Math::Scale::Execute(Graph::GraphContext ctx) {
                 auto p1 = in.GetVector3Batch(x, y, z);
                 auto s = scale.GetVector3Batch(x, y, z);
 
-                p1.c[0] = p1.c[0] * s.c[0];
-                p1.c[1] = p1.c[1] * s.c[1];
-                p1.c[2] = p1.c[2] * s.c[2];
+                p1.c[0] = p1.c[0] / s.c[0];
+                p1.c[1] = p1.c[1] / s.c[1];
+                p1.c[2] = p1.c[2] / s.c[2];
 
                 Field::VectorizedVector3Field::VectorVector3& vv3 = o->GetVectorVector3(idx);
                 xsimd::store_aligned(vv3.x, p1.c[0]);

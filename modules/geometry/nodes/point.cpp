@@ -78,6 +78,42 @@ std::string Gin::Module::Geometry::PointsCloud::GetName() {
     return "Points Cloud";
 }
 
+
+Gin::Module::Geometry::PointsOnPlane::PointsOnPlane() {
+    AddInputPort("Distance", distance);
+
+    AddOutputPort("Points", points);
+}
+
+void Gin::Module::Geometry::PointsOnPlane::Initialize(Graph::GraphContext ctx) {
+    points = std::make_shared<std::vector<Gin::Math::Vector3>>();
+}
+
+void Gin::Module::Geometry::PointsOnPlane::Execute(Graph::GraphContext ctx) {
+    Math::Vector3 size = Math::Floor((ctx.bounds.extent * 2 + distance) / distance);
+    Math::Vector3 offset = ctx.bounds.origin;
+    offset.x = fmod(offset.x, distance) / distance;
+    offset.z = fmod(offset.z, distance) / distance;
+
+    points->resize(size.x * size.z);
+
+    for (int z = 0; z < size.z; ++z) {
+        for (int x = 0; x < size.x; ++x) {
+            Math::Vector3 currentPoint{ (float)x, (float)0.0, (float)z };
+            currentPoint -= size / 2.0;
+            currentPoint *= distance;
+            currentPoint += ctx.bounds.origin - offset + distance / 2;
+            currentPoint.y = 0.0;
+            (*points)[x + z * (int)size.x] = currentPoint;
+        }
+    }
+}
+
+std::string Gin::Module::Geometry::PointsOnPlane::GetName() {
+    return "Points On Plane";
+}
+
+
 Gin::Module::Geometry::RandomOffset::RandomOffset() {
     AddInputPort("In Points", in);
     AddInputPort("Min", min);

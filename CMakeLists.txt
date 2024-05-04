@@ -70,7 +70,9 @@ file(WRITE ${CMAKE_CURRENT_SOURCE_DIR}/modules/module.hpp ${module_file_src})
 add_library(gin_library STATIC ${gin_library_src} ${gin_modules_src} ${CMAKE_CURRENT_SOURCE_DIR}/modules/module.hpp
         modules/geometry/nodes/volume.hpp
         modules/signed/nodes/3d/noises.hpp
-        modules/signed/nodes/3d/noises.cpp)
+        modules/signed/nodes/3d/noises.cpp
+        modules/noise/nodes/operations.hpp
+        modules/noise/nodes/operations.cpp)
 
 target_include_directories(gin_library PUBLIC library/include modules)
 target_link_libraries(gin_library xsimd FastNoise)

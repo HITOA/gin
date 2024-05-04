@@ -25,6 +25,20 @@ namespace Gin::Module::Geometry {
         std::shared_ptr<std::vector<Math::Vector3>> points{};
     };
 
+    class PointsOnPlane : public Gin::Graph::Node {
+    public:
+        PointsOnPlane();
+
+        virtual void Initialize(Graph::GraphContext ctx) final;
+        virtual void Execute(Graph::GraphContext ctx) final;
+        virtual std::string GetName() final;
+
+    private:
+        float distance{ 1.0 };
+
+        std::shared_ptr<std::vector<Math::Vector3>> points{};
+    };
+
     class RandomOffset : public Gin::Graph::Node {
     public:
         RandomOffset();

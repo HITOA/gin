@@ -1,0 +1,391 @@
+{
+    "data": {
+        "editor": {
+            "inputs": {
+                "position": [
+                    -48.0,
+                    -126.0
+                ]
+            },
+            "outputs": {
+                "position": [
+                    4104.0,
+                    81.0
+                ]
+            }
+        },
+        "outputs": [
+            {
+                "name": "_Volume",
+                "type": 0
+            }
+        ]
+    },
+    "links": [
+        0,
+        0,
+        15,
+        1,
+        0,
+        1,
+        4,
+        5,
+        1,
+        0,
+        6,
+        1,
+        1,
+        1,
+        2,
+        5,
+        1,
+        2,
+        3,
+        5,
+        4,
+        0,
+        1,
+        3,
+        4,
+        1,
+        5,
+        0,
+        8,
+        0,
+        7,
+        0,
+        8,
+        1,
+        10,
+        2,
+        8,
+        2,
+        0,
+        4,
+        10,
+        0,
+        9,
+        0,
+        10,
+        1,
+        11,
+        5,
+        13,
+        0,
+        12,
+        1,
+        13,
+        1,
+        9,
+        0,
+        14,
+        0,
+        19,
+        2,
+        14,
+        1,
+        13,
+        2,
+        17,
+        0,
+        16,
+        1,
+        17,
+        1,
+        18,
+        0,
+        19,
+        0,
+        8,
+        8,
+        19,
+        1,
+        17,
+        2,
+        4294967294,
+        0,
+        14,
+        3
+    ],
+    "name": "<new graph>",
+    "nodes": [
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        1839.0,
+                        93.0
+                    ]
+                },
+                "node": {
+                    "Bounding Sphere Radius": 35.0,
+                    "Smoothness": 6.0
+                }
+            },
+            "path": "Geometry/Scatter Sampler"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        1116.0,
+                        222.0
+                    ]
+                },
+                "node": {}
+            },
+            "path": "Geometry/Random Offset"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        764.0,
+                        278.0
+                    ]
+                },
+                "node": {
+                    "W": 0.0,
+                    "X": -8.0,
+                    "Y": 0.0,
+                    "Z": -8.0
+                }
+            },
+            "path": "Base/Utils/Combine"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        751.0,
+                        460.0
+                    ]
+                },
+                "node": {
+                    "W": 0.0,
+                    "X": 8.0,
+                    "Y": 0.0,
+                    "Z": 8.0
+                }
+            },
+            "path": "Base/Utils/Combine"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        1430.0,
+                        277.0
+                    ]
+                },
+                "node": {
+                    "Frequency": 0.004999999888241291,
+                    "Seed": 756,
+                    "Threshold": 0.0
+                }
+            },
+            "path": "FastNoise2/Operation/FilterPointWithNoise"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        1191.0,
+                        393.0
+                    ]
+                },
+                "node": {}
+            },
+            "path": "FastNoise2/Generator/Simplex"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        732.0,
+                        182.0
+                    ]
+                },
+                "node": {
+                    "Distance": 24.0
+                }
+            },
+            "path": "Geometry/Points On Plane"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        2292.0,
+                        -302.0
+                    ]
+                },
+                "node": {}
+            },
+            "path": "Signed/3D/Noises/CubicNoise"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        2572.0,
+                        -94.0
+                    ]
+                },
+                "node": {
+                    "Frequency": 0.019999999552965164,
+                    "Gain": 0.5,
+                    "Lacunarity": 2.0,
+                    "Octave": 4,
+                    "Seed": 1234.0
+                }
+            },
+            "path": "Signed/3D/Noises/FBMNoiseSampler"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        2009.0,
+                        -187.0
+                    ]
+                },
+                "node": {}
+            },
+            "path": "Base/Position"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        2186.0,
+                        -59.0
+                    ]
+                },
+                "node": {}
+            },
+            "path": "Math/Transform/Scale"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        1884.0,
+                        -107.0
+                    ]
+                },
+                "node": {
+                    "W": 0.0,
+                    "X": 1.0,
+                    "Y": 4.0,
+                    "Z": 1.0
+                }
+            },
+            "path": "Base/Utils/Combine"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        2139.0,
+                        398.0
+                    ]
+                },
+                "node": {
+                    "Height": -20.0
+                }
+            },
+            "path": "Signed/3D/Primitives/Ground"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        2472.0,
+                        416.0
+                    ]
+                },
+                "node": {}
+            },
+            "path": "Signed/3D/Primitives/Sampler"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        3704.0,
+                        65.0
+                    ]
+                },
+                "node": {
+                    "Smooth Factor": 5.0
+                }
+            },
+            "path": "Signed/3D/Operations/SmoothUnion"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        1472.0,
+                        91.0
+                    ]
+                },
+                "node": {
+                    "Radius": 20.0
+                }
+            },
+            "path": "Signed/3D/Primitives/Sphere"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        2543.0,
+                        159.0
+                    ]
+                },
+                "node": {
+                    "Height": 14.0
+                }
+            },
+            "path": "Signed/3D/Primitives/Ground"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        2824.0,
+                        213.0
+                    ]
+                },
+                "node": {}
+            },
+            "path": "Signed/3D/Primitives/Sampler"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        2611.0,
+                        260.0
+                    ]
+                },
+                "node": {}
+            },
+            "path": "Base/Position"
+        },
+        {
+            "data": {
+                "editor": {
+                    "position": [
+                        3128.0,
+                        112.0
+                    ]
+                },
+                "node": {}
+            },
+            "path": "Signed/3D/Operations/Intersection"
+        }
+    ]
+}

@@ -4,6 +4,7 @@
 
 #include <noise/nodes/generator.hpp>
 #include <noise/nodes/sampler.hpp>
+#include <noise/nodes/operations.hpp>
 
 void InitializeNoiseModule()
 {
@@ -20,6 +21,8 @@ void InitializeNoiseModule()
 
 	Gin::Module::AddNodesToRegistry<Gin::Module::Noise::Sampler3D>("FastNoise2/Sampler3D");
 	Gin::Module::AddNodesToRegistry<Gin::Module::Noise::Sampler2D>("FastNoise2/Sampler2D");
+
+    Gin::Module::AddNodesToRegistry<Gin::Module::Noise::FilterPointWithNoise>("FastNoise2/Operation/FilterPointWithNoise");
 }
 
 void UninitializeNoiseModule()
