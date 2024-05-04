@@ -9,7 +9,7 @@
             },
             "outputs": {
                 "position": [
-                    4104.0,
+                    4280.0,
                     81.0
                 ]
             }
@@ -118,7 +118,7 @@
                     ]
                 },
                 "node": {
-                    "Bounding Sphere Radius": 35.0,
+                    "Bounding Sphere Radius": 64.0,
                     "Smoothness": 6.0
                 }
             },
@@ -180,7 +180,7 @@
                 },
                 "node": {
                     "Frequency": 0.004999999888241291,
-                    "Seed": 756,
+                    "Seed": 12756,
                     "Threshold": 0.0
                 }
             },
@@ -237,7 +237,7 @@
                     "Gain": 0.5,
                     "Lacunarity": 2.0,
                     "Octave": 4,
-                    "Seed": 1234.0
+                    "Seed": 7545.0
                 }
             },
             "path": "Signed/3D/Noises/FBMNoiseSampler"
@@ -277,7 +277,7 @@
                 "node": {
                     "W": 0.0,
                     "X": 1.0,
-                    "Y": 4.0,
+                    "Y": 5.0,
                     "Z": 1.0
                 }
             },

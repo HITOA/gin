@@ -154,8 +154,11 @@ void Gin::Module::Geometry::ScatterSampler::Initialize(Graph::GraphContext ctx) 
 void Gin::Module::Geometry::ScatterSampler::Execute(Graph::GraphContext ctx) {
     Math::Vector3 size{ Math::Ceil(ctx.bounds.extent * 2.0 / ctx.scale) };
 
+    Math::Vector3 rSize{ (boudingSphereRadius) * 2.0f / ctx.scale };
+    rSize = Math::Ceil(rSize);
+
     Field::Sampler<Math::Vector3> position{};
-    position.SetField(std::make_shared<Field::VectorizedVector3Field>(size.x, size.y, size.z));
+    position.SetField(std::make_shared<Field::VectorizedVector3Field>(rSize.x, rSize.y, rSize.z));
 
     {
         std::shared_ptr<Field::VectorizedVector3Field> f = position.GetField<Field::VectorizedVector3Field>();
@@ -166,16 +169,16 @@ void Gin::Module::Geometry::ScatterSampler::Execute(Graph::GraphContext ctx) {
         for (size_t i = 0; i < simdSizeW; ++i)
             xcOffsets[i] = i;
 
-        for (size_t z = 0; z < size.z; ++z) {
-            for (size_t y = 0; y < size.y; ++y) {
-                for (size_t x = 0; x < size.x; x += simdSizeW) {
+        for (size_t z = 0; z < rSize.z; ++z) {
+            for (size_t y = 0; y < rSize.y; ++y) {
+                for (size_t x = 0; x < rSize.x; x += simdSizeW) {
                     xsimd::batch<Math::Scalar> xc = xsimd::load_unaligned(xcOffsets) + x;
                     xsimd::batch<Math::Scalar> yc{ (float)y };
                     xsimd::batch<Math::Scalar> zc{ (float)z };
 
-                    xc = xc * ctx.scale - ctx.bounds.extent.x;
-                    yc = yc * ctx.scale - ctx.bounds.extent.y;
-                    zc = zc * ctx.scale - ctx.bounds.extent.z;
+                    xc = xc * ctx.scale - boudingSphereRadius;
+                    yc = yc * ctx.scale - boudingSphereRadius;
+                    zc = zc * ctx.scale - boudingSphereRadius;
 
                     Field::VectorizedVector3Field::VectorVector3& vv3 = f->GetVectorVector3(idx);
                     xsimd::store_aligned(vv3.x, xc);
@@ -193,20 +196,18 @@ void Gin::Module::Geometry::ScatterSampler::Execute(Graph::GraphContext ctx) {
 
 
     std::shared_ptr<Field::ScalarField<float>> d = distance.GetField<Field::ScalarField<float>>();
-    d->Fill(boudingSphereRadius);
-
-    int radius = std::ceil(boudingSphereRadius / ctx.scale);
+    d->Fill(boudingSphereRadius + 1.0f);1
 
     for (int i = 0; i < points->size(); ++i) {
         Math::Vector3 point = (*points)[i];
         point = (point - ctx.bounds.origin + ctx.bounds.extent) / ctx.scale;
-        for (int z = -radius; z <= radius; ++z) {
-            for (int y = -radius; y <= radius; ++y) {
-                for (int x = -radius; x <= radius; ++x) {
-                    Math::Vector3 sPoint = Math::Round(point + Math::Vector3{ (float)x, (float)y, (float)z });
+        for (int z = 0; z < rSize.z; ++z) {
+            for (int y = 0; y < rSize.y; ++y) {
+                for (int x = 0; x < rSize.x; ++x) {
+                    Math::Vector3 sPoint = Math::Round(point + Math::Vector3{ (float)x, (float)y, (float)z } - rSize / 2.0);
                     if (sPoint.x >= 0 && sPoint.y >= 0 && sPoint.z >= 0 &&
                             sPoint.x < size.x && sPoint.y < size.y && sPoint.z < size.z) {
-                        float v = sdf.GetScalar(x + size.x / 2, y + size.y / 2, z + size.z / 2);
+                        float v = sdf.GetScalar(x, y, z);
                         size_t idx = (int)sPoint.x + (int)sPoint.y * d->GetVecWidth() + (int)sPoint.z * d->GetVecWidth() * (int)size.y;
                         float ov = (*d)[idx];
 
