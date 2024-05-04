@@ -196,7 +196,7 @@ void Gin::Module::Geometry::ScatterSampler::Execute(Graph::GraphContext ctx) {
 
 
     std::shared_ptr<Field::ScalarField<float>> d = distance.GetField<Field::ScalarField<float>>();
-    d->Fill(boudingSphereRadius + 1.0f);1
+    d->Fill(boudingSphereRadius + 1.0f);
 
     for (int i = 0; i < points->size(); ++i) {
         Math::Vector3 point = (*points)[i];
