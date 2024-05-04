@@ -87,7 +87,7 @@ Gin::Module::Signed::SDSphericalNoise::SphericalNoise::Compute(Field::Sampler<Ma
                             yv = xv + zv;
                             zv = xv + yv;
 
-                            auto radius = (xsimd::to_float(xv + yv + zv) / (float)std::numeric_limits<int>::max()) * (0.5f - 0.1f) + 0.1f;
+                            auto radius = (xsimd::to_float(xv + yv + zv) / (float)std::numeric_limits<int>::max()) * (0.5f - 0.2f) + 0.2f;
 
                             auto xOffset = (xsimd::to_float(xv) / (float)std::numeric_limits<int>::max() - 0.5f) * 0.2f;
                             auto yOffset = (xsimd::to_float(yv) / (float)std::numeric_limits<int>::max() - 0.5f) * 0.2f;
@@ -111,6 +111,132 @@ Gin::Module::Signed::SDSphericalNoise::SphericalNoise::Compute(Field::Sampler<Ma
 
     return s;
 }
+
+
+Gin::Module::Signed::SDCubicNoise::SDCubicNoise() {
+    AddOutputPort("Out", out);
+}
+
+void Gin::Module::Signed::SDCubicNoise::Initialize(Gin::Graph::GraphContext ctx) {
+    out = std::make_shared<CubicNoise>();
+}
+
+void Gin::Module::Signed::SDCubicNoise::Execute(Gin::Graph::GraphContext ctx) {}
+
+std::string Gin::Module::Signed::SDCubicNoise::GetName() {
+    return "SDCubicNoise";
+}
+
+Gin::Field::Sampler<float>
+Gin::Module::Signed::SDCubicNoise::CubicNoise::Compute(Field::Sampler<Math::Vector3> position,
+                                                               float frequency, int seed) {
+    Math::Vector3 size{ 1.0f };
+
+    if (position.IsFieldOfType<Field::VectorizedVector3Field>()) {
+        std::shared_ptr<Field::VectorizedVector3Field> p = position.GetField<Field::VectorizedVector3Field>();
+        size.x = p->GetWidth();
+        size.y = p->GetHeight();
+        size.z = p->GetDepth();
+    }
+
+    std::shared_ptr<Field::ScalarField<float>> d = std::make_shared<Field::ScalarField<float>>(size.x, size.y, size.z);
+    Field::Sampler<float> s{};
+    s.SetField(d);
+
+    constexpr size_t simdSize = xsimd::simd_type<Math::Scalar>::size;
+    size_t idx = 0;
+
+    for (size_t z = 0; z < size.z; ++z) {
+        for (size_t y = 0; y < size.y; ++y) {
+            for (size_t x = 0; x < size.x; x += simdSize) {
+                auto pos = position.GetVector3Batch(x, y, z);
+
+                pos.c[0] *= frequency;
+                pos.c[1] *= frequency;
+                pos.c[2] *= frequency;
+
+                xsimd::batch<float> ix = xsimd::floor(pos.c[0]);
+                xsimd::batch<float> iy = xsimd::floor(pos.c[1]);
+                xsimd::batch<float> iz = xsimd::floor(pos.c[2]);
+
+                pos.c[0] -= ix;
+                pos.c[1] -= iy;
+                pos.c[2] -= iz;
+
+                xsimd::batch<float> r{ 10.0 };
+
+                for (int z = 0; z < 2; ++z) {
+                    for (int y = 0; y < 2; ++y) {
+                        for (int x = 0; x < 2; ++x) {
+                            xsimd::batch<int> xv = xsimd::to_int(ix) + x + seed;
+                            xsimd::batch<int> yv = xsimd::to_int(iy) + y + seed;
+                            xsimd::batch<int> zv = xsimd::to_int(iz) + z + seed;
+
+                            //xv = (xv * 73856093U) ^ (yv * 19349663U) ^ (zv * 83492791U);
+                            //yv = (xv * 805306457U) ^ (yv * 402653189U) ^ (zv * 201326611U);
+                            //zv = (xv * 100663319U) ^ (yv * 50331653U) ^ (zv * 1610612741U);
+
+                            xv = (xv * 1664525) + 1013904223;
+                            yv = (yv * 1664525) + 1013904223;
+                            zv = (zv * 1664525) + 1013904223;
+
+                            xv += yv * zv;
+                            yv += xv * zv;
+                            zv += yv * xv;
+
+                            xv = xv ^ (xv >> 16);
+                            yv = yv ^ (yv >> 16);
+                            zv = zv ^ (zv >> 16);
+
+                            xv += yv * zv;
+                            yv += xv * zv;
+                            zv += yv * xv;
+
+                            xv = xv ^ yv << 2 ^ zv >> 2;
+                            yv = xv + zv;
+                            zv = xv + yv;
+
+                            auto size = (xsimd::to_float(xv + yv + zv) / (float)std::numeric_limits<int>::max()) * (0.5f - 0.2f) + 0.2f;
+
+                            auto xOffset = (xsimd::to_float(xv) / (float)std::numeric_limits<int>::max() - 0.5f) * 0.2f;
+                            auto yOffset = (xsimd::to_float(yv) / (float)std::numeric_limits<int>::max() - 0.5f) * 0.2f;
+                            auto zOffset = (xsimd::to_float(zv) / (float)std::numeric_limits<int>::max() - 0.5f) * 0.2f;
+
+                            auto cx = pos.c[0] - x + xOffset;
+                            auto cy = pos.c[1] - y + yOffset;
+                            auto cz = pos.c[2] - z + zOffset;
+
+                            auto zero = xsimd::batch<float>{ 0.0f };
+
+                            auto vx = xsimd::abs(cx) - size;
+                            vx = xsimd::max(vx, zero);
+                            vx = vx * vx;
+
+                            auto vy = xsimd::abs(cy) - size;
+                            vy = xsimd::max(vy, zero);
+                            vy = vy * vy;
+
+                            auto vz = xsimd::abs(cz) - size;
+                            vz = xsimd::max(vz, zero);
+                            vz = vz * vz;
+
+                            auto v3 = xsimd::min(xsimd::max(cx, xsimd::max(cy, cz)), zero);
+                            auto cd = xsimd::sqrt(vx + vy + vz) + v3;
+
+                            r = xsimd::min(r, cd);
+                        }
+                    }
+                }
+
+                xsimd::store_aligned(&(*d)[idx], r);
+                idx += simdSize;
+            }
+        }
+    }
+
+    return s;
+}
+
 
 Gin::Module::Signed::SDFBMNoiseSampler::SDFBMNoiseSampler() {
     AddInputPort("In", in);
@@ -185,7 +311,9 @@ void Gin::Module::Signed::SDFBMNoiseSampler::Execute(Gin::Graph::GraphContext ct
     for (int i = 0; i < octaves; ++i) {
         ++running;
         pool.Execute([this, &noises, i, &mutex, &cv, &running]() {
+            Gin::Profiler::RecordEnterNode(std::numeric_limits<uint32_t>::max());
             noises[i] = in->Compute(position, frequency * std::pow(lacunarity, i), ((int)seed << i) + (int)seed);
+            Gin::Profiler::RecordLeaveNode();
             {
                 std::unique_lock<std::mutex> lock{ mutex };
                 --running;

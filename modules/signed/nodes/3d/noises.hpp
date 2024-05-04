@@ -33,7 +33,20 @@ namespace Gin::Module::Signed {
     };
 
     class SDCubicNoise: public Graph::Node {
+    public:
+        SDCubicNoise();
 
+        virtual void Initialize(Gin::Graph::GraphContext ctx) final;
+        virtual void Execute(Gin::Graph::GraphContext ctx) final;
+        virtual std::string GetName() final;
+
+    private:
+        std::shared_ptr<Noise> out{};
+
+        class CubicNoise : public Noise {
+        public:
+            virtual Field::Sampler<float> Compute(Field::Sampler<Math::Vector3> position, float frequency, int seed) final;
+        };
     };
 
     class SDFBMNoiseSampler: public Graph::Node {

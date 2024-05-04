@@ -23,6 +23,7 @@ void InitializeSignedModule()
     Gin::Module::AddNodesToRegistry<Gin::Module::Signed::OPSmoothSubstraction>("Signed/3D/Operations/SmoothSubstraction");
 
     Gin::Module::AddNodesToRegistry<Gin::Module::Signed::SDSphericalNoise>("Signed/3D/Noises/SphericalNoise");
+    Gin::Module::AddNodesToRegistry<Gin::Module::Signed::SDCubicNoise>("Signed/3D/Noises/CubicNoise");
     Gin::Module::AddNodesToRegistry<Gin::Module::Signed::SDFBMNoiseSampler>("Signed/3D/Noises/FBMNoiseSampler");
 /*
     Gin::Module::AddNodesToRegistry<Gin::Module::Signed::SDPlane>("Signed/3D/Primitives/Plane");

@@ -88,7 +88,10 @@ void ProfilerWindow::UpdateSession() {
             ExtendedNodeEvent ene{};
             ene.threadIdx = threadIdx;
             ene.tickStart = event.tickOffset;
-            ene.nodeName = graphEntry->graph->GetNode<Gin::Graph::Node>(event.owner)->GetName();
+            if (event.owner == std::numeric_limits<uint32_t>::max())
+                ene.nodeName = "SubEvent";
+            else
+                ene.nodeName = graphEntry->graph->GetNode<Gin::Graph::Node>(event.owner)->GetName();
             ene.nodeId = event.owner;
             threadEvents[threadIdx].push_back(ene);
         }

@@ -24,6 +24,7 @@ namespace Gin::Profiler {
             uint64_t value{};
             uint32_t owner{};
             uint64_t tid{};
+            std::string name{};
         };
 
         std::string name{};
